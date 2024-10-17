@@ -9,11 +9,9 @@
 
     <include layout="@layout/toolbar"/>
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/stroke_bottom"
-        android:padding="10dp">
+        android:orientation="vertical">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -67,21 +65,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Unfortunately, you have not been selected for 'Swimming Lessons (adult).' However, if a spot opens up we will notify you."
+            android:visibility="gone"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cancel"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Decline"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Accept"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -91,5 +94,8 @@
             android:layout_height="wrap_content"
             android:text="View Poster"/>
     </LinearLayout>
+
+
+
 
 </LinearLayout>
