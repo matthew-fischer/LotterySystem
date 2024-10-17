@@ -2,11 +2,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 <!--    https://developer.android.com/develop/ui/views/components/appbar/actions-->
-    <!-- "Mark Favorite", must appear as action button if possible. -->
     <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/baseline_person_outline_24"
         android:title="Profile"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/nav_signup"
+        android:icon="@drawable/baseline_person_outline_24"
+        android:title="signup"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/nav_events"
+        android:icon="@drawable/baseline_person_outline_24"
+        android:title="events"
         app:showAsAction="ifRoom"/>
 
     <!-- Settings, must always be in the overflow. -->
