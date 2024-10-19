@@ -16,7 +16,7 @@ public class AddEventDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflator = requireActivity().getLayoutInflater();
 
-        builder.setView(inflator.inflate(R.layout.dialog_create_event, null))
+        builder.setView(inflator.inflate(R.layout.dialog_create_event_material, null))
                 .setPositiveButton("Create", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
