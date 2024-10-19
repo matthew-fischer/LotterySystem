@@ -121,6 +121,7 @@
         android:layout_marginTop="10dp"
         >
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/timeTextView"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
@@ -134,8 +135,10 @@
             android:text="|"
             android:textSize="16sp"
             android:layout_marginHorizontal="5dp"
-            android:textColor="?attr/colorPrimary"/>
+            android:textColor="?attr/colorPrimary"
+            android:clickable="false"/>
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/dateTextView"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
