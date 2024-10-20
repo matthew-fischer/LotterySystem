@@ -50,4 +50,4 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     //noinspection UseTomlInstead
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
-}
+    implementation("com.google.zxing:core:3.3.0") }

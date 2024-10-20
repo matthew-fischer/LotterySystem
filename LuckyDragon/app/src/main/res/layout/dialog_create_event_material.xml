@@ -17,6 +17,7 @@
         android:hint="Name"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/eventNameEditText"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -29,6 +30,7 @@
         android:hint="Facility"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/facilityEditText"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -47,6 +49,7 @@
             android:hint="Waitlist Limit"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/waitlistLimitEditText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="No Limit"
@@ -62,6 +65,7 @@
             android:hint="# Attendees"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/attendeeLimitEditText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:inputType="number"/>
