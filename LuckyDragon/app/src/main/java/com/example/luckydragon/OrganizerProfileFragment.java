@@ -1,3 +1,7 @@
+/**
+ * Defines the OrganizerProfileFragment which contains the organizer-specific profile content and logic.
+ */
+
 package com.example.luckydragon;
 
 import android.app.Activity;
@@ -12,8 +16,6 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textview.MaterialTextView;
-
-import java.util.Objects;
 
 public class OrganizerProfileFragment extends Fragment {
     public OrganizerProfileFragment() {
@@ -43,7 +45,9 @@ public class OrganizerProfileFragment extends Fragment {
         facilityTextView.setText(facilityName);
     }
 
+    // EditFacilityDialogFragment uses this function to update the facility textview after a change is made.
     public void setFacilityTextView(String newFacility) {
+        // Set facility text view to a new value
         Activity activity = requireActivity();
         MaterialTextView facilityTextView = activity.findViewById(R.id.facilityTextView);
         facilityTextView.setText(newFacility);

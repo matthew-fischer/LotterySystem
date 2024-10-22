@@ -1,15 +1,14 @@
+/**
+ * Defines AddEventDialogFragment which allows an organizer to create an event.
+ */
+
 package com.example.luckydragon;
 
-import static java.text.DateFormat.getDateInstance;
-
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.LayoutInflater;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,15 +27,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.Objects;
-import java.util.TimeZone;
 
 public class AddEventDialogFragment extends DialogFragment {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
