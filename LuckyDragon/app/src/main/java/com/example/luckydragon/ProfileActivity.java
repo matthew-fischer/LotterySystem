@@ -66,7 +66,8 @@ public class ProfileActivity extends AppBarActivity {
                                         deviceID,
                                         String.format("%s %s", userData.get("FirstName"), userData.get("LastName")),
                                         String.format("%s", userData.get("Email")),
-                                        String.format("%s", userData.get("PhoneNumber"))
+                                        String.format("%s", userData.get("PhoneNumber")),
+                                        String.format("%s", userData.get("Facility"))
                                 );
                             } else if(Boolean.TRUE.equals(isEntrant)) {
                                 // Set entrant
@@ -105,5 +106,9 @@ public class ProfileActivity extends AppBarActivity {
                 }
             }
         });
+    }
+
+    public User getUser() {
+        return user;
     }
 }

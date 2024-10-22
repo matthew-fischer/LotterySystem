@@ -2,15 +2,13 @@ package com.example.luckydragon;
 
 import android.util.Log;
 
-import com.google.type.DateTime;
+import androidx.annotation.NonNull;
+
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -24,8 +22,15 @@ public class Event {
             this.hours = hours;
             this.minutes = minutes;
         }
+
+        @NonNull
+        @Override
+        public String toString() {
+            return String.format("%02d%02d", hours, minutes);
+        }
     }
     private String name;
+    private String organizer;
     private String facility;
     private Integer waitlistLimit;
     private Integer attendeeLimit;
@@ -33,8 +38,9 @@ public class Event {
     private Time time;
     private BitMatrix qrHash;
 
-    public Event(String name, String facility, Integer waitlistLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes)  {
+    public Event(String name, String organizer, String facility, Integer waitlistLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes)  {
         this.name = name;
+        this.organizer = organizer;
         this.facility = facility;
         this.waitlistLimit = waitlistLimit;
         this.attendeeLimit = attendeeLimit;
@@ -52,7 +58,7 @@ public class Event {
         eventData.put("Date", date);
         eventData.put("Hours", time.hours);
         eventData.put("Minutes", time.minutes);
-        eventData.put("HashedQR", qrHash.toString());
+        eventData.put("HashedQR", qrHash.toString("1", "0"));
         return eventData;
     }
 
@@ -70,11 +76,13 @@ public class Event {
     }
 
     public String getQrHash() {
-        return qrHash.toString();
+        return qrHash.toString("1", "0");
     }
 
     public BitMatrix generateQRCode() {
-        String hashedStr = new String(Integer.valueOf(hashCode()).toString().getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+        // Generate a string that concatenates organizer, facility, name, date, and time and replaces whitespace with "-"
+        String hashedStr = String.format("%s/%s/%s/%s/%s", organizer.trim(), facility.trim(), name.trim(), date, time.toString()).replaceAll("\\s+", "-");;
+        // Encode string as QR code
         try {
             return new MultiFormatWriter().encode(hashedStr, BarcodeFormat.QR_CODE, 200, 200);
         } catch (WriterException e) {

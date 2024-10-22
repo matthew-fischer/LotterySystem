@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.luckydragon"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -50,4 +50,6 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     //noinspection UseTomlInstead
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
-    implementation("com.google.zxing:core:3.3.0") }
+    implementation("com.google.zxing:core:3.3.0")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.2")
+}

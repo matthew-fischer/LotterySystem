@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/edit_facility_FacilityTextInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:expandedHintEnabled="false"
+        android:layout_marginTop="10dp"
+        android:hint="Facility Name"
+        app:endIconMode="custom"
+        app:endIconDrawable="@drawable/baseline_clear_24"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_facility_FacilityEditText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.textfield.TextInputLayout>
+</LinearLayout>

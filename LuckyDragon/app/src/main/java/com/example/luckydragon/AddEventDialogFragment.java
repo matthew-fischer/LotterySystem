@@ -1,9 +1,13 @@
 package com.example.luckydragon;
 
+import static java.text.DateFormat.getDateInstance;
+
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.widget.Button;
 import android.widget.Toast;
@@ -25,22 +29,32 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
+import java.util.Objects;
 import java.util.TimeZone;
 
 public class AddEventDialogFragment extends DialogFragment {
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+
     @Nullable private Integer timeHours = null;
     @Nullable private Integer timeMinutes = null;
     @Nullable private String date = null;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflator = requireActivity().getLayoutInflater();
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
 
-        builder.setView(inflator.inflate(R.layout.dialog_create_event_material, null))
+        ProfileActivity parent = (ProfileActivity)getActivity();
+        String organizerName = Objects.requireNonNull(parent).getUser().getName();
+
+        builder.setView(inflater.inflate(R.layout.dialog_create_event_material, null))
                 .setPositiveButton("Create", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -63,7 +77,7 @@ public class AddEventDialogFragment extends DialogFragment {
                         }
 
                         // create event
-                        Event event = new Event(eventName, facilityName, waitlistLimitStr.isEmpty() ? null : Integer.parseInt(waitlistLimitStr),
+                        Event event = new Event(eventName, organizerName, facilityName, waitlistLimitStr.isEmpty() ? null : Integer.parseInt(waitlistLimitStr),
                                 Integer.parseInt(attendeeLimitStr), date, timeHours, timeMinutes);
 
                         // add event to database if one with the same info does not already exist
@@ -137,14 +151,11 @@ public class AddEventDialogFragment extends DialogFragment {
                             .build();
             picker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Long>() {
                 @Override public void onPositiveButtonClick(Long selection) {
-                    Calendar utc = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-                    utc.setTimeInMillis(selection);
-                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                    date = format.format(utc.getTime());
+                    Instant dateInstant = Instant.ofEpochMilli(selection);
+                    date = dateInstant.toString().substring(0, 10);
                     dateTextView.setText(date);
                 }
             });
-
             picker.show(getParentFragmentManager(), "Event date picker");
         });
     }
