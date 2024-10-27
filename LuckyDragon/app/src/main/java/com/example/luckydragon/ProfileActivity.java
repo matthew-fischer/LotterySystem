@@ -72,7 +72,13 @@ public class ProfileActivity extends AppBarActivity {
                                         String.format("%s", userData.get("Facility"))
                                 );
                             } else if(Boolean.TRUE.equals(isEntrant)) {
-                                // Set entrant
+                                mode = Mode.ENTRANT;
+                                user = new User(
+                                        deviceID,
+                                        String.format("%s %s", userData.get("FirstName"), userData.get("LastName")),
+                                        String.format("%s", userData.get("Email")),
+                                        String.format("%s", userData.get("PhoneNumber"))
+                                );
                             } else {
                                 throw new RuntimeException("User must be administrator, organizer, or entrant. They are none of the three.");
                             }

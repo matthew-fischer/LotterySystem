@@ -3,6 +3,10 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="scan_qr_code">Scan QR Code</string>
+    <string name="accepted">Accepted:</string>
+    <string name="waitlisted">Waitlisted:</string>
+    <string name="attended">Attended:</string>
 
     <string-array name="entrant_statuses">
         <item>Attendees</item>
