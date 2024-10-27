@@ -46,6 +46,9 @@ public class AddEventDialogFragment extends DialogFragment {
         ProfileActivity parent = (ProfileActivity)getActivity();
         String organizerName = Objects.requireNonNull(parent).getUser().getName();
 
+        // We know the user is an organizer if they are adding an event. Thus we can cast to Organizer.
+        String facilityName = ((Organizer) Objects.requireNonNull(parent).getUser()).getFacility();
+
         builder.setView(inflater.inflate(R.layout.dialog_create_event_material, null))
                 .setPositiveButton("Create", new DialogInterface.OnClickListener() {
                     @Override
@@ -53,17 +56,18 @@ public class AddEventDialogFragment extends DialogFragment {
                         Dialog dialog = getDialog();
                         // get field values
                         TextInputEditText eventNameEditText = dialog.findViewById(R.id.eventNameEditText);
-                        TextInputEditText facilityEditText = dialog.findViewById(R.id.facilityEditText);
+                        //TextInputEditText facilityEditText = dialog.findViewById(R.id.facilityEditText);
                         TextInputEditText waitlistLimitEditText = dialog.findViewById(R.id.waitlistLimitEditText);
                         TextInputEditText attendeeLimitEditText = dialog.findViewById(R.id.attendeeLimitEditText);
 
                         String eventName = eventNameEditText.getText().toString();
-                        String facilityName = facilityEditText.getText().toString();
+                        //String facilityName = facilityEditText.getText().toString();
                         String waitlistLimitStr = waitlistLimitEditText.getText().toString();
                         String attendeeLimitStr = attendeeLimitEditText.getText().toString();
 
                         // Validate input
-                        if(eventName.isEmpty() || facilityName.isEmpty() || attendeeLimitStr.isEmpty()) {
+                        //if(eventName.isEmpty() || facilityName.isEmpty() || attendeeLimitStr.isEmpty()) {
+                        if(eventName.isEmpty() || attendeeLimitStr.isEmpty()) {
                             Toast.makeText(getContext(), "Fields cannot be empty!", Toast.LENGTH_SHORT).show();
                             return;
                         }

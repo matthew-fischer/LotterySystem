@@ -12,6 +12,7 @@ package com.example.luckydragon;
 
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
