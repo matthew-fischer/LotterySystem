@@ -43,6 +43,7 @@ public class Event {
             return String.format("%02d%02d", hours, minutes);
         }
     }
+    private String id;
     private String name;
     private String organizer;
     private String facility;
@@ -54,6 +55,7 @@ public class Event {
 
     /**
      * Creates an Event object.
+     * @param id the event id
      * @param name the name of the event
      * @param organizer the name of the event organizer
      * @param facility: the name of the event facility
@@ -63,7 +65,8 @@ public class Event {
      * @param timeHours: the hour time e.g. "8" for 8:30
      * @param timeMinutes: the minute time e.g. "30" for 8:30
      */
-    public Event(String name, String organizer, String facility, Integer waitlistLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes)  {
+    public Event(String id, String name, String organizer, String facility, Integer waitlistLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes)  {
+        this.id = id;
         this.name = name;
         this.organizer = organizer;
         this.facility = facility;
@@ -130,8 +133,8 @@ public class Event {
      * @return the QR code as a BitMatrix
      */
     public BitMatrix generateQRCode() {
-        // Generate a string that concatenates organizer, facility, name, date, and time and replaces whitespace with "-"
-        String hashedStr = String.format("%s/%s/%s/%s/%s", organizer.trim(), facility.trim(), name.trim(), date, time.toString()).replaceAll("\\s+", "-");;
+        // Use event id for hashed string
+        String hashedStr = id;
         // Encode string as QR code
         try {
             return new MultiFormatWriter().encode(hashedStr, BarcodeFormat.QR_CODE, 200, 200);
