@@ -28,6 +28,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class AddEventDialogFragment extends DialogFragment {
@@ -69,15 +72,15 @@ public class AddEventDialogFragment extends DialogFragment {
                             return;
                         }
 
-
-
                         // add event to database if one with the same info does not already exist
 
                         DocumentReference eventRef = db.collection("events").document();
 
                         // create event
+                        String[] waitlist = {};
+                        List<String> waitList = new ArrayList<String>(Arrays.asList(waitlist));
                         Event event = new Event(eventRef.getId(), eventName, organizerName, facilityName, waitlistLimitStr.isEmpty() ? null : Integer.parseInt(waitlistLimitStr),
-                                Integer.parseInt(attendeeLimitStr), date, timeHours, timeMinutes);
+                                Integer.parseInt(attendeeLimitStr), date, timeHours, timeMinutes, waitList);
 
                         // Add event to database
                         eventRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

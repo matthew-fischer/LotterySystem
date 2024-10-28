@@ -10,13 +10,20 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
+import com.google.firebase.firestore.DocumentReference;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
+import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -26,7 +33,7 @@ import java.util.Objects;
  * Issues:
  *   - could add another constructor for when waitlist limit is not specified (since it is optional)
  */
-public class Event {
+public class Event implements Serializable {
     /**
      * Represents a time as hours and minutes in 24 hour time.
      * e.g. 8:30 pm would have hours = 20 and minutes = 30
@@ -56,7 +63,9 @@ public class Event {
     private Time time;
     private BitMatrix qrHash;
     private Bitmap qrCode;
-    private String[] waitList;
+
+    private String[] waitlist = {};
+    List<String> waitList = new ArrayList<String>(Arrays.asList(waitlist));
 
     /**
      * Creates an Event object.
@@ -70,7 +79,7 @@ public class Event {
      * @param timeHours: the hour time e.g. "8" for 8:30
      * @param timeMinutes: the minute time e.g. "30" for 8:30
      */
-    public Event(String id, String name, String organizer, String facility, Integer waitlistLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes)  {
+    public Event(String id, String name, String organizer, String facility, @Nullable Integer waitlistLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes, List<String> waitList)  {
         this.id = id;
         this.name = name;
         this.organizer = organizer;
@@ -81,6 +90,7 @@ public class Event {
         this.time = new Time(timeHours, timeMinutes);
         this.qrHash = generateQRCode();
         this.qrCode = createBitMap(this.qrHash);
+        this.waitList = waitList;
     }
 
     /**
@@ -98,7 +108,15 @@ public class Event {
         eventData.put("Hours", time.hours);
         eventData.put("Minutes", time.minutes);
         eventData.put("HashedQR", qrHash.toString("1", "0"));
+        eventData.put("Waitlist", waitList);
         return eventData;
+    }
+
+    /** Remove deviceId from waitList when cancel button is clicked
+     * @param deviceID users unique deviceID
+     */
+    public void removeFromWaitList(String deviceID) {
+        waitList.remove(deviceID);
     }
 
     /**
