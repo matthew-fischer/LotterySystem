@@ -4,7 +4,10 @@
 
 package com.example.luckydragon;
 
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.util.Log;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 
@@ -52,6 +55,8 @@ public class Event {
     private String date;
     private Time time;
     private BitMatrix qrHash;
+    private Bitmap qrCode;
+    private String[] waitList;
 
     /**
      * Creates an Event object.
@@ -75,6 +80,7 @@ public class Event {
         this.date = date;
         this.time = new Time(timeHours, timeMinutes);
         this.qrHash = generateQRCode();
+        this.qrCode = createBitMap(this.qrHash);
     }
 
     /**
@@ -142,5 +148,24 @@ public class Event {
             Log.e("QR Generation", "QR encoding failed!");
             return null;
         }
+    }
+
+    /**
+     * Takes BitMatrix and generates a Bitmap.
+     * Reference: https://stackoverflow.com/questions/19337448/generate-qr-code-directly-into-imageview
+     * @param bitMatrix used to convert to bitMap
+     * @return bitMap based on bitMatrix
+     */
+    public Bitmap createBitMap(BitMatrix bitMatrix) {
+        int height = bitMatrix.getHeight();
+        int width = bitMatrix.getWidth();
+        Bitmap bitMap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+        for (int x_value = 0; x_value < width; x_value++) {
+            for (int y_value = 0; y_value < height; y_value++) {
+                bitMap.setPixel(x_value, y_value, bitMatrix.get(x_value, y_value) ? Color.BLACK : Color.WHITE);
+            }
+        }
+        // DO IMAGEVIEW HERE.
+        return bitMap;
     }
 }

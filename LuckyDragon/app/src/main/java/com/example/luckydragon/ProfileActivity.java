@@ -10,17 +10,24 @@
 
 package com.example.luckydragon;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.util.Map;
 
@@ -103,10 +110,14 @@ public class ProfileActivity extends AppBarActivity {
                     // Create organizer profile fragment
                     getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
-                            .add(R.id.fragment_container_view, OrganizerProfileFragment.class, null)
+                            .replace(R.id.fragment_container_view, OrganizerProfileFragment.class, null)
                             .commit();
                 } else if(mode == Mode.ENTRANT) {
                     // Create entrant profile fragment
+                    getSupportFragmentManager().beginTransaction()
+                            .setReorderingAllowed(true)
+                            .replace(R.id.fragment_container_view, EntrantProfileFragment.class, null)
+                            .commit();
                 } else {
                     throw new RuntimeException("User mode not set.");
                 }

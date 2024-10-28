@@ -52,4 +52,6 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
     implementation("com.google.zxing:core:3.3.0")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.2")
+    // for QR Code Scanner
+    implementation("com.journeyapps:zxing-android-embedded:4.1.0")
 }
