@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -47,6 +48,9 @@ public class AddEventDialogFragment extends DialogFragment {
         ProfileActivity parent = (ProfileActivity)getActivity();
                 String organizerDeviceID = Objects.requireNonNull(parent).getUser().getDeviceID();
         String organizerName = Objects.requireNonNull(parent).getUser().getName();
+
+        Fragment parentFragment = getParentFragment();
+        OrganizerProfileFragment organizerProfile = (OrganizerProfileFragment) parentFragment;
 
         View dialogView = inflater.inflate(R.layout.dialog_create_event_material, null);
 
@@ -84,6 +88,8 @@ public class AddEventDialogFragment extends DialogFragment {
                         // create event
                         Event event = new Event(eventRef.getId(), eventName, organizerDeviceID, organizerName, facilityName, waitlistLimitStr.isEmpty() ? null : Integer.parseInt(waitlistLimitStr),
                                 Integer.parseInt(attendeeLimitStr), date, timeHours, timeMinutes);
+
+                        organizerProfile.addEvent(event);
 
                         // Add event to database
                         eventRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

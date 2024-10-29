@@ -60,7 +60,7 @@ public class ProfileActivity extends AppBarActivity {
         // Create profile fragment
         if(Objects.equals(role, "ORGANIZER")) {
             // Create Organizer
-            String facility = intent.getStringExtra("facility");
+            String facility = intent.getStringExtra("facilityName");
             user = new Organizer(deviceID, name, email, phoneNumber, facility);
 
             // Create organizer profile fragment

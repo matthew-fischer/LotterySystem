@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
@@ -26,9 +27,17 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 public class OrganizerProfileFragment extends Fragment {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private String facilityName;
+    Set<Event> eventSet = new HashSet<>();
+    ArrayList<Event> eventList;
+    EventArrayAdapter eventListAdapter;
 
     public OrganizerProfileFragment() {
         super(R.layout.fragment_organizer_profile);
@@ -63,7 +72,7 @@ public class OrganizerProfileFragment extends Fragment {
                 editFacilityDialog.show(getChildFragmentManager(), "EditFacilityDialogFragment");
             } else {
                 DialogFragment addEventDialog = new AddEventDialogFragment();
-                addEventDialog.show(requireActivity().getSupportFragmentManager(), "AddEventDialogFragment");
+                addEventDialog.show(getChildFragmentManager(), "AddEventDialogFragment");
             }
         });
         // Add on click listener for facility edit button
@@ -72,6 +81,11 @@ public class OrganizerProfileFragment extends Fragment {
             editFacilityDialog.show(getChildFragmentManager(), "EditFacilityDialogFragment");
         });
 
+        // Set up organizer events listview
+        ListView eventsListView = parent.findViewById(R.id.organizerProfileEventsListview);
+        eventList = new ArrayList<>();
+        eventListAdapter = new EventArrayAdapter(eventList, parent.getApplicationContext());
+        eventsListView.setAdapter(eventListAdapter);
 
         // Get events
         db.collection("events")
@@ -80,9 +94,25 @@ public class OrganizerProfileFragment extends Fragment {
                 .addOnCompleteListener((task) -> {
                     if (task.isSuccessful()) {
                         Log.d(TAG, "Got documents");
+                        Map<String, Object> eventData;
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            Log.d(TAG, document.getId() + " => " + document.getData());
+                            eventData = document.getData();
+                            System.out.println(eventData.get("WaitlistLimit"));
+                            Event event = new Event(
+                                    document.getId(),
+                                    eventData.get("Name") == null ? null : String.format("%s", eventData.get("Name")),
+                                    eventData.get("OrganizerDeviceID") == null ? null : String.format("%s", eventData.get("OrganizerDeviceID")),
+                                    eventData.get("Facility") == null ? null : String.format("%s", eventData.get("Facility")),
+                                    eventData.get("WaitlistLimit") == null ? null : Integer.valueOf(String.format("%s", eventData.get("WaitlistLimit"))),
+                                    eventData.get("AttendeeLimit") == null ? null : Integer.valueOf(String.format("%s", eventData.get("AttendeeLimit"))),
+                                    eventData.get("Date") == null ? null : String.format("%s", eventData.get("Date")),
+                                    eventData.get("Hours") == null ? null : Integer.valueOf(String.format("%s", eventData.get("Hours"))),
+                                    eventData.get("Minutes") == null ? null : Integer.valueOf(String.format("%s", eventData.get("Minutes")))
+                            );
+                            eventSet.add(event);
+                            eventList.add(event);
                         }
+                        eventListAdapter.notifyDataSetChanged();
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());
                     }
@@ -102,5 +132,15 @@ public class OrganizerProfileFragment extends Fragment {
         Activity activity = requireActivity();
         ImageButton facilityButton = activity.findViewById(R.id.facilityEditButton);
         facilityButton.setImageResource(newResId);
+    }
+
+    public void addEvent(Event event) {
+        System.out.println("event added");
+
+        eventList.add(event);
+        eventSet.add(event);
+
+        System.out.println(eventList);
+        eventListAdapter.notifyDataSetChanged();
     }
 }

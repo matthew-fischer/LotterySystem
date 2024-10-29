@@ -18,6 +18,7 @@ import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class EditFacilityDialogFragment extends DialogFragment {

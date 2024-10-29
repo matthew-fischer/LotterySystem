@@ -42,6 +42,12 @@ public class Event {
         public String toString() {
             return String.format("%02d%02d", hours, minutes);
         }
+
+        public String toString12h() {
+            String AMorPM = hours <= 12 ? "AM" : "PM";
+            if(hours > 12) hours -= 12;
+            return String.format("%02d:%02d %s", hours, minutes, AMorPM);
+        }
     }
     private String id;
     private String name;
@@ -68,6 +74,31 @@ public class Event {
      * @param timeMinutes: the minute time e.g. "30" for 8:30
      */
     public Event(String id, String name, String organizerDeviceID, String organizerName, String facility, Integer waitlistLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes)  {
+        this.id = id;
+        this.name = name;
+        this.organizerName = organizerName;
+        this.organizerDeviceID = organizerDeviceID;
+        this.facility = facility;
+        this.waitlistLimit = waitlistLimit;
+        this.attendeeLimit = attendeeLimit;
+        this.date = date;
+        this.time = new Time(timeHours, timeMinutes);
+        this.qrHash = generateQRCode();
+    }
+
+    /**
+     * Creates an Event object.
+     * @param id the event id
+     * @param name the name of the event
+     * @param organizerDeviceID the device ID of the event organizer
+     * @param facility: the name of the event facility
+     * @param waitlistLimit: the waitlist limit of the event
+     * @param attendeeLimit: the attendee limit of the event
+     * @param date: the date of the event, as a string YY-MM-DD
+     * @param timeHours: the hour time e.g. "8" for 8:30
+     * @param timeMinutes: the minute time e.g. "30" for 8:30
+     */
+    public Event(String id, String name, String organizerDeviceID, String facility, Integer waitlistLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes)  {
         this.id = id;
         this.name = name;
         this.organizerName = organizerName;
@@ -146,5 +177,21 @@ public class Event {
             Log.e("QR Generation", "QR encoding failed!");
             return null;
         }
+    }
+
+    public Time getTime() {
+        return time;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDateAndTime() {
+        return String.format("%s -- %s", time.toString12h(), date);
     }
 }
