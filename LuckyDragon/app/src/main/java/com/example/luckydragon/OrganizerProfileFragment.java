@@ -42,7 +42,16 @@ public class OrganizerProfileFragment extends Fragment {
         String facilityName = organizer.getFacility();
         // Set facility name
         MaterialTextView facilityTextView = view.findViewById(R.id.facilityTextView);
-        facilityTextView.setText(facilityName);
+        if(facilityName == null) {
+            // Set facility text
+            String noFacilityMessage = "You have not created a facility yet.";
+            facilityTextView.setText(noFacilityMessage);
+            // Change button to "add" icon
+            facilityEditButton.setImageResource(R.drawable.baseline_add_24);
+        } else {
+            // Set facility text
+            facilityTextView.setText(facilityName);
+        }
     }
 
     // EditFacilityDialogFragment uses this function to update the facility textview after a change is made.
@@ -51,5 +60,12 @@ public class OrganizerProfileFragment extends Fragment {
         Activity activity = requireActivity();
         MaterialTextView facilityTextView = activity.findViewById(R.id.facilityTextView);
         facilityTextView.setText(newFacility);
+    }
+
+    // EditFacilityDialogFragment uses this function to update the facility button icon after a change.
+    public void setFacilityButtonIcon(int newResId) {
+        Activity activity = requireActivity();
+        ImageButton facilityButton = activity.findViewById(R.id.facilityEditButton);
+        facilityButton.setImageResource(newResId);
     }
 }

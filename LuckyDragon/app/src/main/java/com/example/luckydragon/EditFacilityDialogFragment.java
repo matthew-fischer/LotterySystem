@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
@@ -32,7 +33,7 @@ public class EditFacilityDialogFragment extends DialogFragment {
         Organizer organizer = (Organizer) activity.getUser();
 
         builder.setView(inflater.inflate(R.layout.dialog_edit_facility_material, null))
-                .setPositiveButton("Create", (dialogInterface, i) -> {
+                .setPositiveButton("Confirm", (dialogInterface, i) -> {
                     // Get text from input
                     Dialog dialog = getDialog();
                     final TextInputEditText facilityEditText = dialog.findViewById(R.id.edit_facility_FacilityEditText);
@@ -50,6 +51,8 @@ public class EditFacilityDialogFragment extends DialogFragment {
                     // Update facility textview in OrganizerProfileFragment
                     OrganizerProfileFragment parent = (OrganizerProfileFragment) requireParentFragment();
                     parent.setFacilityTextView(facilityName);
+                    // If facility was not previously set, change the button icon to edit button
+                    parent.setFacilityButtonIcon(R.drawable.baseline_edit_24);
                 })
                 .setNegativeButton("Cancel", (dialogInterface, i) -> {
                     // cancel
