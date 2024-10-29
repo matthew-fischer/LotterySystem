@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -77,6 +78,13 @@ public class SelectRoleActivity extends AppCompatActivity {
                             // Start profile activity
                             startActivity(profileIntent);
                         });
+
+                        // Hide admin button if user is not an admin
+                        Object isBoolean = userData.get("Administrator");
+                        if(isBoolean == null || !isBoolean.toString().equals("true")) {
+                            Button adminButton = findViewById(R.id.adminButton);
+                            adminButton.setVisibility(View.GONE);
+                        };
                     } else {
                         // TODO: start signup activity
                     }
