@@ -45,7 +45,8 @@ public class Event {
     }
     private String id;
     private String name;
-    private String organizer;
+    private String organizerName;
+    private String organizerDeviceID;
     private String facility;
     private Integer waitlistLimit;
     private Integer attendeeLimit;
@@ -57,7 +58,8 @@ public class Event {
      * Creates an Event object.
      * @param id the event id
      * @param name the name of the event
-     * @param organizer the name of the event organizer
+     * @param organizerName the name of the event organizer
+     * @param organizerDeviceID the device ID of the event organizer
      * @param facility: the name of the event facility
      * @param waitlistLimit: the waitlist limit of the event
      * @param attendeeLimit: the attendee limit of the event
@@ -65,10 +67,11 @@ public class Event {
      * @param timeHours: the hour time e.g. "8" for 8:30
      * @param timeMinutes: the minute time e.g. "30" for 8:30
      */
-    public Event(String id, String name, String organizer, String facility, Integer waitlistLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes)  {
+    public Event(String id, String name, String organizerDeviceID, String organizerName, String facility, Integer waitlistLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes)  {
         this.id = id;
         this.name = name;
-        this.organizer = organizer;
+        this.organizerName = organizerName;
+        this.organizerDeviceID = organizerDeviceID;
         this.facility = facility;
         this.waitlistLimit = waitlistLimit;
         this.attendeeLimit = attendeeLimit;
@@ -85,6 +88,7 @@ public class Event {
     public Map<String, Object> toHashMap() {
         Map<String, Object> eventData = new HashMap<>();
         eventData.put("Name", name);
+        eventData.put("OrganizerDeviceID", organizerDeviceID);
         eventData.put("Facility", facility);
         eventData.put("WaitlistLimit", waitlistLimit);
         eventData.put("AttendeeLimit", attendeeLimit);

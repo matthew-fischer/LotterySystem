@@ -22,6 +22,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class EditFacilityDialogFragment extends DialogFragment {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private String dialogTitle = null;
+
+    public EditFacilityDialogFragment() {}
+
+    public EditFacilityDialogFragment(String title) {
+        this.dialogTitle = title;
+    }
 
     @NonNull
     @Override
@@ -33,6 +40,7 @@ public class EditFacilityDialogFragment extends DialogFragment {
         Organizer organizer = (Organizer) activity.getUser();
 
         builder.setView(inflater.inflate(R.layout.dialog_edit_facility_material, null))
+                .setTitle(dialogTitle)
                 .setPositiveButton("Confirm", (dialogInterface, i) -> {
                     // Get text from input
                     Dialog dialog = getDialog();

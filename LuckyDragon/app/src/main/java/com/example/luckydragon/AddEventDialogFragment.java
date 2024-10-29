@@ -9,6 +9,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -44,13 +45,22 @@ public class AddEventDialogFragment extends DialogFragment {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
         ProfileActivity parent = (ProfileActivity)getActivity();
+                String organizerDeviceID = Objects.requireNonNull(parent).getUser().getDeviceID();
         String organizerName = Objects.requireNonNull(parent).getUser().getName();
 
-        builder.setView(inflater.inflate(R.layout.dialog_create_event_material, null))
+        View dialogView = inflater.inflate(R.layout.dialog_create_event_material, null);
+
+        // Set facility text
+        TextInputEditText facilityEditText = dialogView.findViewById(R.id.facilityEditText);
+        String facility = ((Organizer) parent.getUser()).getFacility();
+        facilityEditText.setText(facility);
+
+        return builder.setView(dialogView)
                 .setPositiveButton("Create", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Dialog dialog = getDialog();
+
                         // get field values
                         TextInputEditText eventNameEditText = dialog.findViewById(R.id.eventNameEditText);
                         TextInputEditText facilityEditText = dialog.findViewById(R.id.facilityEditText);
@@ -68,14 +78,11 @@ public class AddEventDialogFragment extends DialogFragment {
                             return;
                         }
 
-
-
                         // add event to database if one with the same info does not already exist
-
                         DocumentReference eventRef = db.collection("events").document();
 
                         // create event
-                        Event event = new Event(eventRef.getId(), eventName, organizerName, facilityName, waitlistLimitStr.isEmpty() ? null : Integer.parseInt(waitlistLimitStr),
+                        Event event = new Event(eventRef.getId(), eventName, organizerDeviceID, organizerName, facilityName, waitlistLimitStr.isEmpty() ? null : Integer.parseInt(waitlistLimitStr),
                                 Integer.parseInt(attendeeLimitStr), date, timeHours, timeMinutes);
 
                         // Add event to database
@@ -99,9 +106,7 @@ public class AddEventDialogFragment extends DialogFragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         // cancel
                     }
-                });
-
-        return builder.create();
+                }).create();
     }
 
     @Override
