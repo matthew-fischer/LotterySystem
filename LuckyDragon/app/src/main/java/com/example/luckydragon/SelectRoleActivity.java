@@ -97,7 +97,7 @@ public class SelectRoleActivity extends AppCompatActivity {
                         if (user.isOrganizer()) {
                             // Create profile intent
                             Intent profileIntent = new Intent(activity, ProfileActivity.class);
-                            profileIntent.putExtra("organizer", organizer);
+                            profileIntent.putExtra("user", organizer);
 
                             // Put additional organizer profile information in the intent
                             profileIntent.putExtra("role", "ORGANIZER");

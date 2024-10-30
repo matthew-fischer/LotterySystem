@@ -42,7 +42,7 @@ public class ProfileActivity extends AppBarActivity {
 
         // Unpack intent
         Intent intent = getIntent();
-        User user = (User) intent.getSerializableExtra("user");
+        user = (User) intent.getSerializableExtra("user");
         String role = intent.getStringExtra("role");
         System.out.println(role);
 
@@ -57,7 +57,7 @@ public class ProfileActivity extends AppBarActivity {
         // Create profile fragment
         if (Objects.equals(role, "ORGANIZER")) {
             // Create Organizer
-            String facility = intent.getStringExtra("facilityName");
+//            String facility = intent.getStringExtra("facilityName");
 //            user = new Organizer(deviceID, name, email, phoneNumber, facility);
 
             // Create organizer profile fragment
