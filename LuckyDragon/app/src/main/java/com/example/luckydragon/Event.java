@@ -42,10 +42,17 @@ public class Event {
         public String toString() {
             return String.format("%02d%02d", hours, minutes);
         }
+
+        public String toString12h() {
+            String AMorPM = hours <= 12 ? "AM" : "PM";
+            if(hours > 12) hours -= 12;
+            return String.format("%02d:%02d %s", hours, minutes, AMorPM);
+        }
     }
     private String id;
     private String name;
-    private String organizer;
+    private String organizerName;
+    private String organizerDeviceID;
     private String facility;
     private Integer waitlistLimit;
     private Integer attendeeLimit;
@@ -57,7 +64,8 @@ public class Event {
      * Creates an Event object.
      * @param id the event id
      * @param name the name of the event
-     * @param organizer the name of the event organizer
+     * @param organizerName the name of the event organizer
+     * @param organizerDeviceID the device ID of the event organizer
      * @param facility: the name of the event facility
      * @param waitlistLimit: the waitlist limit of the event
      * @param attendeeLimit: the attendee limit of the event
@@ -65,10 +73,36 @@ public class Event {
      * @param timeHours: the hour time e.g. "8" for 8:30
      * @param timeMinutes: the minute time e.g. "30" for 8:30
      */
-    public Event(String id, String name, String organizer, String facility, Integer waitlistLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes)  {
+    public Event(String id, String name, String organizerDeviceID, String organizerName, String facility, Integer waitlistLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes)  {
         this.id = id;
         this.name = name;
-        this.organizer = organizer;
+        this.organizerName = organizerName;
+        this.organizerDeviceID = organizerDeviceID;
+        this.facility = facility;
+        this.waitlistLimit = waitlistLimit;
+        this.attendeeLimit = attendeeLimit;
+        this.date = date;
+        this.time = new Time(timeHours, timeMinutes);
+        this.qrHash = generateQRCode();
+    }
+
+    /**
+     * Creates an Event object.
+     * @param id the event id
+     * @param name the name of the event
+     * @param organizerDeviceID the device ID of the event organizer
+     * @param facility: the name of the event facility
+     * @param waitlistLimit: the waitlist limit of the event
+     * @param attendeeLimit: the attendee limit of the event
+     * @param date: the date of the event, as a string YY-MM-DD
+     * @param timeHours: the hour time e.g. "8" for 8:30
+     * @param timeMinutes: the minute time e.g. "30" for 8:30
+     */
+    public Event(String id, String name, String organizerDeviceID, String facility, Integer waitlistLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes)  {
+        this.id = id;
+        this.name = name;
+        this.organizerName = organizerName;
+        this.organizerDeviceID = organizerDeviceID;
         this.facility = facility;
         this.waitlistLimit = waitlistLimit;
         this.attendeeLimit = attendeeLimit;
@@ -85,6 +119,7 @@ public class Event {
     public Map<String, Object> toHashMap() {
         Map<String, Object> eventData = new HashMap<>();
         eventData.put("Name", name);
+        eventData.put("OrganizerDeviceID", organizerDeviceID);
         eventData.put("Facility", facility);
         eventData.put("WaitlistLimit", waitlistLimit);
         eventData.put("AttendeeLimit", attendeeLimit);
@@ -142,5 +177,21 @@ public class Event {
             Log.e("QR Generation", "QR encoding failed!");
             return null;
         }
+    }
+
+    public Time getTime() {
+        return time;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDateAndTime() {
+        return String.format("%s -- %s", time.toString12h(), date);
     }
 }
