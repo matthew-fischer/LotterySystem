@@ -4,6 +4,12 @@
 
 package com.example.luckydragon;
 
+import android.util.Log;
+import android.widget.Button;
+
+import java.io.Serializable;
+import java.util.Map;
+
 /**
  * Represents a User object.
  * <p>
@@ -11,11 +17,40 @@ package com.example.luckydragon;
  *   - This is only a basic implementation. Additional functionality should be added as needed.
  *   - Email and phone number may be optional. Additional constructors should be defined for these cases.
  */
-public class User {
+public class User implements Serializable {
     private String deviceID;
     private String name;
     private String email;
     private String phoneNumber;
+
+    private Boolean isEntrant = Boolean.FALSE;
+    private Boolean isOrganizer = Boolean.FALSE;
+    private Boolean isAdmin = Boolean.FALSE;
+
+    /**
+     * Creates a User object with empty string values and a deviceID.
+     * @param deviceID: the user's device ID
+     */
+    public User(String deviceID) {
+        this.deviceID = deviceID;
+        this.name = "";
+        this.email = "";
+        this.phoneNumber = "";
+    }
+
+    /**
+     * Creates a User object based on an existing instance
+     * @param user: the user
+     */
+    public User(User user) {
+        this.deviceID = user.getDeviceID();
+        this.name = user.getName();
+        this.email = user.getEmail();
+        this.phoneNumber = user.getPhoneNumber();
+        this.isEntrant = user.isEntrant();
+        this.isOrganizer = user.isOrganizer();
+        this.isAdmin = user.isAdmin();
+    }
 
     /**
      * Creates a User object.
@@ -29,6 +64,24 @@ public class User {
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
+    }
+
+    /**
+     * Set user data using a map from firestore
+     * @param userData: the firestore map
+     */
+    public void setData(Map<String, Object> userData) {
+
+        email = String.format("%s", userData.get("Email"));
+        name = String.format("%s %s", userData.get("FirstName"), userData.get("LastName"));
+        phoneNumber = String.format("%s", userData.get("PhoneNumber"));
+
+        isEntrant = userData.get("Entrant") != null
+                && userData.get("Entrant").toString().equals("true");
+        isOrganizer = userData.get("Organizer") != null
+                && userData.get("Organizer").toString().equals("true");
+        isAdmin = userData.get("Admin") != null
+                && userData.get("Admin").toString().equals("true");
     }
 
     /**
@@ -85,5 +138,29 @@ public class User {
      */
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public Boolean isEntrant() {
+        return isEntrant;
+    }
+
+    public void setEntrant(Boolean entrant) {
+        isEntrant = entrant;
+    }
+
+    public Boolean isOrganizer() {
+        return isOrganizer;
+    }
+
+    public void setOrganizer(Boolean organizer) {
+        isOrganizer = organizer;
+    }
+
+    public Boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        isAdmin = admin;
     }
 }

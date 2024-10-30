@@ -29,6 +29,17 @@ public class Organizer extends User {
     }
 
     /**
+     * Creates an Organizer from a user and facility name.
+     * @param user: the user to convert to an organizer
+     * @param facility: the organizer's facility name
+     */
+    public Organizer(User user, String facility) {
+        super(user);
+        this.facility = facility;
+    }
+
+
+    /**
      * Gets the facility name for the organizer.
      * @return the organizer's facility name
      */

@@ -42,10 +42,7 @@ public class ProfileActivity extends AppBarActivity {
 
         // Unpack intent
         Intent intent = getIntent();
-        String deviceID = intent.getStringExtra("deviceID");
-        String name = intent.getStringExtra("name");
-        String email = intent.getStringExtra("email");
-        String phoneNumber = intent.getStringExtra("phoneNumber");
+        User user = (User) intent.getSerializableExtra("user");
         String role = intent.getStringExtra("role");
         System.out.println(role);
 
@@ -53,22 +50,22 @@ public class ProfileActivity extends AppBarActivity {
         TextView nameView = findViewById(R.id.nameTextView);
         TextView emailView = findViewById(R.id.emailTextView);
         TextView phoneNumberView = findViewById(R.id.phoneNumberTextView);
-        nameView.setText(name);
-        emailView.setText(email);
-        phoneNumberView.setText(phoneNumber);
+        nameView.setText(user.getName());
+        emailView.setText(user.getEmail());
+        phoneNumberView.setText(user.getPhoneNumber());
 
         // Create profile fragment
-        if(Objects.equals(role, "ORGANIZER")) {
+        if (Objects.equals(role, "ORGANIZER")) {
             // Create Organizer
             String facility = intent.getStringExtra("facilityName");
-            user = new Organizer(deviceID, name, email, phoneNumber, facility);
+//            user = new Organizer(deviceID, name, email, phoneNumber, facility);
 
             // Create organizer profile fragment
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
                     .add(R.id.fragment_container_view, OrganizerProfileFragment.class, null)
                     .commit();
-        } else if(Objects.equals(role, "ENTRANT")) {
+        } else if (Objects.equals(role, "ENTRANT")) {
             // Create entrant profile fragment
         } else {
             throw new RuntimeException("User mode not set.");
