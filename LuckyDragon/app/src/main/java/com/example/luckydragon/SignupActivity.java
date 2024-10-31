@@ -8,6 +8,8 @@ import android.widget.EditText;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
+import androidx.annotation.Nullable;
+
 public class SignupActivity extends AppBarActivity {
     private User user;
     private SignupController signupController;
