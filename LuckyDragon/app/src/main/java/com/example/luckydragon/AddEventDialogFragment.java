@@ -30,6 +30,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class AddEventDialogFragment extends DialogFragment {
@@ -49,6 +52,9 @@ public class AddEventDialogFragment extends DialogFragment {
                 String organizerDeviceID = Objects.requireNonNull(parent).getUser().getDeviceID();
         String organizerName = Objects.requireNonNull(parent).getUser().getName();
 
+        // We know the user is an organizer if they are adding an event. Thus we can cast to Organizer.
+        String facilityName = ((Organizer) Objects.requireNonNull(parent).getUser()).getFacility();
+
         Fragment parentFragment = getParentFragment();
         OrganizerProfileFragment organizerProfile = (OrganizerProfileFragment) parentFragment;
 
@@ -67,17 +73,15 @@ public class AddEventDialogFragment extends DialogFragment {
 
                         // get field values
                         TextInputEditText eventNameEditText = dialog.findViewById(R.id.eventNameEditText);
-                        TextInputEditText facilityEditText = dialog.findViewById(R.id.facilityEditText);
                         TextInputEditText waitlistLimitEditText = dialog.findViewById(R.id.waitlistLimitEditText);
                         TextInputEditText attendeeLimitEditText = dialog.findViewById(R.id.attendeeLimitEditText);
 
                         String eventName = eventNameEditText.getText().toString();
-                        String facilityName = facilityEditText.getText().toString();
                         String waitlistLimitStr = waitlistLimitEditText.getText().toString();
                         String attendeeLimitStr = attendeeLimitEditText.getText().toString();
 
                         // Validate input
-                        if(eventName.isEmpty() || facilityName.isEmpty() || attendeeLimitStr.isEmpty()) {
+                        if(eventName.isEmpty() || attendeeLimitStr.isEmpty()) {
                             Toast.makeText(getContext(), "Fields cannot be empty!", Toast.LENGTH_SHORT).show();
                             return;
                         }
@@ -86,8 +90,10 @@ public class AddEventDialogFragment extends DialogFragment {
                         DocumentReference eventRef = db.collection("events").document();
 
                         // create event
+                        String[] waitlist = {};
+                        List<String> waitList = new ArrayList<String>(Arrays.asList(waitlist));
                         Event event = new Event(eventRef.getId(), eventName, organizerDeviceID, organizerName, facilityName, waitlistLimitStr.isEmpty() ? null : Integer.parseInt(waitlistLimitStr),
-                                Integer.parseInt(attendeeLimitStr), date, timeHours, timeMinutes);
+                                Integer.parseInt(attendeeLimitStr), date, timeHours, timeMinutes, waitList);
 
                         organizerProfile.addEvent(event);
 
