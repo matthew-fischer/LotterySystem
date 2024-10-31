@@ -18,11 +18,13 @@ import java.util.Map;
  *   - This is only a basic implementation. Additional functionality should be added as needed.
  *   - Email and phone number may be optional. Additional constructors should be defined for these cases.
  */
-public class User implements Serializable {
+public class User extends Observable implements Serializable {
     private String deviceID;
     private String name;
     private String email;
     private String phoneNumber;
+
+    private String facility;
 
     private Boolean isEntrant = Boolean.FALSE;
     private Boolean isOrganizer = Boolean.FALSE;
@@ -82,6 +84,8 @@ public class User implements Serializable {
                 && userData.get("organizer").toString().equals("true");
         isAdmin = userData.get("admin") != null
                 && userData.get("admin").toString().equals("true");
+
+        notifyObservers();
     }
 
     /**
@@ -153,6 +157,28 @@ public class User implements Serializable {
      */
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    /**
+     * Gets the facility name for the organizer.
+     * @return the organizer's facility name
+     */
+    public String getFacility() {
+        if (!isOrganizer) {
+            throw new RuntimeException("Not an organizer!");
+        }
+        return facility;
+    }
+
+    /**
+     * Sets the facility name for the organizer.
+     * @param facility: the new facility name
+     */
+    public void setFacility(String facility) {
+        if (!isOrganizer) {
+            throw new RuntimeException("Not an organizer!");
+        }
+        this.facility = facility;
     }
 
     public Boolean isEntrant() {
