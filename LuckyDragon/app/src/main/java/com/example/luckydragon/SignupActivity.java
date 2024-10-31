@@ -2,6 +2,7 @@ package com.example.luckydragon;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -9,7 +10,8 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 
 public class SignupActivity extends AppBarActivity {
     private User user;
-    private SelectRoleController selectRoleController;
+    private SignupController signupController;
+    private SignupView signupView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,7 +22,11 @@ public class SignupActivity extends AppBarActivity {
         // Unpack intent
         Intent intent = getIntent();
         user = (User) intent.getSerializableExtra("user");
-        selectRoleController = (SelectRoleController) intent.getSerializableExtra("selectRoleController");
+        signupController = new SignupController(user);
+        signupView = new SignupView(user, this, signupController);
+        Log.d("TONY", user.isValid().toString());
+
+        user.addObserver(signupView);
 
         // Get input fields
         EditText editName = findViewById(R.id.signupName);
@@ -30,12 +36,9 @@ public class SignupActivity extends AppBarActivity {
         SwitchMaterial switchNotifications = findViewById(R.id.signupNotifications);
         Button submitButton = findViewById(R.id.signupSubmit);
 
-//        // on submit listener
-//        submitButton.setOnClickListener(v -> {
-//            selectRoleController.saveUserData();
-//            finish();
-//        });
+        // on submit listener
+        submitButton.setOnClickListener(v -> {
+            signupController.extractFields(editName, editEmail, editPhone);
+        });
     }
-
-
 }

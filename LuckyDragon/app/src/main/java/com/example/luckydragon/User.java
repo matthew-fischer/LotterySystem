@@ -78,12 +78,12 @@ public class User extends Observable implements Serializable {
         name = String.format("%s", userData.get("name"));
         phoneNumber = String.format("%s", userData.get("phoneNumber"));
 
-        isEntrant = userData.get("entrant") != null
-                && userData.get("entrant").toString().equals("true");
-        isOrganizer = userData.get("organizer") != null
-                && userData.get("organizer").toString().equals("true");
-        isAdmin = userData.get("admin") != null
-                && userData.get("admin").toString().equals("true");
+        isEntrant = userData.get("isEntrant") != null
+                && userData.get("isEntrant").toString().equals("true");
+        isOrganizer = userData.get("isOrganizer") != null
+                && userData.get("isOrganizer").toString().equals("true");
+        isAdmin = userData.get("isAdmin") != null
+                && userData.get("isAdmin").toString().equals("true");
 
         notifyObservers();
     }
@@ -94,13 +94,18 @@ public class User extends Observable implements Serializable {
      */
     public HashMap<String, Object> getUserData() {
         HashMap<String, Object> map = new HashMap<>();
-        map.put("entrant", isEntrant);
-        map.put("organizer", isOrganizer);
-        map.put("admin", isAdmin);
+        map.put("isEntrant", isEntrant);
+        map.put("isOrganizer", isOrganizer);
+        map.put("isAdmin", isAdmin);
         map.put("name", name);
         map.put("email", email);
         map.put("phoneNumber", phoneNumber);
         return map;
+    }
+
+    // TODO: Implement, send error messages
+    public Boolean isValid() {
+        return !name.isEmpty();
     }
 
     /**
@@ -141,6 +146,7 @@ public class User extends Observable implements Serializable {
      */
     public void setName(String name) {
         this.name = name;
+        notifyObservers();
     }
 
     /**
@@ -149,6 +155,7 @@ public class User extends Observable implements Serializable {
      */
     public void setEmail(String email) {
         this.email = email;
+        notifyObservers();
     }
 
     /**
@@ -157,6 +164,7 @@ public class User extends Observable implements Serializable {
      */
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+        notifyObservers();
     }
 
     /**
