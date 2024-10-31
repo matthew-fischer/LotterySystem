@@ -30,6 +30,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class ProfileActivity extends AppBarActivity {
     // Mode may be ENTRANT or ORGANIZER. If there is an admin profile, then ADMIN should be added as well.
@@ -38,8 +39,6 @@ public class ProfileActivity extends AppBarActivity {
         ORGANIZER,
     }
 
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private Mode mode;
     private User user;
 
     @Override
@@ -48,81 +47,44 @@ public class ProfileActivity extends AppBarActivity {
         setContentView(R.layout.activity_profile);
         getSupportActionBar().setTitle("Profile");
 
-        // Get android device id
-        // Reference: https://stackoverflow.com/questions/60503568/best-possible-way-to-get-device-id-in-android
-        String deviceID = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-        // Check if user exists in database
-        DocumentReference docRef = db.collection("users").document(deviceID);
-        // Create user object
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()) {
-                    DocumentSnapshot userDocument = task.getResult();
-                    if(userDocument.exists()) {
-                        Map<String, Object> userData = userDocument.getData();
-                        if(userData != null) {
-                            Boolean isAdministrator = (Boolean) userData.get("Administrator");
-                            Boolean isOrganizer = (Boolean) userData.get("Organizer");
-                            Boolean isEntrant = (Boolean) userData.get("Entrant");
+        // Unpack intent
+        Intent intent = getIntent();
+        String deviceID = intent.getStringExtra("deviceID");
+        String name = intent.getStringExtra("name");
+        String email = intent.getStringExtra("email");
+        String phoneNumber = intent.getStringExtra("phoneNumber");
+        String role = intent.getStringExtra("role");
+        System.out.println(role);
+        
+        // Set profile info views
+        TextView nameView = findViewById(R.id.nameTextView);
+        TextView emailView = findViewById(R.id.emailTextView);
+        TextView phoneNumberView = findViewById(R.id.phoneNumberTextView);
+        nameView.setText(name);
+        emailView.setText(email);
+        phoneNumberView.setText(phoneNumber);
 
-                            if(Boolean.TRUE.equals(isAdministrator)) {
-                                // Set administrator
-                            } else if(Boolean.TRUE.equals(isOrganizer)) {
-                                // Set organizer
-                                mode = Mode.ORGANIZER;
-                                user = new Organizer(
-                                        deviceID,
-                                        String.format("%s %s", userData.get("FirstName"), userData.get("LastName")),
-                                        String.format("%s", userData.get("Email")),
-                                        String.format("%s", userData.get("PhoneNumber")),
-                                        String.format("%s", userData.get("Facility"))
-                                );
-                            } else if(Boolean.TRUE.equals(isEntrant)) {
-                                mode = Mode.ENTRANT;
-                                user = new User(
-                                        deviceID,
-                                        String.format("%s %s", userData.get("FirstName"), userData.get("LastName")),
-                                        String.format("%s", userData.get("Email")),
-                                        String.format("%s", userData.get("PhoneNumber"))
-                                );
-                            } else {
-                                throw new RuntimeException("User must be administrator, organizer, or entrant. They are none of the three.");
-                            }
-                        } else {
-                            throw new RuntimeException("User has no data.");
-                        }
-                    }
-                } else {
-                    throw new RuntimeException("Database read failed.");
-                }
-
-                // Set profile info views
-                TextView nameView = findViewById(R.id.nameTextView);
-                TextView emailView = findViewById(R.id.emailTextView);
-                TextView phoneNumberView = findViewById(R.id.phoneNumberTextView);
-                nameView.setText(user.getName());
-                emailView.setText(user.getEmail());
-                phoneNumberView.setText(user.getPhoneNumber());
-
-                // Create profile fragment
-                if(mode == Mode.ORGANIZER) {
-                    // Create organizer profile fragment
-                    getSupportFragmentManager().beginTransaction()
-                            .setReorderingAllowed(true)
-                            .replace(R.id.fragment_container_view, OrganizerProfileFragment.class, null)
-                            .commit();
-                } else if(mode == Mode.ENTRANT) {
-                    // Create entrant profile fragment
-                    getSupportFragmentManager().beginTransaction()
+        // Create profile fragment
+        if(Objects.equals(role, "ORGANIZER")) {
+            // Create Organizer
+            String facility = intent.getStringExtra("facilityName");
+            user = new Organizer(deviceID, name, email, phoneNumber, facility);
+            
+            // Create organizer profile fragment
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .add(R.id.fragment_container_view, OrganizerProfileFragment.class, null)
+                    .commit();
+        } else if(Objects.equals(role, "ENTRANT")) {
+            // Create entrant profile fragment
+            user = new User(deviceID, name, email, phoneNumber);
+            getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
                             .replace(R.id.fragment_container_view, EntrantProfileFragment.class, null)
                             .commit();
-                } else {
-                    throw new RuntimeException("User mode not set.");
-                }
-            }
-        });
+        } else {
+            throw new RuntimeException("User mode not set.");
+        }
     }
 
     public User getUser() {

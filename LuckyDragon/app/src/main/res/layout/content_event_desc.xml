@@ -3,36 +3,37 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="10dp">
+    android:background="@color/light_grey"
+    android:paddingHorizontal="10dp"
+    android:paddingVertical="5dp">
     <LinearLayout
-        android:layout_weight="1"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        >
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:autoSizeTextType="uniform"
+            android:id="@+id/eventRowEventName"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textSize="24sp"
             android:text="Event Name" />
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="25dp"
+            android:id="@+id/eventRowEventDateTime"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
             android:textSize="20sp"
             android:text="Date/Time" />
     </LinearLayout>
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/baseline_clear_24"
-        android:background="@null"
-        android:visibility="visible"
-        android:layout_gravity="center"/>
+    <Space
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent" />
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/baseline_qr_code_24"
         android:background="@null"
         android:visibility="visible"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center" />
 
 </LinearLayout>
