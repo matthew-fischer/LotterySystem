@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.Button;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -71,17 +72,31 @@ public class User implements Serializable {
      * @param userData: the firestore map
      */
     public void setData(Map<String, Object> userData) {
+        email = String.format("%s", userData.get("email"));
+        name = String.format("%s", userData.get("name"));
+        phoneNumber = String.format("%s", userData.get("phoneNumber"));
 
-        email = String.format("%s", userData.get("Email"));
-        name = String.format("%s %s", userData.get("FirstName"), userData.get("LastName"));
-        phoneNumber = String.format("%s", userData.get("PhoneNumber"));
+        isEntrant = userData.get("entrant") != null
+                && userData.get("entrant").toString().equals("true");
+        isOrganizer = userData.get("organizer") != null
+                && userData.get("organizer").toString().equals("true");
+        isAdmin = userData.get("admin") != null
+                && userData.get("admin").toString().equals("true");
+    }
 
-        isEntrant = userData.get("Entrant") != null
-                && userData.get("Entrant").toString().equals("true");
-        isOrganizer = userData.get("Organizer") != null
-                && userData.get("Organizer").toString().equals("true");
-        isAdmin = userData.get("Admin") != null
-                && userData.get("Admin").toString().equals("true");
+    /**
+     * Return user data for saving to firestore
+     * @return hash map for saving to firestore
+     */
+    public HashMap<String, Object> getUserData() {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("entrant", isEntrant);
+        map.put("organizer", isOrganizer);
+        map.put("admin", isAdmin);
+        map.put("name", name);
+        map.put("email", email);
+        map.put("phoneNumber", phoneNumber);
+        return map;
     }
 
     /**

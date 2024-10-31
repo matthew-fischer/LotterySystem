@@ -54,16 +54,14 @@ public class SelectRoleActivity extends AppCompatActivity {
                 if(task.isSuccessful()) {
                     DocumentSnapshot userDocument = task.getResult();
                     if(userDocument.exists()) {
-                        setContentView(R.layout.select_role_page); // set content to role page
                         Map<String, Object> userData = userDocument.getData();
                         user.setData(userData);
                         if (user.isOrganizer()) {
                             organizer = new Organizer(user, String.format("%s", userData.get("Facility")));
                         }
                     } else {
-//                        // Create a new document for this user
-//                        docRef
-//                                .set(user.getUserData())
+                        // Create a new document for this user
+                        docRef.set(user.getUserData());
 //                                .addOnFailureListener(new OnFailureListener() {
 //                                    @Override
 //                                    public void onFailure(@NonNull Exception e) {
@@ -72,6 +70,7 @@ public class SelectRoleActivity extends AppCompatActivity {
 //                                })
 
                     }
+                    setContentView(R.layout.select_role_page); // set content to role page
 
                     // Set up on entrant click listener
                     Button entrantButton = findViewById(R.id.entrantButton);
@@ -86,8 +85,9 @@ public class SelectRoleActivity extends AppCompatActivity {
                             startActivity(profileIntent);
                         } else {
                             // Send to entrant signup
-                            Intent profileIntent = new Intent(activity, SignupActivity.class);
-                            profileIntent.putExtra("deviceID", deviceID);
+                            Intent signupIntent = new Intent(activity, SignupActivity.class);
+                            signupIntent.putExtra("deviceID", deviceID);
+                            startActivity(signupIntent);
                         }
                     });
 

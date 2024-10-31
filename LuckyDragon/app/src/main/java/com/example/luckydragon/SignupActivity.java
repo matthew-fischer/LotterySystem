@@ -8,5 +8,9 @@ public class SignupActivity extends AppBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
         getSupportActionBar().setTitle("Sign-Up");
+
+        // on submit listener
+
+        // send to firestore
     }
 }
