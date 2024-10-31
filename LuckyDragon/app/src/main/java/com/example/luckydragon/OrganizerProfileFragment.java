@@ -47,8 +47,8 @@ public class OrganizerProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         // Get facility from parent activity
         ProfileActivity parent = (ProfileActivity)requireActivity();
-        Organizer organizer = (Organizer)(parent.getUser());
-        facilityName = organizer.getFacility();
+        User user = parent.getUser();
+        facilityName = user.getFacility();
         // Set facility name
         MaterialTextView facilityTextView = view.findViewById(R.id.facilityTextView);
         ImageButton facilityEditButton = view.findViewById(R.id.facilityEditButton);
@@ -66,7 +66,7 @@ public class OrganizerProfileFragment extends Fragment {
         // Add on click listener for "Add Event" button
         Button addEventButton = view.findViewById(R.id.addEventButton);
         addEventButton.setOnClickListener((View v) -> {
-            facilityName = organizer.getFacility();
+            facilityName = user.getFacility();
             if(facilityName == null) { // if no facility, open the facility edit fragment instead
                 DialogFragment editFacilityDialog = new EditFacilityDialogFragment("Add a facility before you create an event!");
                 editFacilityDialog.show(getChildFragmentManager(), "EditFacilityDialogFragment");

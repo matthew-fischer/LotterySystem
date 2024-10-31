@@ -69,7 +69,7 @@ public class SelectRoleActivity extends AppCompatActivity {
                 // Start profile activity
                 startActivity(profileIntent);
             } else {
-                // Send to organizer signup
+                // TODO: Send to organizer signup
             }
         });
     }

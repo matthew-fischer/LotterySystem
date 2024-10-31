@@ -38,7 +38,7 @@ public class EditFacilityDialogFragment extends DialogFragment {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
         ProfileActivity activity = (ProfileActivity)requireActivity();
-        Organizer organizer = (Organizer) activity.getUser();
+        User user = activity.getUser();
 
         builder.setView(inflater.inflate(R.layout.dialog_edit_facility_material, null))
                 .setTitle(dialogTitle)
@@ -52,10 +52,10 @@ public class EditFacilityDialogFragment extends DialogFragment {
                     if(facilityName.isEmpty()) return;
 
                     // Update facility in Organizer class
-                    organizer.setFacility(facilityName);
+                    user.setFacility(facilityName);
 
                     // Update facility in user document
-                    db.collection("users").document(organizer.getDeviceID()).update("Facility", facilityName);
+                    db.collection("users").document(user.getDeviceID()).update("Facility", facilityName);
 
                     // Update facility textview in OrganizerProfileFragment
                     OrganizerProfileFragment parent = (OrganizerProfileFragment) requireParentFragment();
@@ -75,7 +75,7 @@ public class EditFacilityDialogFragment extends DialogFragment {
         final TextInputEditText facilityEditText = dialog.findViewById(R.id.edit_facility_FacilityEditText);
 
         // Set text to existing facility value
-        facilityEditText.setText(organizer.getFacility());
+        facilityEditText.setText(user.getFacility());
 
         // Set clear button click listener
         facilityInputLayout.setEndIconOnClickListener((v) -> {
