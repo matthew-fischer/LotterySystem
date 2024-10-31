@@ -17,6 +17,10 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    testOptions {
+        animationsDisabled = true
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -52,4 +56,6 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
     implementation("com.google.zxing:core:3.3.0")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.2")
+    androidTestImplementation("org.mockito:mockito-core:5.14.2")
+    androidTestImplementation("org.mockito:mockito-android:5.14.2")
 }

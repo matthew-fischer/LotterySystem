@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -31,69 +32,69 @@ import java.util.Map;
 
 
 public class SelectRoleActivity extends AppCompatActivity {
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    Map<String, Object> userData;
+    private UserController userController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setContentView(R.layout.select_role_page);
         super.onCreate(savedInstanceState);
 
-        SelectRoleActivity activity = this;
+        Intent intent = getIntent();
+        userController = (UserController) intent.getSerializableExtra("Controller");
+        if(userController == null) {
+            userController = new UserController();
+        }
 
-        // Get user data
         String deviceID = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-        DocumentReference docRef = db.collection("users").document(deviceID);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()) {
-                    DocumentSnapshot userDocument = task.getResult();
-                    if(userDocument.exists()) {
-                        setContentView(R.layout.select_role_page); // set content to role page
+        /*
+         * TODO Add an on failure callback for when the user does not exist yet
+         * Will need to add a second Consumer arg to userController.getUser() and define another function in SelectRoleActivity
+         * I am leaving this for whoever has this user story to implement
+         * - Ellis
+         */
+        userController.getUser(deviceID, this::initializeView);
+    }
 
-                        userData = userDocument.getData();
+    /**
+     * Initialize SelectRoleActivity once user data has been fetched from the database.
+     * Sets content view to select_role_page.
+     * Initializes button on click listeners.
+     * Hides admin button if user is not an administrator.
+     * @param userData map containing user data
+     */
+    public void initializeView(Map<String, Object> userData) {
+        setContentView(R.layout.select_role_page); // set content to role page
 
-                        // Create profile intent
-                        Intent profileIntent = new Intent(activity, ProfileActivity.class);
-                        profileIntent.putExtra("deviceID", deviceID);
-                        profileIntent.putExtra("name", String.format("%s %s", userData.get("FirstName"), userData.get("LastName")));
-                        profileIntent.putExtra("email", String.format("%s", userData.get("Email")));
-                        profileIntent.putExtra("phoneNumber", String.format("%s", userData.get("PhoneNumber")));
+        // Create profile intent
+        Intent profileIntent = new Intent(this, ProfileActivity.class);
+        profileIntent.putExtra("deviceID", String.format("%s", userData.get("DeviceID")));
+        profileIntent.putExtra("name", String.format("%s %s", userData.get("FirstName"), userData.get("LastName")));
+        profileIntent.putExtra("email", String.format("%s", userData.get("Email")));
+        profileIntent.putExtra("phoneNumber", String.format("%s", userData.get("PhoneNumber")));
 
-
-                        // Set up on click listeners
-                        Button entrantButton = findViewById(R.id.entrantButton);
-                        entrantButton.setOnClickListener(v -> {
-                            // TODO: Put additional entrant profile information in the intent
-                            profileIntent.putExtra("role", "ENTRANT");
-                            // Start profile activity
-                            startActivity(profileIntent);
-                        });
-
-                        Button organizerButton = findViewById(R.id.organizerButton);
-                        organizerButton.setOnClickListener(v -> {
-                            // Put additional organizer profile information in the intent
-                            profileIntent.putExtra("role", "ORGANIZER");
-                            profileIntent.putExtra("facilityName", String.format("%s", userData.get("Facility")));
-                            // Start profile activity
-                            startActivity(profileIntent);
-                        });
-
-                        // Hide admin button if user is not an admin
-                        Object isBoolean = userData.get("Administrator");
-                        if(isBoolean == null || !isBoolean.toString().equals("true")) {
-                            Button adminButton = findViewById(R.id.adminButton);
-                            adminButton.setVisibility(View.GONE);
-                        };
-                    } else {
-                        // TODO: start signup activity
-                    }
-                } else {
-                    throw new RuntimeException("Database read failed.");
-                }
-            }
+        // Set up on click listeners
+        Button entrantButton = findViewById(R.id.entrantButton);
+        entrantButton.setOnClickListener(v -> {
+            // TODO: Put additional entrant profile information in the intent
+            profileIntent.putExtra("role", "ENTRANT");
+            // Start profile activity
+            startActivity(profileIntent);
         });
 
+        Button organizerButton = findViewById(R.id.organizerButton);
+        organizerButton.setOnClickListener(v -> {
+            // Put additional organizer profile information in the intent
+            profileIntent.putExtra("role", "ORGANIZER");
+            profileIntent.putExtra("facilityName", String.format("%s", userData.get("Facility")));
+            // Start profile activity
+            startActivity(profileIntent);
+        });
 
+        // Hide admin button if user is not an admin
+        Object isAdmin = userData.get("Administrator");
+        if(isAdmin == null || !isAdmin.toString().equals("true")) {
+            Button adminButton = findViewById(R.id.adminButton);
+            adminButton.setVisibility(View.GONE);
+        };
     }
 }
