@@ -26,8 +26,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 
 import java.util.Map;
 import java.util.Objects;
@@ -74,7 +72,6 @@ public class ProfileActivity extends AppBarActivity {
                     .commit();
         } else if (Objects.equals(role, "ENTRANT")) {
             // Create entrant profile fragment
-            user = new User(deviceID, name, email, phoneNumber);
             getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
                             .replace(R.id.fragment_container_view, EntrantProfileFragment.class, null)
