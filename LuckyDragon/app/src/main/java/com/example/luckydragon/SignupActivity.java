@@ -1,6 +1,9 @@
 package com.example.luckydragon;
 
+import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.annotation.Nullable;
 
 public class SignupActivity extends AppBarActivity {
     @Override
