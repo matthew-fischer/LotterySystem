@@ -1,13 +1,21 @@
 package com.example.luckydragon;
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.Serializable;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class SelectRoleController extends Controller {
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private transient FirebaseFirestore db = FirebaseFirestore.getInstance();
+    Map<String, Object> userData;
 
     public SelectRoleController(User observable) {
         super(observable);
@@ -18,25 +26,25 @@ public class SelectRoleController extends Controller {
         return (User) super.getObservable();
     }
 
+    public Map<String,Object> getUserData() {
+        return userData;
+    }
+
     public void fetchUserData() {
         db
             .collection("users")
             .document(getObservable().getDeviceID())
             .get()
-            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    if (documentSnapshot.exists()) {
-                        Map<String, Object> userData = documentSnapshot.getData();
-                        assert userData != null;
-                        getObservable().setData(userData);
-//                        user = new Organizer(user, String.format("%s", userData.get("Facility")));
-                    } else {
-                        // Create a new document for this user
-                        db.collection("users")
-                                .document(getObservable().getDeviceID())
-                                .set(getObservable().getUserData());
-                    }
+            .addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    userData = documentSnapshot.getData();
+                    assert userData != null;
+                    getObservable().setData(userData);
+                } else {
+                    // Create a new document for this user
+                    db.collection("users")
+                            .document(getObservable().getDeviceID())
+                            .set(getObservable().getUserData());
                 }
             });
     }
