@@ -49,8 +49,7 @@ public class ProfileActivity extends AppBarActivity {
         Intent intent = getIntent();
         user = (User) intent.getSerializableExtra("user");
         String role = intent.getStringExtra("role");
-        System.out.println(role);
-        
+
         // Set profile info views
         TextView nameView = findViewById(R.id.nameTextView);
         TextView emailView = findViewById(R.id.emailTextView);

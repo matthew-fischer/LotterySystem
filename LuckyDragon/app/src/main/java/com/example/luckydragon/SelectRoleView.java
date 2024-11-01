@@ -25,6 +25,7 @@ public class SelectRoleView extends Observer {
 
     @Override
     public void update(Observable whoUpdatedMe) {
+        selectRoleActivity.initializeView();
         if (!getObservable().isAdmin()) {
             selectRoleActivity.hideAdminButton();
         }

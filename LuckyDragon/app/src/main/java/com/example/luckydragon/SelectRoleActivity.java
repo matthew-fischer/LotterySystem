@@ -3,10 +3,14 @@ package com.example.luckydragon;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Notes:
@@ -26,52 +30,74 @@ public class SelectRoleActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.select_role_page); // set content to role page
 
         // Get user data
         String deviceID = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
         user = new User(deviceID);
-        selectRoleController = new SelectRoleController(user);
         user.addObserver(new SelectRoleView(user, this));
+
+        // Set controller if testing
+        Intent intent = getIntent();
+        SelectRoleController passedInController = (SelectRoleController) intent.getSerializableExtra("controller");
+        Log.e("SET CONTROLLER", "Time to set controller");
+        if(passedInController == null) {
+            Log.e("SET CONTROLLER", "No controller passed");
+            selectRoleController = new SelectRoleController(user);
+        } else {
+            selectRoleController = passedInController;
+            passedInController.setObservable(user);
+        }
 
         // Make controller do initial fetching
         selectRoleController.fetchUserData();
+    }
+
+    public void initializeView() {
+        // Set content view (don't do this until after user has been fetched from db)
+        setContentView(R.layout.select_role_page); // set content to role page
 
         // Set up on entrant click listener
         Button entrantButton = findViewById(R.id.entrantButton);
-        entrantButton.setOnClickListener(v -> {
-            if (user.isEntrant()) {
-                // TODO: Put additional entrant profile information in the intent
-                // Create profile intent
-                Intent profileIntent = new Intent(this, ProfileActivity.class);
-                profileIntent.putExtra("user", user);
-                profileIntent.putExtra("role", "ENTRANT");
-                // Start profile activity
-                startActivity(profileIntent);
-            } else {
-                // Send to entrant signup
-                Intent signupIntent = new Intent(this, SignupActivity.class);
-                signupIntent.putExtra("user", user);
-                startActivity(signupIntent);
-            }
-        });
+        if(!entrantButton.hasOnClickListeners()) {
+            entrantButton.setOnClickListener(v -> {
+                // Convert user to entrant
+                user = new Entrant(user);
+
+                if (user.isEntrant()) {
+                    // Create profile intent
+                    Intent profileIntent = new Intent(this, ProfileActivity.class);
+                    profileIntent.putExtra("user", user);
+                    profileIntent.putExtra("role", "ENTRANT");
+                    // Start profile activity
+                    startActivity(profileIntent);
+                } else {
+                    // Send to entrant signup
+                    Intent signupIntent = new Intent(this, SignupActivity.class);
+                    signupIntent.putExtra("user", user);
+                    startActivity(signupIntent);
+                }
+            });
+        }
 
         // Set up on organizer click listener
         Button organizerButton = findViewById(R.id.organizerButton);
-        organizerButton.setOnClickListener(v -> {
-            if (user.isOrganizer()) {
-                // Create profile intent
-                Intent profileIntent = new Intent(this, ProfileActivity.class);
-                profileIntent.putExtra("user", user);
-
-                // Put additional organizer profile information in the intent
-                profileIntent.putExtra("role", "ORGANIZER");
-                // Start profile activity
-                startActivity(profileIntent);
-            } else {
-                // TODO: Send to organizer signup
-            }
-        });
+        if(!organizerButton.hasOnClickListeners()) {
+            organizerButton.setOnClickListener(v -> {
+                if (user.isOrganizer()) {
+                    // Create profile intent
+                    Intent profileIntent = new Intent(this, ProfileActivity.class);
+                    // Convert user to organizer and pass into intent
+                    profileIntent.putExtra("role", "ORGANIZER");
+                    String facilityName = selectRoleController.getUserData().get("facility") != null ? selectRoleController.getUserData().get("facility").toString() : null;
+                    user = new Organizer(user, facilityName);
+                    profileIntent.putExtra("user", user);
+                    // Start profile activity
+                    startActivity(profileIntent);
+                } else {
+                    // TODO: Send to organizer signup
+                }
+            });
+        }
     }
 
     public void hideAdminButton() {
