@@ -11,12 +11,12 @@ import android.content.Context;
 import android.content.Intent;
 
 import androidx.test.core.app.ActivityScenario;
+
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.Test;
-import org.junit.jupiter.api.Disabled;
 import org.junit.runner.RunWith;
 
 import java.util.HashMap;
@@ -25,18 +25,19 @@ import java.util.Map;
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class SelectRoleActivityTest {
-    @Test
+
     /**
      * TEST
      * Tests that only "Entrant" and "Organizer" buttons show for a user without admin privileges.
      * "Administrator" button should not be visible.
      */
+    @Test
     public void testButtonsForNonAdminUser() {
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
 
         Map<String, Object> mockUserData = new HashMap<>();
-        mockUserData.put("Administrator", false);
+        mockUserData.put("isAdmin", false);
 
         /*
          * Note that the observable for the mock controller is set to 'null' here.
@@ -72,7 +73,7 @@ public class SelectRoleActivityTest {
         try(final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
             onView(withId(R.id.entrantButton)).check(matches(isDisplayed()));
             onView(withId(R.id.organizerButton)).check(matches(isDisplayed()));
-            onView(withId(R.id.adminButton)).check(matches((isDisplayed())));
+            onView(withId(R.id.adminButton)).check(matches(isDisplayed()));
         }
     }
 }

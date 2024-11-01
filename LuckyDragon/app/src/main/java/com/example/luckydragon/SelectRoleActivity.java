@@ -29,6 +29,7 @@ public class SelectRoleActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setContentView(R.layout.select_role_page);
         super.onCreate(savedInstanceState);
 
         // Get user data
