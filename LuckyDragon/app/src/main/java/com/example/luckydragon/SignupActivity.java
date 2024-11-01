@@ -22,8 +22,7 @@ public class SignupActivity extends AppBarActivity {
         getSupportActionBar().setTitle("Sign-Up");
 
         // Unpack intent
-        Intent intent = getIntent();
-        user = (User) intent.getSerializableExtra("user");
+        user = ((GlobalApp) getApplication()).getUser();
         signupController = new SignupController(user);
         signupView = new SignupView(user, this, signupController);
         Log.d("TONY", user.isValid().toString());
@@ -42,5 +41,9 @@ public class SignupActivity extends AppBarActivity {
         submitButton.setOnClickListener(v -> {
             signupController.extractFields(editName, editEmail, editPhone);
         });
+    }
+
+    public void toNewActivity() {
+
     }
 }

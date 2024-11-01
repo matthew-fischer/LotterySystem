@@ -55,7 +55,7 @@ public class EditFacilityDialogFragment extends DialogFragment {
                     user.setFacility(facilityName);
 
                     // Update facility in user document
-                    db.collection("users").document(user.getDeviceID()).update("Facility", facilityName);
+                    db.collection("users").document(user.getDeviceID()).update("facility", facilityName);
 
                     // Update facility textview in OrganizerProfileFragment
                     OrganizerProfileFragment parent = (OrganizerProfileFragment) requireParentFragment();

@@ -47,7 +47,7 @@ public class ProfileActivity extends AppBarActivity {
 
         // Unpack intent
         Intent intent = getIntent();
-        user = (User) intent.getSerializableExtra("user");
+        user = ((GlobalApp) getApplication()).getUser();
         String role = intent.getStringExtra("role");
 
         // Set profile info views

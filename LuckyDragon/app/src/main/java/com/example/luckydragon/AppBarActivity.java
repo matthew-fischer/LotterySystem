@@ -17,8 +17,12 @@ public abstract class AppBarActivity extends AppCompatActivity {
     @Override
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), SelectRoleActivity.class);
+            startActivity(intent);
+        });
     }
 
     @Override

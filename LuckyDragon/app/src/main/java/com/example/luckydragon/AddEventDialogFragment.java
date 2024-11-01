@@ -49,7 +49,7 @@ public class AddEventDialogFragment extends DialogFragment {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
         ProfileActivity parent = (ProfileActivity)getActivity();
-                String organizerDeviceID = Objects.requireNonNull(parent).getUser().getDeviceID();
+        String organizerDeviceID = Objects.requireNonNull(parent).getUser().getDeviceID();
         String organizerName = Objects.requireNonNull(parent).getUser().getName();
 
         // We know the user is an organizer if they are adding an event. Thus we can cast to Organizer.

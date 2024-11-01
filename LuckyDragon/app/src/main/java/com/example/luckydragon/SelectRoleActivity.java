@@ -24,31 +24,30 @@ import java.util.Objects;
 
 
 public class SelectRoleActivity extends AppCompatActivity {
-    User user;
-    SelectRoleController selectRoleController;
+    private User user;
+    private SelectRoleController selectRoleController;
+    private SelectRoleView selectRoleView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.select_role_page);
         super.onCreate(savedInstanceState);
 
-        // Get user data
-        String deviceID = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-        user = new User(deviceID);
-        user.addObserver(new SelectRoleView(user, this));
+        // Get user
+        user = ((GlobalApp) getApplication()).getUser();
+        selectRoleView = new SelectRoleView(user, this);
+        user.addObserver(selectRoleView);
+        selectRoleController = new SelectRoleController(user);
 
         // Set controller if testing
-        Intent intent = getIntent();
-        SelectRoleController passedInController = (SelectRoleController) intent.getSerializableExtra("controller");
-        if (passedInController == null) {
-            selectRoleController = new SelectRoleController(user);
-        } else {
-            selectRoleController = passedInController;
-            passedInController.setObservable(user);
-        }
-
-        // Make controller do initial fetching
-        selectRoleController.fetchUserData();
+//        Intent intent = getIntent();
+//        SelectRoleController passedInController = (SelectRoleController) intent.getSerializableExtra("controller");
+//        if (passedInController == null) {
+//            selectRoleController = new SelectRoleController(user);
+//        } else {
+//            selectRoleController = passedInController;
+//            passedInController.setObservable(user);
+//        }
     }
 
     public void initializeView() {
@@ -57,7 +56,7 @@ public class SelectRoleActivity extends AppCompatActivity {
 
         // Set up on entrant click listener
         Button entrantButton = findViewById(R.id.entrantButton);
-        if(!entrantButton.hasOnClickListeners()) {
+        if (!entrantButton.hasOnClickListeners()) {
             entrantButton.setOnClickListener(v -> {
                 // Convert user to entrant
                 user = new Entrant(user);
@@ -65,14 +64,12 @@ public class SelectRoleActivity extends AppCompatActivity {
                 if (user.isEntrant()) {
                     // Create profile intent
                     Intent profileIntent = new Intent(this, ProfileActivity.class);
-                    profileIntent.putExtra("user", user);
                     profileIntent.putExtra("role", "ENTRANT");
                     // Start profile activity
                     startActivity(profileIntent);
                 } else {
                     // Send to entrant signup
                     Intent signupIntent = new Intent(this, SignupActivity.class);
-                    signupIntent.putExtra("user", user);
                     startActivity(signupIntent);
                 }
             });
@@ -80,16 +77,13 @@ public class SelectRoleActivity extends AppCompatActivity {
 
         // Set up on organizer click listener
         Button organizerButton = findViewById(R.id.organizerButton);
-        if(!organizerButton.hasOnClickListeners()) {
+        if (!organizerButton.hasOnClickListeners()) {
             organizerButton.setOnClickListener(v -> {
                 if (user.isOrganizer()) {
                     // Create profile intent
                     Intent profileIntent = new Intent(this, ProfileActivity.class);
                     // Convert user to organizer and pass into intent
                     profileIntent.putExtra("role", "ORGANIZER");
-                    String facilityName = selectRoleController.getUserData().get("facility") != null ? selectRoleController.getUserData().get("facility").toString() : null;
-                    user = new Organizer(user, facilityName);
-                    profileIntent.putExtra("user", user);
                     // Start profile activity
                     startActivity(profileIntent);
                 } else {

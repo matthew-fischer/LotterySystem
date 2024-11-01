@@ -7,6 +7,8 @@ package com.example.luckydragon;
 import android.util.Log;
 import android.widget.Button;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +21,8 @@ import java.util.Map;
  *   - Email and phone number may be optional. Additional constructors should be defined for these cases.
  */
 public class User extends Observable implements Serializable {
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+
     private String deviceID;
     private String name;
     private String email;
@@ -39,6 +43,24 @@ public class User extends Observable implements Serializable {
         this.name = "";
         this.email = "";
         this.phoneNumber = "";
+        db
+                .collection("users")
+                .document(deviceID)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        // Load user data
+                        Map<String, Object> userData = documentSnapshot.getData();
+                        assert userData != null;
+                        setData(userData);
+                    } else {
+                        // Create a new document for this user
+                        db.collection("users")
+                                .document(deviceID)
+                                .set(deviceID);
+                    }
+                    notifyObservers();
+                });
     }
 
     /**
@@ -78,6 +100,8 @@ public class User extends Observable implements Serializable {
         name = String.format("%s", userData.get("name"));
         phoneNumber = String.format("%s", userData.get("phoneNumber"));
 
+        facility = String.format("%s", userData.get("facility"));
+
         isEntrant = userData.get("isEntrant") != null
                 && userData.get("isEntrant").toString().equals("true");
         isOrganizer = userData.get("isOrganizer") != null
@@ -97,6 +121,9 @@ public class User extends Observable implements Serializable {
         map.put("isEntrant", isEntrant);
         map.put("isOrganizer", isOrganizer);
         map.put("isAdmin", isAdmin);
+
+        map.put("facility", facility);
+
         map.put("name", name);
         map.put("email", email);
         map.put("phoneNumber", phoneNumber);
