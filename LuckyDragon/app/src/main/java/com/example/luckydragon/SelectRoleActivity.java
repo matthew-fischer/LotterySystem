@@ -39,9 +39,7 @@ public class SelectRoleActivity extends AppCompatActivity {
         // Set controller if testing
         Intent intent = getIntent();
         SelectRoleController passedInController = (SelectRoleController) intent.getSerializableExtra("controller");
-        Log.e("SET CONTROLLER", "Time to set controller");
         if(passedInController == null) {
-            Log.e("SET CONTROLLER", "No controller passed");
             selectRoleController = new SelectRoleController(user);
         } else {
             selectRoleController = passedInController;

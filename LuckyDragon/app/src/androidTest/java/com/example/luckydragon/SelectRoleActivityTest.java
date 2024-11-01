@@ -26,6 +26,11 @@ import java.util.Map;
 @LargeTest
 public class SelectRoleActivityTest {
     @Test
+    /**
+     * TEST
+     * Tests that only "Entrant" and "Organizer" buttons show for a user without admin privileges.
+     * "Administrator" button should not be visible.
+     */
     public void testButtonsForNonAdminUser() {
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
@@ -49,6 +54,11 @@ public class SelectRoleActivityTest {
     }
 
     @Test
+    /**
+     * TEST
+     * Tests that only "Entrant" and "Organizer" buttons show for a user without admin privileges.
+     * "Administrator" button should not be visible.
+     */
     public void testButtonsForAdminUser() {
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
