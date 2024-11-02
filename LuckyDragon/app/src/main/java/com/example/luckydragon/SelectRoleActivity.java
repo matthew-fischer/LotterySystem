@@ -25,7 +25,6 @@ import java.util.Objects;
 
 public class SelectRoleActivity extends AppCompatActivity {
     private User user;
-    private SelectRoleController selectRoleController;
     private SelectRoleView selectRoleView;
 
     @Override
@@ -36,9 +35,6 @@ public class SelectRoleActivity extends AppCompatActivity {
         // Get user
         user = ((GlobalApp) getApplication()).getUser();
         selectRoleView = new SelectRoleView(user, this);
-        user.addObserver(selectRoleView);
-        selectRoleController = new SelectRoleController(user);
-
         // Set controller if testing
 //        Intent intent = getIntent();
 //        SelectRoleController passedInController = (SelectRoleController) intent.getSerializableExtra("controller");
@@ -58,9 +54,6 @@ public class SelectRoleActivity extends AppCompatActivity {
         Button entrantButton = findViewById(R.id.entrantButton);
         if (!entrantButton.hasOnClickListeners()) {
             entrantButton.setOnClickListener(v -> {
-                // Convert user to entrant
-                user = new Entrant(user);
-
                 if (user.isEntrant()) {
                     // Create profile intent
                     Intent profileIntent = new Intent(this, ProfileActivity.class);

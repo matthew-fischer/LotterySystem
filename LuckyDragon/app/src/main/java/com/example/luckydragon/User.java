@@ -4,9 +4,9 @@
 
 package com.example.luckydragon;
 
-import android.util.Log;
-import android.widget.Button;
+import androidx.annotation.Nullable;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.Serializable;
@@ -23,111 +23,90 @@ import java.util.Map;
 public class User extends Observable implements Serializable {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    private String deviceID;
+    private String deviceId;
     private String name;
     private String email;
     private String phoneNumber;
 
-    private String facility;
+    private Boolean isLoaded = Boolean.FALSE;
 
-    private Boolean isEntrant = Boolean.FALSE;
-    private Boolean isOrganizer = Boolean.FALSE;
+    private Organizer organizer;
+    private Entrant entrant;
+
     private Boolean isAdmin = Boolean.FALSE;
 
+    public User(String deviceId) {
+        super();
+        this.deviceId = deviceId;
+    }
+
+    @Override
+    public void notifyObservers() {
+        super.notifyObservers();
+        save();
+    }
+
     /**
-     * Creates a User object with empty string values and a deviceID.
-     * @param deviceID: the user's device ID
+     * Set user data from firestore
      */
-    public User(String deviceID) {
-        this.deviceID = deviceID;
-        this.name = "";
-        this.email = "";
-        this.phoneNumber = "";
-        db
-                .collection("users")
-                .document(deviceID)
+    public void fetchData() {
+        db.collection("users").document(getDeviceId())
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        // Load user data
-                        Map<String, Object> userData = documentSnapshot.getData();
-                        assert userData != null;
-                        setData(userData);
-                    } else {
-                        // Create a new document for this user
-                        db.collection("users")
-                                .document(deviceID)
-                                .set(deviceID);
+                    Map<String, Object> userData = documentSnapshot.getData();
+                    email = String.format("%s", userData.get("email"));
+                    name = String.format("%s", userData.get("name"));
+                    phoneNumber = String.format("%s", userData.get("phoneNumber"));
+
+                    boolean isEntrant = userData.get("isEntrant") != null
+                            && userData.get("isEntrant").toString().equals("true");
+                    if (isEntrant) {
+                        entrant = new Entrant();
                     }
+                    boolean isOrganizer = userData.get("isOrganizer") != null
+                            && userData.get("isOrganizer").toString().equals("true");
+                    if (isOrganizer) {
+                        String facility = String.format("%s", userData.get("facility"));
+
+                        if (facility != null) {
+                            organizer = new Organizer(facility);
+                        } else {
+                            organizer = new Organizer();
+                        }
+                    }
+                    isAdmin = userData.get("isAdmin") != null
+                            && userData.get("isAdmin").toString().equals("true");
+
+                    isLoaded = true;
                     notifyObservers();
                 });
     }
 
     /**
-     * Creates a User object based on an existing instance
-     * @param user: the user
+     * Save to firestore
      */
-    public User(User user) {
-        this.deviceID = user.getDeviceID();
-        this.name = user.getName();
-        this.email = user.getEmail();
-        this.phoneNumber = user.getPhoneNumber();
-        this.isEntrant = user.isEntrant();
-        this.isOrganizer = user.isOrganizer();
-        this.isAdmin = user.isAdmin();
-    }
-
-    /**
-     * Creates a User object.
-     * @param deviceID: the user's device ID
-     * @param name: the user's name
-     * @param email: the user's email
-     * @param phoneNumber: the user's phone number
-     */
-    public User(String deviceID, String name, String email, String phoneNumber) {
-        this.deviceID = deviceID;
-        this.name = name;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-    }
-
-    /**
-     * Set user data using a map from firestore
-     * @param userData: the firestore map
-     */
-    public void setData(Map<String, Object> userData) {
-        email = String.format("%s", userData.get("email"));
-        name = String.format("%s", userData.get("name"));
-        phoneNumber = String.format("%s", userData.get("phoneNumber"));
-
-        facility = String.format("%s", userData.get("facility"));
-
-        isEntrant = userData.get("isEntrant") != null
-                && userData.get("isEntrant").toString().equals("true");
-        isOrganizer = userData.get("isOrganizer") != null
-                && userData.get("isOrganizer").toString().equals("true");
-        isAdmin = userData.get("isAdmin") != null
-                && userData.get("isAdmin").toString().equals("true");
-
-        notifyObservers();
-    }
-
-    /**
-     * Return user data for saving to firestore
-     * @return hash map for saving to firestore
-     */
-    public HashMap<String, Object> getUserData() {
+    public void save() {
         HashMap<String, Object> map = new HashMap<>();
-        map.put("isEntrant", isEntrant);
-        map.put("isOrganizer", isOrganizer);
-        map.put("isAdmin", isAdmin);
+        map.put("isEntrant", isEntrant());
+        map.put("isOrganizer", isOrganizer());
+        map.put("isAdmin", isAdmin());
 
-        map.put("facility", facility);
+        if (isOrganizer()) {
+            map.put("facility", organizer.getFacility());
+        }
 
         map.put("name", name);
         map.put("email", email);
         map.put("phoneNumber", phoneNumber);
-        return map;
+
+        db.collection("users").document(deviceId)
+                .set(map)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        notifyObservers();
+                    }
+                });
     }
 
     // TODO: Implement, send error messages
@@ -139,8 +118,8 @@ public class User extends Observable implements Serializable {
      * Get the user's device ID.
      * @return user's device ID as String
      */
-    public String getDeviceID() {
-        return deviceID;
+    public String getDeviceId() {
+        return deviceId;
     }
 
     /**
@@ -194,42 +173,34 @@ public class User extends Observable implements Serializable {
         notifyObservers();
     }
 
-    /**
-     * Gets the facility name for the organizer.
-     * @return the organizer's facility name
-     */
-    public String getFacility() {
-        if (!isOrganizer) {
-            throw new RuntimeException("Not an organizer!");
-        }
-        return facility;
-    }
-
-    /**
-     * Sets the facility name for the organizer.
-     * @param facility: the new facility name
-     */
-    public void setFacility(String facility) {
-        if (!isOrganizer) {
-            throw new RuntimeException("Not an organizer!");
-        }
-        this.facility = facility;
-    }
-
     public Boolean isEntrant() {
-        return isEntrant;
+        return entrant != null;
     }
 
     public void setEntrant(Boolean entrant) {
-        isEntrant = entrant;
+        if (entrant) {
+            this.entrant = new Entrant();
+        } else {
+            this.entrant = null;
+        }
+        notifyObservers();
     }
 
     public Boolean isOrganizer() {
-        return isOrganizer;
+        return organizer != null;
+    }
+
+    @Nullable
+    public Organizer getOrganizer() {
+        return organizer;
     }
 
     public void setOrganizer(Boolean organizer) {
-        isOrganizer = organizer;
+        if (organizer) {
+            this.organizer = new Organizer();
+        } else {
+            this.organizer = null;
+        }
     }
 
     public Boolean isAdmin() {
@@ -238,5 +209,9 @@ public class User extends Observable implements Serializable {
 
     public void setAdmin(Boolean admin) {
         isAdmin = admin;
+    }
+
+    public Boolean isLoaded() {
+        return isLoaded;
     }
 }

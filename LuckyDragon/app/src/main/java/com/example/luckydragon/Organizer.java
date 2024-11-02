@@ -12,32 +12,20 @@ package com.example.luckydragon;
  *   This is only a basic implementation. Additional functionality should be added as needed.
  *   Since email and phone number are optional, additional constructors should be added.
  */
-public class Organizer extends User {
+public class Organizer {
     private String facility;
 
-    /**
-     * Creates an Organizer object.
-     * @param deviceID: the user's unique device id
-     * @param name: the user's name
-     * @param email: the user's email
-     * @param phoneNumber: the user's phone number
-     * @param facility: the organizer's facility name
-     */
-    public Organizer(String deviceID, String name, String email, String phoneNumber, String facility) {
-        super(deviceID, name, email, phoneNumber);
-        this.facility = facility;
+    public Organizer() {
+        super();
     }
 
     /**
-     * Creates an Organizer from a user and facility name.
-     * @param user: the user to convert to an organizer
+     * Creates an Organizer from a facility name.
      * @param facility: the organizer's facility name
      */
-    public Organizer(User user, String facility) {
-        super(user);
+    public Organizer(String facility) {
         this.facility = facility;
     }
-
 
     /**
      * Gets the facility name for the organizer.
