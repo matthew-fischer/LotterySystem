@@ -37,4 +37,6 @@ jobs:
         target: default
         arch: x86
         profile: Nexus 6
-        script: ./gradlew connectedCheck --stacktrace
+        script: 
+          rm -r /usr/local/lib/android/sdk/cmdline-tools
+          ./gradlew connectedCheck --stacktrace
