@@ -100,13 +100,7 @@ public class User extends Observable implements Serializable {
         map.put("phoneNumber", phoneNumber);
 
         db.collection("users").document(deviceId)
-                .set(map)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        notifyObservers();
-                    }
-                });
+                .set(map);
     }
 
     // TODO: Implement, send error messages
