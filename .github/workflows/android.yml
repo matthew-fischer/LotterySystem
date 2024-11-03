@@ -44,4 +44,4 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
-          script: ./LuckyDragon/gradlew connectedDebugAndroidTest
+          script: cd ./LuckyDragon && ./gradlew connectedDebugAndroidTest
