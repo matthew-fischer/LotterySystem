@@ -6,6 +6,10 @@ package com.example.luckydragon;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.Base64;
 import android.util.Log;
 
@@ -15,9 +19,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Represents a User object.
@@ -33,10 +39,10 @@ public class User extends Observable implements Serializable {
     private String name;
     private String email;
     private String phoneNumber;
-    private Bitmap profilePicture;
+    private Bitmap uploadedProfilePicture;
+    private Bitmap defaultProfilePicture;
 
     private Boolean isLoaded = Boolean.FALSE;
-
     private Organizer organizer;
     private Entrant entrant;
 
@@ -86,9 +92,9 @@ public class User extends Observable implements Serializable {
                         }
                         isAdmin = userData.get("isAdmin") != null
                                 && userData.get("isAdmin").toString().equals("true");
-                        profilePicture = stringToBitmap((String)userData.get("profilePicture"));
+                        uploadedProfilePicture = stringToBitmap((String)userData.get("profilePicture"));
+                        defaultProfilePicture = stringToBitmap((String)userData.get("defaultProfilePicture"));
                     }
-
 
                     isLoaded = true;
                     notifyObservers();
@@ -111,7 +117,8 @@ public class User extends Observable implements Serializable {
         map.put("name", name);
         map.put("email", email);
         map.put("phoneNumber", phoneNumber);
-        map.put("profilePicture", bitmapToString(profilePicture));
+        map.put("profilePicture", bitmapToString(uploadedProfilePicture));
+        map.put("defaultProfilePicture", bitmapToString(defaultProfilePicture));
         db.collection("users").document(deviceId)
                 .set(map).addOnFailureListener(e -> {
                     Log.e("SAVE DB", "fail");
@@ -159,7 +166,10 @@ public class User extends Observable implements Serializable {
      * Gets the user's profile picture.
      * @return the user's profile picture
      */
-    public Bitmap getProfilePicture() { return profilePicture; }
+    public Bitmap getProfilePicture() {
+        if (uploadedProfilePicture != null) return uploadedProfilePicture;
+        return defaultProfilePicture;
+    }
 
     /**
      * Set the user's name.
@@ -167,6 +177,10 @@ public class User extends Observable implements Serializable {
      */
     public void setName(String name) {
         this.name = name;
+
+        // change default profile picture
+        this.defaultProfilePicture = generateProfilePicture(this.name);
+
         notifyObservers();
     }
 
@@ -188,12 +202,13 @@ public class User extends Observable implements Serializable {
         notifyObservers();
     }
 
-    /**
-     * Set the user's email.
-     * @param profilePicture: the user's new email
-     */
-    public void setProfilePicture(Bitmap profilePicture) {
-        this.profilePicture = profilePicture;
+    public void setUserProfilePicture(Bitmap profilePicture) {
+        this.uploadedProfilePicture = profilePicture;
+        notifyObservers();
+    }
+
+    public void uploadProfilePicture(Bitmap profilePicture) {
+        this.uploadedProfilePicture = profilePicture;
         notifyObservers();
     }
 
@@ -208,6 +223,37 @@ public class User extends Observable implements Serializable {
             this.entrant = null;
         }
         notifyObservers();
+    }
+
+    public Bitmap generateProfilePicture(String s) {
+        assert !s.isEmpty();
+
+        Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+
+
+        // Fill background with solid color
+        Random rand = new Random(s.hashCode());
+        float hue = rand.nextFloat();
+        float saturation = (rand.nextInt(5000) + 1000) / 10000f;
+        float luminance = 0.95f;
+
+        Paint background = new Paint(Paint.ANTI_ALIAS_FLAG);
+        background.setColor(Color.HSVToColor(new float[]{hue, saturation, luminance}));
+        canvas.drawRect(0, 0, 100, 100, background);
+
+        // Draw first letter of s on bitmap
+        String text = s.substring(0, 1);
+        Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        textPaint.setColor(Color.WHITE);
+        textPaint.setTextSize(70);
+        Rect bounds = new Rect();
+        textPaint.getTextBounds(text, 0, text.length(), bounds);
+        int x = (bitmap.getWidth() - bounds.width())/2;
+        int y = (bitmap.getHeight() - bounds.height())/2 + bounds.height();
+        canvas.drawText(text, x, y, textPaint);
+
+        return bitmap;
     }
 
     public Boolean isOrganizer() {

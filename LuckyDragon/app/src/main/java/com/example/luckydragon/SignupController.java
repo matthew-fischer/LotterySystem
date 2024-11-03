@@ -36,7 +36,7 @@ public class SignupController extends Controller {
     }
 
     public void setProfilePicture(Bitmap image) {
-        getObservable().setProfilePicture(image);
+        getObservable().uploadProfilePicture(image);
     }
 
     public void becomeEntrant() {
