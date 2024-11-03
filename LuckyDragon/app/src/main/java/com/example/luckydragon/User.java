@@ -107,7 +107,7 @@ public class User extends Observable implements Serializable {
         map.put("name", name);
         map.put("email", email);
         map.put("phoneNumber", phoneNumber);
-
+        map.put("profilePicture", profilePicture);
         db.collection("users").document(deviceId)
                 .set(map);
     }
@@ -150,6 +150,12 @@ public class User extends Observable implements Serializable {
     }
 
     /**
+     * Gets the user's profile picture.
+     * @return the user's profile picture
+     */
+    public Bitmap getProfilePicture() { return profilePicture; }
+
+    /**
      * Set the user's name.
      * @param name: the user's new name
      */
@@ -167,16 +173,21 @@ public class User extends Observable implements Serializable {
         notifyObservers();
     }
 
-    public void setProfilePicture(Bitmap image) {
-
-    }
-
     /**
      * Set the user's phone number.
      * @param phoneNumber: the user's new phone number
      */
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+        notifyObservers();
+    }
+
+    /**
+     * Set the user's email.
+     * @param profilePicture: the user's new email
+     */
+    public void setProfilePicture(Bitmap profilePicture) {
+        this.profilePicture = profilePicture;
         notifyObservers();
     }
 

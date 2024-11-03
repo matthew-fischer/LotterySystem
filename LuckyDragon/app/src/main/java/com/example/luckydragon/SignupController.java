@@ -1,5 +1,6 @@
 package com.example.luckydragon;
 
+import android.graphics.Bitmap;
 import android.widget.EditText;
 
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -32,6 +33,10 @@ public class SignupController extends Controller {
         // TODO: input validation
         String phoneNumber = editPhone.getText().toString();
         getObservable().setPhoneNumber(phoneNumber);
+    }
+
+    public void setProfilePicture(Bitmap image) {
+        getObservable().setProfilePicture(image);
     }
 
     public void becomeEntrant() {

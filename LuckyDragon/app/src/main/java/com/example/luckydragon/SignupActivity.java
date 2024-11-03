@@ -2,15 +2,18 @@ package com.example.luckydragon;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Switch;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -32,8 +35,9 @@ public class SignupActivity extends AppBarActivity {
     private SwitchMaterial switchNotifications;
     private Button submitButton;
     private ImageButton uploadProfilePictureButton;
-    ActivityResultLauncher<Intent> uploadImageResultLauncher;
-
+    private ActivityResultLauncher<Intent> uploadImageResultLauncher;
+    private Bitmap profilePicture;
+    private ImageView profilePictureView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +58,8 @@ public class SignupActivity extends AppBarActivity {
 
         // Profile picture
         uploadProfilePictureButton = findViewById(R.id.uploadProfilePicture);
+//        profilePictureView = findViewById(R.id.signupProfilePicture);
+
         uploadImageResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
@@ -62,8 +68,17 @@ public class SignupActivity extends AppBarActivity {
                         if (result.getResultCode() == Activity.RESULT_OK) {
                             // There are no request codes
                             Intent data = result.getData();
+                            Uri image = data.getData();
+                            assert(image != null);
 
-                            //                            doSomeOperations();
+                            try {
+                                profilePicture = MediaStore.Images.Media.getBitmap(getContentResolver(), image);
+//                                profilePictureView.setImageBitmap(profilePicture);
+                            } catch (Exception e) {
+                                Log.e("signup", "error uploading pfp");
+                            }
+
+                            // Add intent to crop image if that exists
                         }
                     }
                 });
@@ -99,8 +114,8 @@ public class SignupActivity extends AppBarActivity {
             Intent intent = new Intent();
             intent.setType("image/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
-//            startActivityForResult(Intent.createChooser(intent, "Select Picture"),REQUEST_CODE);
             uploadImageResultLauncher.launch(intent);
+            signupController.setProfilePicture(profilePicture);
         });
 
         submitButton.setOnClickListener(view -> {
