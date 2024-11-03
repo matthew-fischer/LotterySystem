@@ -38,5 +38,4 @@ jobs:
         arch: x86
         profile: Nexus 6
         script: 
-          rm -r /usr/local/lib/android/sdk/cmdline-tools
-          ./gradlew connectedCheck --stacktrace
+          rm -r /usr/local/lib/android/sdk/cmdline-tools && ./gradlew connectedCheck --stacktrace
