@@ -1,6 +1,8 @@
 package com.example.luckydragon;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -8,10 +10,15 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Switch;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 
 public class SignupActivity extends AppBarActivity {
@@ -24,6 +31,8 @@ public class SignupActivity extends AppBarActivity {
     private EditText editPhone;
     private SwitchMaterial switchNotifications;
     private Button submitButton;
+    private ImageButton uploadProfilePictureButton;
+    ActivityResultLauncher<Intent> uploadImageResultLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +51,22 @@ public class SignupActivity extends AppBarActivity {
         editName = findViewById(R.id.signupName);
         editEmail = findViewById(R.id.signupEmail);
         editPhone = findViewById(R.id.signupPhone);
-        // TODO: Profile photo
+
+        // Profile picture
+        uploadProfilePictureButton = findViewById(R.id.uploadProfilePicture);
+        uploadImageResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            // There are no request codes
+                            Intent data = result.getData();
+
+                            //                            doSomeOperations();
+                        }
+                    }
+                });
         switchNotifications = findViewById(R.id.signupNotifications);
         submitButton = findViewById(R.id.signupSubmit);
 
@@ -68,6 +92,15 @@ public class SignupActivity extends AppBarActivity {
             // code that will run in x seconds
             signupController.extractPhoneNumber(editPhone);
             // TODO: input validation
+        });
+
+        // set listener for uploading pfp button
+        uploadProfilePictureButton.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+//            startActivityForResult(Intent.createChooser(intent, "Select Picture"),REQUEST_CODE);
+            uploadImageResultLauncher.launch(intent);
         });
 
         submitButton.setOnClickListener(view -> {

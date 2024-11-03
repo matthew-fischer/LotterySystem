@@ -111,6 +111,7 @@
                 android:src="@drawable/baseline_image_24"
                 android:background="@null"/>
             <ImageButton
+                android:id="@+id/uploadProfilePicture"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/baseline_upload_24"

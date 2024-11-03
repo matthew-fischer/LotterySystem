@@ -43,7 +43,7 @@ public class User extends Observable implements Serializable {
     @Override
     public void notifyObservers() {
         super.notifyObservers();
-        save();
+//        save();
     }
 
     /**
