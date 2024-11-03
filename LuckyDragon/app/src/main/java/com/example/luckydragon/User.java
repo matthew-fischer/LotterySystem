@@ -285,6 +285,10 @@ public class User extends Observable implements Serializable {
         return isLoaded;
     }
 
+    public void setIsLoaded(Boolean newIsLoaded) {
+        isLoaded = newIsLoaded;
+    }
+
     /**
      * Converts bitmap to string
      * @param image: the bitmap to convert to base 64 string
