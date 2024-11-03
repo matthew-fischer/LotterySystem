@@ -77,8 +77,15 @@ public class SignupActivity extends AppBarActivity {
                             }
 
                             // TODO: Add intent to crop image and move it around when selecting if that exists
-                            // TODO: Scale properly
-                            profilePicture = Bitmap.createScaledBitmap(profilePicture, 120, 120, false);
+
+                            // Crop image to square
+                            int n = Math.min(profilePicture.getWidth(), profilePicture.getHeight());
+                            profilePicture = Bitmap.createBitmap(profilePicture, 0, 0, n, n);
+
+                            // Scale image to proper size
+                            int width = ((GlobalApp) getApplication()).profilePictureSize.getWidth();
+                            int height = ((GlobalApp) getApplication()).profilePictureSize.getHeight();
+                            profilePicture = Bitmap.createScaledBitmap(profilePicture, width, height, false);
                             signupController.setProfilePicture(profilePicture);
                         }
                     }
