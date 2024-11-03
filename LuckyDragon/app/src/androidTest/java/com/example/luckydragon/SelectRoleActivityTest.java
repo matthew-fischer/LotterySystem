@@ -1,45 +1,28 @@
 package com.example.luckydragon;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withResourceName;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
 
 import static org.hamcrest.CoreMatchers.not;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
-import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
-import androidx.test.espresso.matcher.ViewMatchers;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
+
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(AndroidJUnit4.class)
 @LargeTest
 public class SelectRoleActivityTest {
 
@@ -49,15 +32,20 @@ public class SelectRoleActivityTest {
      * "Administrator" button should not be visible.
      */
     @Test
-    public void testNonAdministrator() {
+    public void testButtonsForNonAdminUser() {
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
 
-        Map<String, Object> mockUserData = new HashMap<String, Object>();
-        mockUserData.put("Administrator", false);
+        Map<String, Object> mockUserData = new HashMap<>();
+        mockUserData.put("isAdmin", false);
 
-        MockUserController mockUserController = new MockUserController(mockUserData);
-        intent.putExtra("Controller", mockUserController);
+        /*
+         * Note that the observable for the mock controller is set to 'null' here.
+         * It will be set to the correct observable within SelectRoleActivity.
+         * This is done because we don't have access to the Observable here until the activity is started below (which is too late)
+         */
+        MockSelectRoleController mockSelectRoleController = new MockSelectRoleController(null, mockUserData);
+        intent.putExtra("controller", mockSelectRoleController);
 
         try(final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
             onView(withId(R.id.entrantButton)).check(matches(isDisplayed()));
@@ -66,20 +54,21 @@ public class SelectRoleActivityTest {
         }
     }
 
+    @Test
     /**
      * TEST
-     * Tests that "Entrant", "Organizer", and "Administrator" buttons show for a user with admin privileges.
+     * Tests that only "Entrant" and "Organizer" buttons show for a user without admin privileges.
+     * "Administrator" button should not be visible.
      */
-    @Test
-    public void testAdministrator() {
+    public void testButtonsForAdminUser() {
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
 
-        Map<String, Object> mockUserData = new HashMap<String, Object>();
-        mockUserData.put("Administrator", true);
+        Map<String, Object> mockUserData = new HashMap<>();
+        mockUserData.put("isAdmin", true);
 
-        MockUserController mockUserController = new MockUserController(mockUserData);
-        intent.putExtra("Controller", mockUserController);
+        MockSelectRoleController mockSelectRoleController = new MockSelectRoleController(null, mockUserData);
+        intent.putExtra("controller", mockSelectRoleController);
 
         try(final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
             onView(withId(R.id.entrantButton)).check(matches(isDisplayed()));

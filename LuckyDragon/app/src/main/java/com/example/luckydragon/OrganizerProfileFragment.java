@@ -7,7 +7,6 @@ package com.example.luckydragon;
 import static android.content.ContentValues.TAG;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,13 +18,9 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.textview.MaterialTextView;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -47,12 +42,15 @@ public class OrganizerProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         // Get facility from parent activity
         ProfileActivity parent = (ProfileActivity)requireActivity();
-        Organizer organizer = (Organizer)(parent.getUser());
-        facilityName = organizer.getFacility();
+        User user = parent.getUser();
+
+        assert user.getOrganizer() != null;  // if this runs, we messed up in coding.
+        facilityName = user.getOrganizer().getFacility();
+
         // Set facility name
         MaterialTextView facilityTextView = view.findViewById(R.id.facilityTextView);
         ImageButton facilityEditButton = view.findViewById(R.id.facilityEditButton);
-        if(facilityName == null) {
+        if (facilityName == null) {
             // Set facility text
             String noFacilityMessage = "You have not created a facility yet.";
             facilityTextView.setText(noFacilityMessage);
@@ -66,7 +64,7 @@ public class OrganizerProfileFragment extends Fragment {
         // Add on click listener for "Add Event" button
         Button addEventButton = view.findViewById(R.id.addEventButton);
         addEventButton.setOnClickListener((View v) -> {
-            facilityName = organizer.getFacility();
+            facilityName = user.getOrganizer().getFacility();
             if(facilityName == null) { // if no facility, open the facility edit fragment instead
                 DialogFragment editFacilityDialog = new EditFacilityDialogFragment("Add a facility before you create an event!");
                 editFacilityDialog.show(getChildFragmentManager(), "EditFacilityDialogFragment");
@@ -89,7 +87,7 @@ public class OrganizerProfileFragment extends Fragment {
 
         // Get events
         db.collection("events")
-                .whereEqualTo("OrganizerDeviceID", parent.getUser().getDeviceID())
+                .whereEqualTo("OrganizerDeviceID", parent.getUser().getDeviceId())
                 .get()
                 .addOnCompleteListener((task) -> {
                     if (task.isSuccessful()) {

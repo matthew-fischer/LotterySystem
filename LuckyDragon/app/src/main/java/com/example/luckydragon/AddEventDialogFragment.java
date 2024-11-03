@@ -49,11 +49,11 @@ public class AddEventDialogFragment extends DialogFragment {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
         ProfileActivity parent = (ProfileActivity)getActivity();
-                String organizerDeviceID = Objects.requireNonNull(parent).getUser().getDeviceID();
+        String organizerDeviceID = Objects.requireNonNull(parent).getUser().getDeviceId();
         String organizerName = Objects.requireNonNull(parent).getUser().getName();
 
         // We know the user is an organizer if they are adding an event. Thus we can cast to Organizer.
-        String facilityName = ((Organizer) Objects.requireNonNull(parent).getUser()).getFacility();
+        String facilityName = (Objects.requireNonNull(parent).getUser()).getOrganizer().getFacility();
 
         Fragment parentFragment = getParentFragment();
         OrganizerProfileFragment organizerProfile = (OrganizerProfileFragment) parentFragment;
@@ -62,7 +62,7 @@ public class AddEventDialogFragment extends DialogFragment {
 
         // Set facility text
         TextInputEditText facilityEditText = dialogView.findViewById(R.id.facilityEditText);
-        String facility = ((Organizer) parent.getUser()).getFacility();
+        String facility = (parent.getUser()).getOrganizer().getFacility();
         facilityEditText.setText(facility);
 
         return builder.setView(dialogView)

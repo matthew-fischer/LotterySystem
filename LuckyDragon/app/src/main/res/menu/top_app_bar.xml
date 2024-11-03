@@ -7,16 +7,16 @@
         android:icon="@drawable/baseline_person_outline_24"
         android:title="Profile"
         app:showAsAction="ifRoom"/>
-    <item
-        android:id="@+id/nav_signup"
-        android:icon="@drawable/baseline_person_outline_24"
-        android:title="signup"
-        app:showAsAction="ifRoom"/>
-    <item
-        android:id="@+id/nav_events"
-        android:icon="@drawable/baseline_person_outline_24"
-        android:title="events"
-        app:showAsAction="ifRoom"/>
+<!--    <item-->
+<!--        android:id="@+id/nav_signup"-->
+<!--        android:icon="@drawable/baseline_person_outline_24"-->
+<!--        android:title="signup"-->
+<!--        app:showAsAction="ifRoom"/>-->
+<!--    <item-->
+<!--        android:id="@+id/nav_events"-->
+<!--        android:icon="@drawable/baseline_person_outline_24"-->
+<!--        android:title="events"-->
+<!--        app:showAsAction="ifRoom"/>-->
 
     <!-- Settings, must always be in the overflow. -->
 <!--    <item android:id="@+id/action_settings"-->

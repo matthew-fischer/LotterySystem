@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -16,8 +17,12 @@ public abstract class AppBarActivity extends AppCompatActivity {
     @Override
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), SelectRoleActivity.class);
+            startActivity(intent);
+        });
     }
 
     @Override
@@ -32,12 +37,12 @@ public abstract class AppBarActivity extends AppCompatActivity {
 //            Toast.makeText(this, "Click Profile Icon.", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
             startActivity(intent);
-        } else if (item.getItemId() == R.id.nav_events) {
-            Intent intent = new Intent(getApplicationContext(), EventActivity.class);
-            startActivity(intent);
-        } else if (item.getItemId() == R.id.nav_signup) {
-            Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
-            startActivity(intent);
+//        } else if (item.getItemId() == R.id.nav_events) {
+//            Intent intent = new Intent(getApplicationContext(), EventActivity.class);
+//            startActivity(intent);
+//        } else if (item.getItemId() == R.id.nav_signup) {
+//            Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
+//            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
