@@ -47,11 +47,13 @@ public class SelectRoleActivity extends AppCompatActivity {
     }
 
     public void initializeView() {
+        Log.e("TEST", "starting initialize view");
         // Set content view (don't do this until after user has been fetched from db)
         setContentView(R.layout.select_role_page); // set content to role page
 
         // Set up on entrant click listener
         Button entrantButton = findViewById(R.id.entrantButton);
+        entrantButton.setVisibility(View.VISIBLE);
         if (!entrantButton.hasOnClickListeners()) {
             entrantButton.setOnClickListener(v -> {
                 if (user.isEntrant()) {
@@ -70,6 +72,7 @@ public class SelectRoleActivity extends AppCompatActivity {
 
         // Set up on organizer click listener
         Button organizerButton = findViewById(R.id.organizerButton);
+        organizerButton.setVisibility(View.VISIBLE);
         if (!organizerButton.hasOnClickListeners()) {
             organizerButton.setOnClickListener(v -> {
                 if (user.isOrganizer()) {
@@ -84,10 +87,11 @@ public class SelectRoleActivity extends AppCompatActivity {
                 }
             });
         }
+        Log.e("TEST", "view initialized");
     }
 
-    public void hideAdminButton() {
+    public void showAdminButton() {
         Button adminButton = findViewById(R.id.adminButton);
-        adminButton.setVisibility(View.GONE);
+        adminButton.setVisibility(View.VISIBLE);
     }
 }

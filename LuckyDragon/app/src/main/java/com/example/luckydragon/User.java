@@ -20,7 +20,7 @@ import java.util.Map;
  *   - This is only a basic implementation. Additional functionality should be added as needed.
  *   - Email and phone number may be optional. Additional constructors should be defined for these cases.
  */
-public class User extends Observable implements Serializable {
+public class User extends Observable {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private String deviceId;
@@ -214,5 +214,9 @@ public class User extends Observable implements Serializable {
 
     public Boolean isLoaded() {
         return isLoaded;
+    }
+
+    public void setIsLoaded(Boolean newIsLoaded) {
+        isLoaded = newIsLoaded;
     }
 }

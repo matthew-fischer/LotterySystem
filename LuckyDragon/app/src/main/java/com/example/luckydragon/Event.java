@@ -33,7 +33,7 @@ import java.util.Objects;
  * Issues:
  *   - could add another constructor for when waitlist limit is not specified (since it is optional)
  */
-public class Event implements Serializable {
+public class Event {
     /**
      * Represents a time as hours and minutes in 24 hour time.
      * e.g. 8:30 pm would have hours = 20 and minutes = 30
