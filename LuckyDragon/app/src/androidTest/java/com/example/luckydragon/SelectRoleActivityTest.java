@@ -91,7 +91,7 @@ public class SelectRoleActivityTest {
             // Assertions
             onView(withId(R.id.entrantButton)).check(matches(isDisplayed()));
             onView(withId(R.id.organizerButton)).check(matches(isDisplayed()));
-            onView(withId(R.id.adminButton)).check(matches((isDisplayed())));
+            onView(withId(R.id.adminButton)).check(matches((not(isDisplayed()))));
         }
     }
 }
