@@ -58,7 +58,6 @@ public class SignupActivity extends AppBarActivity {
 
         // Profile picture
         uploadProfilePictureButton = findViewById(R.id.uploadProfilePicture);
-//        profilePictureView = findViewById(R.id.signupProfilePicture);
 
         uploadImageResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -73,12 +72,14 @@ public class SignupActivity extends AppBarActivity {
 
                             try {
                                 profilePicture = MediaStore.Images.Media.getBitmap(getContentResolver(), image);
-//                                profilePictureView.setImageBitmap(profilePicture);
                             } catch (Exception e) {
                                 Log.e("signup", "error uploading pfp");
                             }
 
-                            // Add intent to crop image if that exists
+                            // TODO: Add intent to crop image and move it around when selecting if that exists
+                            // TODO: Scale properly
+                            profilePicture = Bitmap.createScaledBitmap(profilePicture, 120, 120, false);
+                            signupController.setProfilePicture(profilePicture);
                         }
                     }
                 });
@@ -115,7 +116,6 @@ public class SignupActivity extends AppBarActivity {
             intent.setType("image/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
             uploadImageResultLauncher.launch(intent);
-            signupController.setProfilePicture(profilePicture);
         });
 
         submitButton.setOnClickListener(view -> {

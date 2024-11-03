@@ -5,12 +5,16 @@
 package com.example.luckydragon;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +49,7 @@ public class User extends Observable implements Serializable {
     @Override
     public void notifyObservers() {
         super.notifyObservers();
-//        save();
+        save();
     }
 
     /**
@@ -82,7 +86,7 @@ public class User extends Observable implements Serializable {
                         }
                         isAdmin = userData.get("isAdmin") != null
                                 && userData.get("isAdmin").toString().equals("true");
-
+                        profilePicture = stringToBitmap((String)userData.get("profilePicture"));
                     }
 
 
@@ -107,9 +111,11 @@ public class User extends Observable implements Serializable {
         map.put("name", name);
         map.put("email", email);
         map.put("phoneNumber", phoneNumber);
-        map.put("profilePicture", profilePicture);
+        map.put("profilePicture", bitmapToString(profilePicture));
         db.collection("users").document(deviceId)
-                .set(map);
+                .set(map).addOnFailureListener(e -> {
+                    Log.e("SAVE DB", "fail");
+                });
     }
 
     // TODO: Implement, send error messages
@@ -231,5 +237,32 @@ public class User extends Observable implements Serializable {
 
     public Boolean isLoaded() {
         return isLoaded;
+    }
+
+    /**
+     * Converts bitmap to string
+     * @param image: the bitmap to convert to base 64 string
+     * @return image encoded as string
+     */
+    private String bitmapToString(Bitmap image) {
+        if (image == null) return "";
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(byteArray, Base64.DEFAULT);
+    }
+
+    /**
+     * Converts base64 string to bitmap
+     * @param base64Str: The base 64 string to convert to bitmap
+     * @return base64Str decoded to bitmap
+     */
+    public static Bitmap stringToBitmap(String base64Str) {
+        if (base64Str == null || base64Str.isEmpty()) return null;
+        byte[] decodedBytes = Base64.decode(
+                base64Str.substring(base64Str.indexOf(",")  + 1),
+                Base64.DEFAULT
+        );
+        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 }
