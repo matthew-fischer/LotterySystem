@@ -37,12 +37,12 @@ public abstract class AppBarActivity extends AppCompatActivity {
 //            Toast.makeText(this, "Click Profile Icon.", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
             startActivity(intent);
-        } else if (item.getItemId() == R.id.nav_events) {
-            Intent intent = new Intent(getApplicationContext(), EventActivity.class);
-            startActivity(intent);
-        } else if (item.getItemId() == R.id.nav_signup) {
-            Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
-            startActivity(intent);
+//        } else if (item.getItemId() == R.id.nav_events) {
+//            Intent intent = new Intent(getApplicationContext(), EventActivity.class);
+//            startActivity(intent);
+//        } else if (item.getItemId() == R.id.nav_signup) {
+//            Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
+//            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
