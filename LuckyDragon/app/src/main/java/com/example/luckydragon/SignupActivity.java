@@ -46,6 +46,14 @@ public class SignupActivity extends AppBarActivity {
         switchNotifications = findViewById(R.id.signupNotifications);
         submitButton = findViewById(R.id.signupSubmit);
 
+        setupListeners();
+    }
+
+    public void setSubmitButton(boolean enabled) {
+        submitButton.setEnabled(enabled);
+    }
+
+    private void setupListeners() {
         setListener(editName, () -> {
             // code that will run in x seconds
             signupController.extractName(editName);
@@ -75,11 +83,6 @@ public class SignupActivity extends AppBarActivity {
             signupController.becomeEntrant();
         });
     }
-
-    public void enableSubmit() {
-        submitButton.setEnabled(true);
-    }
-
 
     private void setListener(EditText editText, Runnable runnable) {
         Handler handler = new Handler();
