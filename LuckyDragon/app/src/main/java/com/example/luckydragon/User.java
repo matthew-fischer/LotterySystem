@@ -4,6 +4,8 @@
 
 package com.example.luckydragon;
 
+import android.graphics.Bitmap;
+
 import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -27,6 +29,7 @@ public class User extends Observable implements Serializable {
     private String name;
     private String email;
     private String phoneNumber;
+    private Bitmap profilePicture;
 
     private Boolean isLoaded = Boolean.FALSE;
 
@@ -34,7 +37,6 @@ public class User extends Observable implements Serializable {
     private Entrant entrant;
 
     private Boolean isAdmin = Boolean.FALSE;
-
     public User(String deviceId) {
         super();
         this.deviceId = deviceId;
@@ -163,6 +165,10 @@ public class User extends Observable implements Serializable {
     public void setEmail(String email) {
         this.email = email;
         notifyObservers();
+    }
+
+    public void setProfilePicture(Bitmap image) {
+
     }
 
     /**
