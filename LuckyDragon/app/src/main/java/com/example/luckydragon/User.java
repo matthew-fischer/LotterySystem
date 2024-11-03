@@ -215,4 +215,8 @@ public class User extends Observable implements Serializable {
     public Boolean isLoaded() {
         return isLoaded;
     }
+
+    public void setIsLoaded(Boolean newIsLoaded) {
+        isLoaded = newIsLoaded;
+    }
 }

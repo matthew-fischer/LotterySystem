@@ -19,6 +19,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.CoreMatchers.not;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -36,7 +37,6 @@ import org.junit.Test;
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class SelectRoleActivityTest {
-
     /**
      * TEST
      * Tests that only "Entrant" and "Organizer" buttons show for a user without admin privileges.
@@ -50,6 +50,7 @@ public class SelectRoleActivityTest {
         // Set user to a test object
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
         User testUser = new User("test");
+        testUser.setIsLoaded(true);
         globalApp.setUser(testUser);
 
         try(final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
@@ -78,6 +79,7 @@ public class SelectRoleActivityTest {
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
         User testUser = new User("test");
         testUser.setAdmin(true);
+        testUser.setIsLoaded(true);
         globalApp.setUser(testUser);
 
         try(final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {

@@ -29,8 +29,8 @@ public class SelectRoleView extends Observer {
             selectRoleActivity.initializeView();
         }
 
-        if (!getObservable().isAdmin()) {
-            selectRoleActivity.hideAdminButton();
+        if (getObservable().isAdmin()) {
+            selectRoleActivity.showAdminButton();
         }
     }
 }
