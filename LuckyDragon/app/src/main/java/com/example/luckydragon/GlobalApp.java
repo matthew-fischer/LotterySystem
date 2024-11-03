@@ -21,4 +21,8 @@ public class GlobalApp extends Application {
         }
         return user;
     }
+
+    public void setUser(User newUser) {
+        user = newUser;
+    }
 }
