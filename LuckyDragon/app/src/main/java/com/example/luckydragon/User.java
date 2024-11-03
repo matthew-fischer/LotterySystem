@@ -54,28 +54,35 @@ public class User extends Observable implements Serializable {
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     Map<String, Object> userData = documentSnapshot.getData();
-                    email = String.format("%s", userData.get("email"));
-                    name = String.format("%s", userData.get("name"));
-                    phoneNumber = String.format("%s", userData.get("phoneNumber"));
+                    if (userData == null) {
+                        // create new user with empty info
+                        save();
+                    } else {
+                        email = String.format("%s", userData.get("email"));
+                        name = String.format("%s", userData.get("name"));
+                        phoneNumber = String.format("%s", userData.get("phoneNumber"));
 
-                    boolean isEntrant = userData.get("isEntrant") != null
-                            && userData.get("isEntrant").toString().equals("true");
-                    if (isEntrant) {
-                        entrant = new Entrant();
-                    }
-                    boolean isOrganizer = userData.get("isOrganizer") != null
-                            && userData.get("isOrganizer").toString().equals("true");
-                    if (isOrganizer) {
-                        String facility = String.format("%s", userData.get("facility"));
-
-                        if (facility != null) {
-                            organizer = new Organizer(facility);
-                        } else {
-                            organizer = new Organizer();
+                        boolean isEntrant = userData.get("isEntrant") != null
+                                && userData.get("isEntrant").toString().equals("true");
+                        if (isEntrant) {
+                            entrant = new Entrant();
                         }
+                        boolean isOrganizer = userData.get("isOrganizer") != null
+                                && userData.get("isOrganizer").toString().equals("true");
+                        if (isOrganizer) {
+                            String facility = String.format("%s", userData.get("facility"));
+
+                            if (facility != null) {
+                                organizer = new Organizer(facility);
+                            } else {
+                                organizer = new Organizer();
+                            }
+                        }
+                        isAdmin = userData.get("isAdmin") != null
+                                && userData.get("isAdmin").toString().equals("true");
+
                     }
-                    isAdmin = userData.get("isAdmin") != null
-                            && userData.get("isAdmin").toString().equals("true");
+
 
                     isLoaded = true;
                     notifyObservers();
