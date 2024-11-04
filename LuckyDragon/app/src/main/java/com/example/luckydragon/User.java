@@ -4,6 +4,8 @@
 
 package com.example.luckydragon;
 
+import static java.util.Objects.nonNull;
+
 import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -12,6 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Represents a User object.
@@ -58,9 +61,10 @@ public class User extends Observable {
                         // create new user with empty info
                         save();
                     } else {
-                        email = String.format("%s", userData.get("email"));
-                        name = String.format("%s", userData.get("name"));
-                        phoneNumber = String.format("%s", userData.get("phoneNumber"));
+                        name = userData.get("name") != null ? Objects.requireNonNull(userData.get("name")).toString() : null;
+                        email = userData.get("email") != null ? Objects.requireNonNull(userData.get("email")).toString() : null;
+                        phoneNumber = userData.get("phoneNumber") != null ? Objects.requireNonNull(userData.get("phoneNumber")).toString() : null;
+                        assert(name != null);
 
                         boolean isEntrant = userData.get("isEntrant") != null
                                 && userData.get("isEntrant").toString().equals("true");
@@ -103,8 +107,8 @@ public class User extends Observable {
         }
 
         map.put("name", name);
-        map.put("email", email);
-        map.put("phoneNumber", phoneNumber);
+        map.put("email", nonNull(email) ? email : null);
+        map.put("phoneNumber", nonNull(phoneNumber) ? phoneNumber : null);
 
         db.collection("users").document(deviceId)
                 .set(map);

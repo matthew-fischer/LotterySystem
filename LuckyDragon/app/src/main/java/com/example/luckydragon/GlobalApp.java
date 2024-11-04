@@ -10,7 +10,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.Map;
 
 public class GlobalApp extends Application {
+    public enum ROLE {
+        ENTRANT,
+        ORGANIZER,
+        ADMINISTRATOR
+    }
     private User user;
+    private ROLE role;
 
     public User getUser() {
         if (user == null) {
@@ -21,7 +27,15 @@ public class GlobalApp extends Application {
         return user;
     }
 
+    public ROLE getRole() {
+        return role;
+    }
+
     public void setUser(User newUser) {
         user = newUser;
+    }
+
+    public void setRole(ROLE role) {
+        this.role = role;
     }
 }

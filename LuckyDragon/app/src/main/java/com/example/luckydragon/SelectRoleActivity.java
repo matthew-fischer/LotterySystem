@@ -47,7 +47,6 @@ public class SelectRoleActivity extends AppCompatActivity {
     }
 
     public void initializeView() {
-        Log.e("TEST", "starting initialize view");
         // Set content view (don't do this until after user has been fetched from db)
         setContentView(R.layout.select_role_page); // set content to role page
 
@@ -56,6 +55,8 @@ public class SelectRoleActivity extends AppCompatActivity {
         entrantButton.setVisibility(View.VISIBLE);
         if (!entrantButton.hasOnClickListeners()) {
             entrantButton.setOnClickListener(v -> {
+                // Set GlobalApp role to entrant
+                ((GlobalApp) getApplication()).setRole(GlobalApp.ROLE.ENTRANT);
                 if (user.isEntrant()) {
                     // Create profile intent
                     Intent profileIntent = new Intent(this, ProfileActivity.class);
@@ -75,6 +76,8 @@ public class SelectRoleActivity extends AppCompatActivity {
         organizerButton.setVisibility(View.VISIBLE);
         if (!organizerButton.hasOnClickListeners()) {
             organizerButton.setOnClickListener(v -> {
+                // Set GlobalApp role to organizer
+                ((GlobalApp) getApplication()).setRole(GlobalApp.ROLE.ORGANIZER);
                 if (user.isOrganizer()) {
                     // Create profile intent
                     Intent profileIntent = new Intent(this, ProfileActivity.class);
@@ -87,7 +90,6 @@ public class SelectRoleActivity extends AppCompatActivity {
                 }
             });
         }
-        Log.e("TEST", "view initialized");
     }
 
     public void showAdminButton() {
