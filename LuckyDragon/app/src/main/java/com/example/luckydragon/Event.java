@@ -73,6 +73,8 @@ public class Event extends Observable {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private List<String> waitList = new ArrayList<>();
+    private List<String> inviteeList = new ArrayList<>();
+    private List<String> attendeeList = new ArrayList<>();
 
     public Event() {
         qrHash = generateQRCode();
@@ -95,6 +97,7 @@ public class Event extends Observable {
      * @param date: the date of the event, as a string YY-MM-DD
      * @param timeHours: the hour time e.g. "8" for 8:30
      * @param timeMinutes: the minute time e.g. "30" for 8:30
+     * @param waitList the waitlist for this event
      */
     public Event(String name, String organizerDeviceID, String organizerName, String facility, @Nullable Integer waitListLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes, List<String> waitList)  {
         this.name = name;
@@ -106,6 +109,7 @@ public class Event extends Observable {
         this.date = date;
         this.time = new Time(timeHours, timeMinutes);
         this.qrHash = generateQRCode();
+        this.waitList = waitList;
     }
 
     // TODO: Do we need 2 similar constructors?
@@ -133,7 +137,6 @@ public class Event extends Observable {
         this.time = new Time(timeHours, timeMinutes);
         this.qrHash = generateQRCode();
         this.qrCode = createBitMap(this.qrHash);
-        this.waitList = waitList;
     }
 
 
@@ -157,7 +160,9 @@ public class Event extends Observable {
         eventData.put("Hours", time.hours);
         eventData.put("Minutes", time.minutes);
         eventData.put("HashedQR", qrHash.toString("1", "0"));
-        eventData.put("Waitlist", waitList);
+        eventData.put("waitList", waitList);
+        eventData.put("inviteeList", inviteeList);
+        eventData.put("attendeeList", attendeeList);
 
         if (id != null) {
             db.collection("users").document(id)
@@ -172,12 +177,69 @@ public class Event extends Observable {
                     });
         }
     }
+    public void fetchData() {
+        DocumentReference docRef = db.collection("events").document(id);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    throw new RuntimeException("Database read failed.");
+                }
+                DocumentSnapshot eventDocument = task.getResult();
+                if (!eventDocument.exists()) {
+                    throw new RuntimeException("Event Document does not exist.");
+                }
+                Map<String, Object> eventData = eventDocument.getData();
+                if (eventData == null) {
+                    throw new RuntimeException("Event has no data.");
+                }
+                name = (String) eventData.get("name");
+                facility = (String) eventData.get("facility");
+                date = (String) eventData.get("date");
+                time = new Time((int) (long) eventData.get("hours"), (int) (long) eventData.get("minutes"));
+                attendeeLimit = (int) (long) eventData.get("attendeeLimit");
+                if (eventData.get("WaitlistLimit") == null) {
+                    waitListLimit = -1;
+                } else {
+                    waitListLimit = (int) (long) eventData.get("waitListLimit");
+                }
+                waitList = (List<String>) eventData.get("waitList");
+                notifyObservers();
+            }
+        });
+    }
 
     /** Remove deviceId from waitList when cancel button is clicked
      * @param deviceID users unique deviceID
      */
     public void removeFromWaitList(String deviceID) {
         waitList.remove(deviceID);
+    }
+
+    /**
+     * Returns a random entrant's deviceID from the waitlist.
+     * In the case that there is no one in the waitlist, returns null.
+     * @return the deviceID of the randomly chosen entrant, or null if list is empty
+     */
+    public String drawEntrantFromWaitList() {
+        if (waitList.isEmpty()) {
+            return null;
+        }
+        int randomIndex = (int) (Math.random() * waitList.size());
+
+        return waitList.get(randomIndex);
+    }
+
+    /**
+     * Samples entrants from the waitlist and moves them to the invitee list.
+     * TODO: This should also notify the invited entrants.
+     */
+    public void sampleEntrantsFromWaitList() {
+        while (attendeeList.size() + inviteeList.size() < attendeeLimit && !waitList.isEmpty()) {
+            String sampledEntrant = drawEntrantFromWaitList();
+            inviteeList.add(sampledEntrant);
+            removeFromWaitList(sampledEntrant);
+        }
     }
 
     /**
@@ -246,38 +308,6 @@ public class Event extends Observable {
         }
         // DO IMAGEVIEW HERE.
         return bitMap;
-    }
-
-    public void fetchData() {
-        DocumentReference docRef = db.collection("events").document(id);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (!task.isSuccessful()) {
-                    throw new RuntimeException("Database read failed.");
-                }
-                DocumentSnapshot eventDocument = task.getResult();
-                if (!eventDocument.exists()) {
-                    throw new RuntimeException("Event Document does not exist.");
-                }
-                Map<String, Object> eventData = eventDocument.getData();
-                if (eventData == null) {
-                    throw new RuntimeException("Event has no data.");
-                }
-                name = (String) eventData.get("Name");
-                facility = (String) eventData.get("Facility");
-                date = (String) eventData.get("Date");
-                time = new Time((int) (long) eventData.get("Hours"), (int) (long) eventData.get("Minutes"));
-                attendeeLimit = (int) (long) eventData.get("AttendeeLimit");
-                if (eventData.get("WaitlistLimit") == null) {
-                    waitListLimit = -1;
-                } else {
-                    waitListLimit = (int) (long) eventData.get("WaitlistLimit");
-                }
-                waitList = (List<String>) eventData.get("Waitlist");
-                notifyObservers();
-            }
-        });
     }
 
     public void waitList(String deviceId) {

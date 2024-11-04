@@ -48,6 +48,7 @@ public class EventActivity extends AppBarActivity {
 
         eventView = new EventView(event, deviceId, this);
 
+        Button signUp = findViewById(R.id.signUpButton);
         // Signup button will put their deviceID on the waitlist.
         signUp.setOnClickListener(v -> {
             eventController.waitList(deviceId);
