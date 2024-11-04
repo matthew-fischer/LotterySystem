@@ -20,6 +20,10 @@ public class EventController extends Controller {
         getObservable().waitList(deviceId);
     }
 
+    public void leaveWaitList(String deviceId) {
+        getObservable().leaveWaitList(deviceId);
+    }
+
 //    public void extractEmail(EditText editEmail) {
 //        // TODO: input validation
 //        String email = editEmail.getText().toString();

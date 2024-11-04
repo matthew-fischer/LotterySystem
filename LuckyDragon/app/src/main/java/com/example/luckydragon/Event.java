@@ -59,6 +59,8 @@ public class Event extends Observable {
             return String.format("%02d:%02d %s", hours, minutes, AMorPM);
         }
     }
+    private transient FirebaseFirestore db = FirebaseFirestore.getInstance();
+
     private String id = "";
     private String name = "";
     private String organizerName = "";
@@ -70,11 +72,11 @@ public class Event extends Observable {
     private Time time = new Time(0, 0);
     private BitMatrix qrHash;
     private Bitmap qrCode;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private List<String> waitList = new ArrayList<>();
     private List<String> inviteeList = new ArrayList<>();
     private List<String> attendeeList = new ArrayList<>();
+    private List<String> cancelledList = new ArrayList<>();
 
     public Event() {
         qrHash = generateQRCode();
@@ -313,6 +315,12 @@ public class Event extends Observable {
     public void waitList(String deviceId) {
         if (!waitList.contains(deviceId)) {
             waitList.add(deviceId);
+            notifyObservers();
+        }
+    }
+    public void leaveWaitList(String deviceId) {
+        if (waitList.contains(deviceId)) {
+            waitList.remove(deviceId);
             notifyObservers();
         }
     }

@@ -50,20 +50,36 @@ public class EventView extends Observer {
         eventNameView.setText(getObservable().getName());
         facilityNameView.setText(getObservable().getFacility());
         dateAndTimeView.setText(getObservable().getDateAndTime());
-        waitlistSpotsView.setText(String.format("Waitlist Spots: %s", getObservable().getWaitListSpots()));
-        attendeeSpotsView.setText(String.format("Attendee Spots: %s", getObservable().getAttendeeSpots()));
+
+        // set list limit counts
+        if (getObservable().getWaitListSpots() == -1) {
+            waitlistSpotsView.setText("Waitlist Spots: Unlimited");
+        } else {
+            waitlistSpotsView.setText(String.format("Waitlist Spots: %s", getObservable().getWaitListSpots()));
+        }
+        if (getObservable().getAttendeeSpots() == -1) {
+            attendeeSpotsView.setText("Attendee Spots: Unlimited");
+        } else {
+            attendeeSpotsView.setText(String.format("Attendee Spots: %s", getObservable().getAttendeeSpots()));
+        }
+        // set current count
         currentlyJoinedView.setText(String.format("Currently Joined: %s", getObservable().getCurrentlyJoined()));
-        // Switch mode to waitlist view
+
         if (getObservable().onWaitList(deviceId)) {
+            // Switch mode to waitlist view
             // TODO:
             signUp.setVisibility(View.GONE);
             notSelectedText.setVisibility(View.GONE);
             cancel.setVisibility(View.VISIBLE);
             decline.setVisibility(View.GONE);
             accept.setVisibility(View.GONE);
-        } else if (true) {
-
+        } else {
+            // Default mode is signup view
+            signUp.setVisibility(View.VISIBLE);
+            notSelectedText.setVisibility(View.GONE);
+            cancel.setVisibility(View.GONE);
+            decline.setVisibility(View.GONE);
+            accept.setVisibility(View.GONE);
         }
-        // Default mode is signup view
     }
 }
