@@ -25,10 +25,13 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
+import java.util.Objects;
+
 public class SignupActivity extends AppBarActivity {
     private User user;
     private SignupController signupController;
     private SignupView signupView;
+    private String role;
 
     private TextInputEditText editName;
     private TextInputEditText editEmail;
@@ -44,6 +47,10 @@ public class SignupActivity extends AppBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup_material);
         getSupportActionBar().setTitle("Sign-Up");
+
+        // Get intent
+        role = getIntent().getStringExtra("role");
+        Objects.requireNonNull(role, "Signup activity launched without a role!");
 
         // Get input fields
         editName = findViewById(R.id.signupName);
@@ -171,7 +178,7 @@ public class SignupActivity extends AppBarActivity {
 
             // tell activity to launch profile
             Intent intent = new Intent(this, ProfileActivity.class);
-            intent.putExtra("role", "ENTRANT");
+            intent.putExtra("role", role);
 
             // Start profile activity
             startActivity(intent);

@@ -69,6 +69,7 @@ public class ProfileActivity extends AppBarActivity {
         edit_profile_button.setOnClickListener(view -> {
             // Create intent to go to signup
             Intent signupIntent = new Intent(this, SignupActivity.class);
+            signupIntent.putExtra("role", role);
             startActivity(signupIntent);
         });
         // Create profile fragment
