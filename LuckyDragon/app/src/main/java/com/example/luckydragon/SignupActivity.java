@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Switch;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
@@ -22,7 +21,6 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.Nullable;
 
 public class SignupActivity extends AppBarActivity {
     private User user;
@@ -103,18 +101,21 @@ public class SignupActivity extends AppBarActivity {
     private void setupListeners() {
         setListener(editName, () -> {
             // code that will run in x seconds
-            signupController.extractName(editName);
-            // TODO: input validation
+            try {
+                signupController.extractName(editName);
+            } catch(Exception ignored) {};
         });
         setListener(editEmail, () -> {
             // code that will run in x seconds
-            signupController.extractEmail(editEmail);
-            // TODO: input validation
+            try {
+                signupController.extractEmail(editEmail);
+            } catch (Exception ignored) {};
         });
         setListener(editPhone, () -> {
             // code that will run in x seconds
-            signupController.extractPhoneNumber(editPhone);
-            // TODO: input validation
+            try {
+                signupController.extractPhoneNumber(editPhone);
+            } catch(Exception ignored) {};
         });
 
         // set listener for uploading pfp button
@@ -126,6 +127,29 @@ public class SignupActivity extends AppBarActivity {
         });
 
         submitButton.setOnClickListener(view -> {
+
+            // Validate input fields
+            boolean valid = true;
+            try {
+                signupController.extractName(editName);
+            } catch (Exception e) {
+                editName.setError(e.getMessage());
+                valid = false;
+            }
+            try {
+                signupController.extractEmail(editEmail);
+            } catch(Exception e) {
+                editEmail.setError(e.getMessage());
+                valid = false;
+            }
+            try {
+                signupController.extractPhoneNumber(editPhone);
+            } catch (Exception e) {
+                editEmail.setError(e.getMessage());
+                valid = false;
+            }
+            if (!valid) return;
+
             // tell activity to launch profile
             Intent intent = new Intent(this, ProfileActivity.class);
             intent.putExtra("role", "ENTRANT");
