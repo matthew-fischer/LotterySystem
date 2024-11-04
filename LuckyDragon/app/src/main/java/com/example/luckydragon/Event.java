@@ -71,7 +71,7 @@ public class Event extends Observable {
     private String facility = "";
     private Integer waitListLimit = -1;
     private Integer attendeeLimit = -1;
-    private String date = "";
+    private String date = LocalDate.now().toString();
     private Time time = new Time(0, 0);
     private BitMatrix qrHash;
     private Bitmap qrCode;
@@ -370,16 +370,10 @@ public class Event extends Observable {
     }
 
     public String getTime12h() {
-        if (time == null) {
-            return "Time";
-        }
         return time.toString12h();
     }
 
     public String getDate() {
-        if (date.isEmpty()) {
-            return LocalDate.now().toString();
-        }
         return date;
     }
 
