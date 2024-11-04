@@ -1,17 +1,27 @@
 package com.example.luckydragon;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Switch;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 
 public class SignupActivity extends AppBarActivity {
@@ -24,7 +34,10 @@ public class SignupActivity extends AppBarActivity {
     private EditText editPhone;
     private SwitchMaterial switchNotifications;
     private Button submitButton;
-
+    private ImageButton uploadProfilePictureButton;
+    private ActivityResultLauncher<Intent> uploadImageResultLauncher;
+    private Bitmap profilePicture;
+    private ImageView profilePictureView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +55,41 @@ public class SignupActivity extends AppBarActivity {
         editName = findViewById(R.id.signupName);
         editEmail = findViewById(R.id.signupEmail);
         editPhone = findViewById(R.id.signupPhone);
-        // TODO: Profile photo
+
+        // Profile picture
+        uploadProfilePictureButton = findViewById(R.id.uploadProfilePicture);
+
+        uploadImageResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            // There are no request codes
+                            Intent data = result.getData();
+                            Uri image = data.getData();
+                            assert(image != null);
+
+                            try {
+                                profilePicture = MediaStore.Images.Media.getBitmap(getContentResolver(), image);
+                            } catch (Exception e) {
+                                Log.e("signup", "error uploading pfp");
+                            }
+
+                            // TODO: Add intent to crop image and move it around when selecting if that exists
+
+                            // Crop image to square
+                            int n = Math.min(profilePicture.getWidth(), profilePicture.getHeight());
+                            profilePicture = Bitmap.createBitmap(profilePicture, 0, 0, n, n);
+
+                            // Scale image to proper size
+                            int width = ((GlobalApp) getApplication()).profilePictureSize.getWidth();
+                            int height = ((GlobalApp) getApplication()).profilePictureSize.getHeight();
+                            profilePicture = Bitmap.createScaledBitmap(profilePicture, width, height, false);
+                            signupController.setProfilePicture(profilePicture);
+                        }
+                    }
+                });
         switchNotifications = findViewById(R.id.signupNotifications);
         submitButton = findViewById(R.id.signupSubmit);
 
@@ -68,6 +115,14 @@ public class SignupActivity extends AppBarActivity {
             // code that will run in x seconds
             signupController.extractPhoneNumber(editPhone);
             // TODO: input validation
+        });
+
+        // set listener for uploading pfp button
+        uploadProfilePictureButton.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            uploadImageResultLauncher.launch(intent);
         });
 
         submitButton.setOnClickListener(view -> {

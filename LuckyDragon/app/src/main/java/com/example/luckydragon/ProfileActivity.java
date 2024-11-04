@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,10 +55,12 @@ public class ProfileActivity extends AppBarActivity {
         TextView nameView = findViewById(R.id.nameTextView);
         TextView emailView = findViewById(R.id.emailTextView);
         TextView phoneNumberView = findViewById(R.id.phoneNumberTextView);
+        ImageView profilePictureView = findViewById(R.id.profilePicture);
+
         nameView.setText(user.getName());
         emailView.setText(user.getEmail());
         phoneNumberView.setText(user.getPhoneNumber());
-
+        profilePictureView.setImageBitmap(user.getProfilePicture());
         // Create profile fragment
         if (Objects.equals(role, "ORGANIZER")) {
             // Create Organizer
