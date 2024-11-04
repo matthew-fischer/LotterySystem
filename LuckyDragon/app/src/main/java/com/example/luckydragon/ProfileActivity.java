@@ -70,6 +70,7 @@ public class ProfileActivity extends AppBarActivity {
         edit_profile_button.setOnClickListener(view -> {
             // Create intent to go to signup
             Intent signupIntent = new Intent(this, SignupActivity.class);
+            signupIntent.putExtra("role", role);
             startActivity(signupIntent);
         });
         // Create profile fragment
@@ -100,7 +101,12 @@ public class ProfileActivity extends AppBarActivity {
         }
     }
 
+    // TODO: REMOVE
     public User getUser() {
         return user;
+    }
+
+    public void sendToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

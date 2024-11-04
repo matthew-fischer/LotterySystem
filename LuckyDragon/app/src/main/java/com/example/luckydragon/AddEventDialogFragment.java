@@ -36,11 +36,13 @@ import java.util.List;
 import java.util.Objects;
 
 public class AddEventDialogFragment extends DialogFragment {
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-
     @Nullable private Integer timeHours = null;
     @Nullable private Integer timeMinutes = null;
     @Nullable private String date = null;
+    Event event;
+    AddEventController controller;
+    AddEventView eventView;
+
 
     @NonNull
     @Override
@@ -48,67 +50,51 @@ public class AddEventDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
-        ProfileActivity parent = (ProfileActivity)getActivity();
-        String organizerDeviceID = Objects.requireNonNull(parent).getUser().getDeviceId();
-        String organizerName = Objects.requireNonNull(parent).getUser().getName();
+        // Now, inflate view
+        View dialogView = inflater.inflate(R.layout.dialog_create_event_material, null);
 
+        ProfileActivity activity = Objects.requireNonNull((ProfileActivity) getActivity(), "Activity is null in AddEventDialogFramgent!");
+        String organizerDeviceID = activity.getUser().getDeviceId();
+        String organizerName = activity.getUser().getName();
         // We know the user is an organizer if they are adding an event. Thus we can cast to Organizer.
-        String facilityName = (Objects.requireNonNull(parent).getUser()).getOrganizer().getFacility();
+        String facilityName = activity.getUser().getOrganizer().getFacility();
+
+        // MVC
+        // TODO: restore an in progress event creation OR, save to db if all data is valid.
+        event = ((GlobalApp) activity.getApplication()).makeEvent();
+        // Set event attr we know (and before it is observed)
+        event.setOrganizerName(organizerName);
+        event.setOrganizerDeviceId(organizerDeviceID);
+        event.setFacility(facilityName);
+
+        controller = new AddEventController(event, activity);
 
         Fragment parentFragment = getParentFragment();
         OrganizerProfileFragment organizerProfile = (OrganizerProfileFragment) parentFragment;
 
-        View dialogView = inflater.inflate(R.layout.dialog_create_event_material, null);
-
-        // Set facility text
+        // Set facility text to organizer's facility
         TextInputEditText facilityEditText = dialogView.findViewById(R.id.facilityEditText);
-        String facility = (parent.getUser()).getOrganizer().getFacility();
+        String facility = activity.getUser().getOrganizer().getFacility();
         facilityEditText.setText(facility);
 
         return builder.setView(dialogView)
-                .setPositiveButton("Create", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Dialog dialog = getDialog();
+                .setPositiveButton("Create", (dialogInterface, i) -> {
+                    Dialog dialog = getDialog();
 
-                        // get field values
-                        TextInputEditText eventNameEditText = dialog.findViewById(R.id.eventNameEditText);
-                        TextInputEditText waitlistLimitEditText = dialog.findViewById(R.id.waitlistLimitEditText);
-                        TextInputEditText attendeeLimitEditText = dialog.findViewById(R.id.attendeeLimitEditText);
+                    // TODO: make sure we only want to extract event on submit
+                    // get fields
+                    TextInputEditText eventNameEditText = dialogView.findViewById(R.id.eventNameEditText);
+                    TextInputEditText waitlistLimitEditText = dialogView.findViewById(R.id.waitlistLimitEditText);
+                    TextInputEditText attendeeLimitEditText = dialogView.findViewById(R.id.attendeeLimitEditText);
 
-                        String eventName = eventNameEditText.getText().toString();
-                        String waitlistLimitStr = waitlistLimitEditText.getText().toString();
-                        String attendeeLimitStr = attendeeLimitEditText.getText().toString();
+                    // extract event (auto added to db)
+                    controller.extractName(eventNameEditText);
+                    controller.extractWaitLimit(waitlistLimitEditText);
+                    controller.extractAttendeeLimit(attendeeLimitEditText);
 
-                        // Validate input
-                        if(eventName.isEmpty() || attendeeLimitStr.isEmpty()) {
-                            Toast.makeText(getContext(), "Fields cannot be empty!", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
+                    // TODO: Make view reply if event with same info has been created upon save attempt
 
-                        // add event to database if one with the same info does not already exist
-//                        DocumentReference eventRef = db.collection("events").document();
-                        // create event
-                        List<String> waitList = new ArrayList<String>();
-                        // TODO: Move to controller and then make view reply if event with same info has been created upon save attempt
-                        Event event = new Event(
-                                eventName,
-                                organizerDeviceID,
-                                organizerName,
-                                facilityName,
-                                waitlistLimitStr.isEmpty() ? null : Integer.parseInt(waitlistLimitStr),
-                                Integer.parseInt(attendeeLimitStr),
-                                date,
-                                timeHours,
-                                timeMinutes,
-                                waitList
-                        );
-
-                        organizerProfile.addEvent(event);
-
-                        // Add event to database
-                        event.save();
-                    }
+                    organizerProfile.addEvent(event);
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
@@ -122,6 +108,10 @@ public class AddEventDialogFragment extends DialogFragment {
     public void onStart() {
         super.onStart();
         Dialog dialog = getDialog();
+        Objects.requireNonNull(dialog);
+
+        // make view
+        eventView = new AddEventView(event, this);
 
         // Set up time picker
         MaterialTextView timeTextView = dialog.findViewById(R.id.timeTextView);
@@ -135,18 +125,7 @@ public class AddEventDialogFragment extends DialogFragment {
                             .setInputMode(MaterialTimePicker.INPUT_MODE_KEYBOARD)
                             .build();
             picker.addOnPositiveButtonClickListener(p -> {
-                timeHours = picker.getHour();
-                timeMinutes = picker.getMinute();
-                if(timeHours == 0) {
-                    timeTextView.setText(String.format("%02d:%02d AM", timeHours + 12, timeMinutes));
-                }
-                else if(timeHours < 12) {
-                    timeTextView.setText(String.format("%02d:%02d AM", timeHours, timeMinutes));
-                } else if(timeHours == 12) {
-                    timeTextView.setText(String.format("%02d:%02d PM", timeHours, timeMinutes));
-                } else {
-                    timeTextView.setText(String.format("%02d:%02d PM", timeHours - 12, timeMinutes));
-                }
+                controller.extractTime(picker);
             });
             picker.show(getParentFragmentManager(), "Event time picker");
         });
@@ -159,12 +138,8 @@ public class AddEventDialogFragment extends DialogFragment {
                             .setTitleText("Select Event Date")
                             .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                             .build();
-            picker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Long>() {
-                @Override public void onPositiveButtonClick(Long selection) {
-                    Instant dateInstant = Instant.ofEpochMilli(selection);
-                    date = dateInstant.toString().substring(0, 10);
-                    dateTextView.setText(date);
-                }
+            picker.addOnPositiveButtonClickListener(selection -> {
+                controller.extractDate(selection);
             });
             picker.show(getParentFragmentManager(), "Event date picker");
         });

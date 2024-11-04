@@ -65,6 +65,7 @@ public class SelectRoleActivity extends AppCompatActivity {
                 } else {
                     // Send to entrant signup
                     Intent signupIntent = new Intent(this, SignupActivity.class);
+                    signupIntent.putExtra("role", "ENTRANT");
                     startActivity(signupIntent);
                 }
             });

@@ -87,7 +87,7 @@ public class OrganizerProfileFragment extends Fragment {
 
         // Get events
         db.collection("events")
-                .whereEqualTo("OrganizerDeviceID", parent.getUser().getDeviceId())
+                .whereEqualTo("organizerDeviceId", parent.getUser().getDeviceId())
                 .get()
                 .addOnCompleteListener((task) -> {
                     if (task.isSuccessful()) {
@@ -95,17 +95,17 @@ public class OrganizerProfileFragment extends Fragment {
                         Map<String, Object> eventData;
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             eventData = document.getData();
-                            System.out.println(eventData.get("WaitlistLimit"));
+                            System.out.println(eventData.get("waitListLimit"));
                             Event event = new Event(
                                     document.getId(),
-                                    eventData.get("Name") == null ? null : String.format("%s", eventData.get("Name")),
-                                    eventData.get("OrganizerDeviceID") == null ? null : String.format("%s", eventData.get("OrganizerDeviceID")),
-                                    eventData.get("Facility") == null ? null : String.format("%s", eventData.get("Facility")),
-                                    eventData.get("WaitlistLimit") == null ? null : Integer.valueOf(String.format("%s", eventData.get("WaitlistLimit"))),
-                                    eventData.get("AttendeeLimit") == null ? null : Integer.valueOf(String.format("%s", eventData.get("AttendeeLimit"))),
-                                    eventData.get("Date") == null ? null : String.format("%s", eventData.get("Date")),
-                                    eventData.get("Hours") == null ? null : Integer.valueOf(String.format("%s", eventData.get("Hours"))),
-                                    eventData.get("Minutes") == null ? null : Integer.valueOf(String.format("%s", eventData.get("Minutes")))
+                                    eventData.get("name") == null ? null : String.format("%s", eventData.get("name")),
+                                    eventData.get("organizerDeviceId") == null ? null : String.format("%s", eventData.get("organizerDeviceId")),
+                                    eventData.get("facility") == null ? null : String.format("%s", eventData.get("facility")),
+                                    eventData.get("waitListLimit") == null ? null : Integer.valueOf(String.format("%s", eventData.get("waitListLimit"))),
+                                    eventData.get("attendeeLimit") == null ? null : Integer.valueOf(String.format("%s", eventData.get("attendeeLimit"))),
+                                    eventData.get("date") == null ? null : String.format("%s", eventData.get("date")),
+                                    eventData.get("hours") == null ? null : Integer.valueOf(String.format("%s", eventData.get("hours"))),
+                                    eventData.get("minutes") == null ? null : Integer.valueOf(String.format("%s", eventData.get("minutes")))
                             );
                             eventSet.add(event);
                             eventList.add(event);
