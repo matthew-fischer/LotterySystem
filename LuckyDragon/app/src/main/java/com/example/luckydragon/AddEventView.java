@@ -2,32 +2,25 @@ package com.example.luckydragon;
 
 import android.widget.TextView;
 
+import androidx.fragment.app.DialogFragment;
+
+import org.w3c.dom.Text;
+
+import java.time.Instant;
+import java.util.Objects;
+
 public class AddEventView extends Observer {
-    private TextView eventNameView;
-    private TextView facilityNameView;
-    private TextView dateAndTimeView;
-    private TextView waitlistSpotsView;
-    private TextView attendeeSpotsView;
-    private TextView currentlyJoinedView;
+    private AddEventDialogFragment fragment;
+    private TextView timeTextView;
+    private TextView dateTextView;
 
     private String deviceId;
 
-    public AddEventView(
-            Event event,
-            String deviceId,
-            TextView eventNameView,
-            TextView facilityNameView,
-            TextView dateAndTimeView,
-            TextView waitlistSpotsView,
-            TextView attendeeSpotsView,
-            TextView currentlyJoinedView
-    ) {
-        this.eventNameView = eventNameView;
-        this.facilityNameView = facilityNameView;
-        this.dateAndTimeView = dateAndTimeView;
-        this.waitlistSpotsView = waitlistSpotsView;
-        this.attendeeSpotsView = attendeeSpotsView;
-        this.currentlyJoinedView = currentlyJoinedView;
+    public AddEventView(Event event, AddEventDialogFragment fragment) {
+        this.fragment = fragment;
+        Objects.requireNonNull(fragment.getDialog());
+        timeTextView = fragment.getDialog().findViewById(R.id.timeTextView);
+        dateTextView = fragment.getDialog().findViewById(R.id.dateTextView);
         startObserving(event);
     }
 
@@ -38,16 +31,10 @@ public class AddEventView extends Observer {
 
     @Override
     public void update(Observable whoUpdatedMe) {
-        eventNameView.setText(getObservable().getName());
-        facilityNameView.setText(getObservable().getFacility());
-        dateAndTimeView.setText(getObservable().getDateAndTime());
-        waitlistSpotsView.setText(String.format("Waitlist Spots: %s", getObservable().getWaitListSpots()));
-        attendeeSpotsView.setText(String.format("Attendee Spots: %s", getObservable().getAttendeeSpots()));
-        currentlyJoinedView.setText(String.format("Currently Joined: %s", getObservable().getWaitListSize()));
-        // Switch mode to waitlist view
-        if (getObservable().onWaitList(deviceId)) {
-            // TODO:
-        }
-        // Default mode is signup view
+        String time = getObservable().getTime12h();
+        timeTextView.setText(time);
+
+        String date = getObservable().getDate();
+        dateTextView.setText(date);
     }
 }

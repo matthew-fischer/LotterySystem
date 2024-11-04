@@ -41,4 +41,11 @@ public class GlobalApp extends Application {
         }
         return event;
     }
+
+    public Event makeEvent() {
+        // create an eventId
+        Event event = new Event();
+
+        return getEvent(event.getId());
+    }
 }

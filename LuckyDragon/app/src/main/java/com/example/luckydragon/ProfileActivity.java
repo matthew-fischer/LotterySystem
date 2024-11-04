@@ -93,7 +93,12 @@ public class ProfileActivity extends AppBarActivity {
         }
     }
 
+    // TODO: REMOVE
     public User getUser() {
         return user;
+    }
+
+    public void sendToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

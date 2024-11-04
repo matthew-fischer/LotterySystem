@@ -21,6 +21,9 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
+import java.lang.reflect.Array;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,7 +64,7 @@ public class Event extends Observable {
     }
     private transient FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    private String id = "";
+    private String id;
     private String name = "";
     private String organizerName = "";
     private String organizerDeviceId = "";
@@ -79,13 +82,14 @@ public class Event extends Observable {
     private List<String> cancelledList = new ArrayList<>();
 
     public Event() {
+        id = db.collection("events").document().getId();
         qrHash = generateQRCode();
     }
 
     public Event(String id) {
         super();
         this.id = id;
-        qrHash = generateQRCode();
+        qrHash = generateQRCode();  // TODO: load from db
     }
 
     /**
@@ -167,20 +171,17 @@ public class Event extends Observable {
         eventData.put("attendeeList", attendeeList);
         eventData.put("cancelledList", cancelledList);
 
-        if (id != null) {
-            db.collection("events").document(id)
-                    .set(eventData).addOnFailureListener(e -> {
-                        Log.e("SAVE DB", "event save fail");
-                    });
-        } else {
-            Log.d("EVENT DB", "save: Creating new event with auto-generated id");
-            db.collection("events").document()
-                    .set(eventData).addOnFailureListener(e -> {
-                        Log.e("SAVE DB", "event save fail");
-                    });
+        if (id == null || id.isEmpty()) {
+            throw new RuntimeException("Event id should not be empty!");
         }
+        db.collection("events").document(id)
+                .set(eventData).addOnFailureListener(e -> {
+                    Log.e("SAVE DB", "event save fail");
+                });
     }
+
     public void fetchData() {
+        // TODO: Ensure null attr are ok to read
         DocumentReference docRef = db.collection("events").document(id);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -368,11 +369,17 @@ public class Event extends Observable {
         }
     }
 
-    public Time getTime() {
-        return time;
+    public String getTime12h() {
+        if (time == null) {
+            return "Time";
+        }
+        return time.toString12h();
     }
 
     public String getDate() {
+        if (date.isEmpty()) {
+            return LocalDate.now().toString();
+        }
         return date;
     }
 
@@ -426,5 +433,46 @@ public class Event extends Observable {
 
     public List<String> getWaitList() {
         return waitList;
+    }
+
+    public void setName(String name) {
+        // TODO: Catch empty?
+        this.name = name;
+        notifyObservers();
+    }
+
+    public void setAttendeeLimit(Integer limit) {
+        attendeeLimit = limit;
+        notifyObservers();
+    }
+
+    public void setWaitListLimit(Integer limit) {
+        waitListLimit = limit;
+        notifyObservers();
+    }
+
+    public void setOrganizerName(String organizerName) {
+        this.organizerName = organizerName;
+        notifyObservers();
+    }
+
+    public void setOrganizerDeviceId(String organizerDeviceId) {
+        this.organizerDeviceId = organizerDeviceId;
+        notifyObservers();
+    }
+
+    public void setFacility(String facility) {
+        this.facility = facility;
+        notifyObservers();
+    }
+
+    public void setTime(int timeHours, int timeMinutes) {
+        this.time = new Time(timeHours, timeMinutes);
+        notifyObservers();
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+        notifyObservers();
     }
 }
