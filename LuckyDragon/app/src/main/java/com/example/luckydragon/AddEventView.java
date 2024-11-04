@@ -43,7 +43,7 @@ public class AddEventView extends Observer {
         dateAndTimeView.setText(getObservable().getDateAndTime());
         waitlistSpotsView.setText(String.format("Waitlist Spots: %s", getObservable().getWaitListSpots()));
         attendeeSpotsView.setText(String.format("Attendee Spots: %s", getObservable().getAttendeeSpots()));
-        currentlyJoinedView.setText(String.format("Currently Joined: %s", getObservable().getCurrentlyJoined()));
+        currentlyJoinedView.setText(String.format("Currently Joined: %s", getObservable().getWaitListSize()));
         // Switch mode to waitlist view
         if (getObservable().onWaitList(deviceId)) {
             // TODO:

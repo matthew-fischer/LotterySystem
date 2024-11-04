@@ -1,6 +1,5 @@
 package com.example.luckydragon;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -13,11 +12,13 @@ public class EventView extends Observer {
     private TextView attendeeSpotsView;
     private TextView currentlyJoinedView;
 
+    private TextView status;
     private TextView notSelectedText;
     private Button cancel;
     private Button decline;
     private Button accept;
     private Button signUp;
+    private Button viewPoster;
 
     private String deviceId;
 
@@ -31,11 +32,13 @@ public class EventView extends Observer {
         attendeeSpotsView = eventActivity.findViewById(R.id.attendeeSpots);
         currentlyJoinedView = eventActivity.findViewById(R.id.currentlyJoined);
 
+        status = eventActivity.findViewById(R.id.eventStatus);
         signUp = eventActivity.findViewById(R.id.signUpButton);
         notSelectedText = eventActivity.findViewById(R.id.eventNotSelectedText);
         cancel = eventActivity.findViewById(R.id.eventCancel);
         decline = eventActivity.findViewById(R.id.eventDecline);
         accept = eventActivity.findViewById(R.id.eventAccept);
+        viewPoster = eventActivity.findViewById(R.id.viewPosterButton);
 
         startObserving(event);
     }
@@ -63,23 +66,58 @@ public class EventView extends Observer {
             attendeeSpotsView.setText(String.format("Attendee Spots: %s", getObservable().getAttendeeSpots()));
         }
         // set current count
-        currentlyJoinedView.setText(String.format("Currently Joined: %s", getObservable().getCurrentlyJoined()));
+        currentlyJoinedView.setText(String.format("Currently Joined: %s", getObservable().getWaitListSize()));
 
+        // erase everything
+        currentlyJoinedView.setVisibility(View.GONE);
+        waitlistSpotsView.setVisibility(View.GONE);
+        attendeeSpotsView.setVisibility(View.GONE);
+
+        signUp.setVisibility(View.GONE);
+        notSelectedText.setVisibility(View.GONE);
+        cancel.setVisibility(View.GONE);
+        decline.setVisibility(View.GONE);
+        accept.setVisibility(View.GONE);
+        viewPoster.setVisibility(View.GONE);
+
+        // show what we want
         if (getObservable().onWaitList(deviceId)) {
             // Switch mode to waitlist view
-            // TODO:
-            signUp.setVisibility(View.GONE);
-            notSelectedText.setVisibility(View.GONE);
+            status.setText("You are on the waitlist");
+
+            currentlyJoinedView.setVisibility(View.VISIBLE);
+            waitlistSpotsView.setVisibility(View.VISIBLE);
+            attendeeSpotsView.setVisibility(View.VISIBLE);
+
             cancel.setVisibility(View.VISIBLE);
-            decline.setVisibility(View.GONE);
-            accept.setVisibility(View.GONE);
+            viewPoster.setVisibility(View.VISIBLE);
+        } else if (getObservable().onInviteeList(deviceId)) {
+            // mode: invitee
+            status.setText("You have been invited to attend!");
+            decline.setVisibility(View.VISIBLE);
+            accept.setVisibility(View.VISIBLE);
+        } else if (getObservable().onAttendeeList(deviceId)) {
+            // mode: attendee
+            status.setText("You are attending this event");
+
+            currentlyJoinedView.setText(String.format("Current Attendees: %s", getObservable().getAttendeeListSize()));
+            currentlyJoinedView.setVisibility(View.VISIBLE);
+            attendeeSpotsView.setVisibility(View.VISIBLE);
+
+            viewPoster.setVisibility(View.VISIBLE);
+        } else if (getObservable().onCancelledList(deviceId)) {
+            status.setText("Unfortunately, you have not been selected. Enable notifications incase a spot opens up.");
+//            notSelectedText.setVisibility(View.VISIBLE);
         } else {
             // Default mode is signup view
+            status.setText("You can join the waitlist");
+
+            currentlyJoinedView.setVisibility(View.VISIBLE);
+            waitlistSpotsView.setVisibility(View.VISIBLE);
+            attendeeSpotsView.setVisibility(View.VISIBLE);
+
             signUp.setVisibility(View.VISIBLE);
-            notSelectedText.setVisibility(View.GONE);
-            cancel.setVisibility(View.GONE);
-            decline.setVisibility(View.GONE);
-            accept.setVisibility(View.GONE);
+            viewPoster.setVisibility(View.VISIBLE);
         }
     }
 }

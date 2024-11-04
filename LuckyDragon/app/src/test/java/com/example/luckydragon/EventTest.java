@@ -23,10 +23,10 @@ public class EventTest {
      * Tests that the removeFromWaitList method removes an entrant from the list.
      */
     @Test
-    void testRemoveFromWaitList() {
+    void testRemoveFromJoinWaitList() {
         Event event = mockEvent();
         String entrant = event.getWaitList().get(0);
-        event.removeFromWaitList(entrant);
+        event.leaveWaitList(entrant);
 
         assertFalse(event.getWaitList().contains(entrant));
     }
@@ -37,14 +37,14 @@ public class EventTest {
      * an entrant from the waiting list.
      */
     @Test
-    void testDrawEntrantFromWaitList() {
+    void testDrawEntrantFromJoinWaitList() {
         Event event = mockEvent();
         String chosenEntrant = event.drawEntrantFromWaitList();
 
 
         assertTrue(event.getWaitList().contains(chosenEntrant));
 
-        event.removeFromWaitList(chosenEntrant);
+        event.leaveWaitList(chosenEntrant);
         chosenEntrant = event.drawEntrantFromWaitList();
         assertNull(chosenEntrant);
     }

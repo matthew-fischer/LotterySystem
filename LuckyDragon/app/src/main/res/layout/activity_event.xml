@@ -39,6 +39,7 @@
         android:orientation="vertical"
         android:padding="10dp">
         <TextView
+            android:id="@+id/eventStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/waitlist_status"
@@ -70,7 +71,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Unfortunately, you have not been selected for 'Swimming Lessons (adult).' However, if a spot opens up we will notify you."
+            android:text="Unfortunately, you have not been selected for the event. However, if a spot opens up we will notify you."
             android:visibility="gone"/>
         <LinearLayout
             android:layout_width="match_parent"

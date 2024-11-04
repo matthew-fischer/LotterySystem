@@ -12,6 +12,6 @@ public class AddEventController extends Controller {
 
     public void add(String deviceId) {
         // Add deviceID to Waitlist:
-        getObservable().waitList(deviceId);
+        getObservable().joinWaitList(deviceId);
     }
 }

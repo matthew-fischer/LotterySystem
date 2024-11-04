@@ -50,13 +50,23 @@ public class EventActivity extends AppBarActivity {
 
         Button signUp = findViewById(R.id.signUpButton);
         Button cancel = findViewById(R.id.eventCancel);
+        Button decline = findViewById(R.id.eventDecline);
+        Button accept = findViewById(R.id.eventAccept);
         // Signup button will put their deviceID on the waitlist.
         signUp.setOnClickListener(v -> {
             eventController.waitList(deviceId);
         });
 
         cancel.setOnClickListener(v -> {
-            eventController.leaveWaitList(deviceId);
+            eventController.cancel(deviceId);
+        });
+
+        decline.setOnClickListener(v -> {
+            eventController.declineInvitation(deviceId);
+        });
+
+        accept.setOnClickListener(v -> {
+            eventController.acceptInvitation(deviceId);
         });
 
         // ViewPoster button will show a dialog with an ImageView.

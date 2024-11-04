@@ -64,7 +64,7 @@ public class Event extends Observable {
     private String id = "";
     private String name = "";
     private String organizerName = "";
-    private String organizerDeviceID = "";
+    private String organizerDeviceId = "";
     private String facility = "";
     private Integer waitListLimit = -1;
     private Integer attendeeLimit = -1;
@@ -92,7 +92,7 @@ public class Event extends Observable {
      * Creates an Event object with organizer name and no id
      * @param name the name of the event
      * @param organizerName the name of the event organizer
-     * @param organizerDeviceID the device ID of the event organizer
+     * @param organizerDeviceId the device ID of the event organizer
      * @param facility: the name of the event facility
      * @param waitListLimit: the waitlist limit of the event
      * @param attendeeLimit: the attendee limit of the event
@@ -101,10 +101,10 @@ public class Event extends Observable {
      * @param timeMinutes: the minute time e.g. "30" for 8:30
      * @param waitList the waitlist for this event
      */
-    public Event(String name, String organizerDeviceID, String organizerName, String facility, @Nullable Integer waitListLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes, List<String> waitList)  {
+    public Event(String name, String organizerDeviceId, String organizerName, String facility, @Nullable Integer waitListLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes, List<String> waitList)  {
         this.name = name;
         this.organizerName = organizerName;
-        this.organizerDeviceID = organizerDeviceID;
+        this.organizerDeviceId = organizerDeviceId;
         this.facility = facility;
         this.waitListLimit = waitListLimit;
         this.attendeeLimit = attendeeLimit;
@@ -119,7 +119,7 @@ public class Event extends Observable {
      * Creates an Event object.
      * @param id the event id
      * @param name the name of the event
-     * @param organizerDeviceID the device ID of the event organizer
+     * @param organizerDeviceId the device ID of the event organizer
      * @param facility: the name of the event facility
      * @param waitListLimit: the waitlist limit of the event
      * @param attendeeLimit: the attendee limit of the event
@@ -127,11 +127,11 @@ public class Event extends Observable {
      * @param timeHours: the hour time e.g. "8" for 8:30
      * @param timeMinutes: the minute time e.g. "30" for 8:30
      */
-    public Event(String id, String name, String organizerDeviceID, String facility, Integer waitListLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes)  {
+    public Event(String id, String name, String organizerDeviceId, String facility, Integer waitListLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes)  {
         this.id = id;
         this.name = name;
         this.organizerName = organizerName;
-        this.organizerDeviceID = organizerDeviceID;
+        this.organizerDeviceId = organizerDeviceId;
         this.facility = facility;
         this.waitListLimit = waitListLimit;
         this.attendeeLimit = attendeeLimit;
@@ -154,9 +154,9 @@ public class Event extends Observable {
     public void save() {
         Map<String, Object> eventData = new HashMap<>();
         eventData.put("name", name);
-        eventData.put("organizerDeviceID", organizerDeviceID);
+        eventData.put("organizerDeviceId", organizerDeviceId);
         eventData.put("facility", facility);
-        eventData.put("waitlistLimit", waitListLimit);
+        eventData.put("waitListLimit", waitListLimit);
         eventData.put("attendeeLimit", attendeeLimit);
         eventData.put("date", date);
         eventData.put("hours", time.hours);
@@ -165,6 +165,7 @@ public class Event extends Observable {
         eventData.put("waitList", waitList);
         eventData.put("inviteeList", inviteeList);
         eventData.put("attendeeList", attendeeList);
+        eventData.put("cancelledList", cancelledList);
 
         if (id != null) {
             db.collection("events").document(id)
@@ -196,32 +197,41 @@ public class Event extends Observable {
                     throw new RuntimeException("Event has no data.");
                 }
                 name = (String) eventData.get("name");
+                organizerDeviceId = (String) eventData.get("organizerDeviceId");
                 facility = (String) eventData.get("facility");
+                waitListLimit = (int) (long) eventData.get("waitListLimit");
+                attendeeLimit = (int) (long) eventData.get("attendeeLimit");
                 date = (String) eventData.get("date");
                 time = new Time((int) (long) eventData.get("hours"), (int) (long) eventData.get("minutes"));
-                attendeeLimit = (int) (long) eventData.get("attendeeLimit");
-                if (eventData.get("waitListLimit") == null) {
-                    waitListLimit = -1;
-                } else {
-                    waitListLimit = (int) (long) eventData.get("waitListLimit");
+//                TODO: Decode qrHash
+//                qrHash
+                List<String> incWaitList = (List<String>) eventData.get("waitList");
+                List<String> incInviteeList = (List<String>) eventData.get("inviteeList");
+                List<String> incAttendeeList = (List<String>) eventData.get("attendeeList");
+                List<String> incCancelledList = (List<String>) eventData.get("cancelledList");
+                if (incWaitList != null) {
+                    waitList = incWaitList;
                 }
-                waitList = (List<String>) eventData.get("waitList");
+                if (incInviteeList != null) {
+                    inviteeList = incInviteeList;
+                }
+                if (incAttendeeList != null) {
+                    attendeeList = incAttendeeList;
+                }
+                if (incCancelledList != null) {
+                    cancelledList = incCancelledList;
+                }
+
                 notifyObservers();
             }
         });
-    }
-
-    /** Remove deviceId from waitList when cancel button is clicked
-     * @param deviceID users unique deviceID
-     */
-    public void removeFromWaitList(String deviceID) {
-        waitList.remove(deviceID);
     }
 
     /**
      * Returns a random entrant's deviceID from the waitlist.
      * In the case that there is no one in the waitlist, returns null.
      * @return the deviceID of the randomly chosen entrant, or null if list is empty
+     * TODO: Should be private method?
      */
     public String drawEntrantFromWaitList() {
         if (waitList.isEmpty()) {
@@ -235,13 +245,15 @@ public class Event extends Observable {
     /**
      * Samples entrants from the waitlist and moves them to the invitee list.
      * TODO: This should also notify the invited entrants.
+     * TODO: Should move other entrants to cancelled list? - Tony
      */
     public void sampleEntrantsFromWaitList() {
         while (attendeeList.size() + inviteeList.size() < attendeeLimit && !waitList.isEmpty()) {
             String sampledEntrant = drawEntrantFromWaitList();
             inviteeList.add(sampledEntrant);
-            removeFromWaitList(sampledEntrant);
+            waitList.remove(sampledEntrant);
         }
+        notifyObservers();
     }
 
     /**
@@ -312,15 +324,46 @@ public class Event extends Observable {
         return bitMap;
     }
 
-    public void waitList(String deviceId) {
+    public void joinWaitList(String deviceId) {
         if (!waitList.contains(deviceId)) {
             waitList.add(deviceId);
             notifyObservers();
         }
     }
+    /** Remove deviceId from joinWaitList when cancel button is clicked
+     * @param deviceId users unique deviceID
+     */
     public void leaveWaitList(String deviceId) {
         if (waitList.contains(deviceId)) {
             waitList.remove(deviceId);
+            notifyObservers();
+        }
+    }
+
+    public void leaveInviteeList(String deviceId) {
+        if (inviteeList.contains(deviceId)) {
+            inviteeList.remove(deviceId);
+            notifyObservers();
+        }
+    }
+
+    public void joinAttendeeList(String deviceId) {
+        if (!attendeeList.contains(deviceId)) {
+            attendeeList.add(deviceId);
+            notifyObservers();
+        }
+    }
+
+    public void leaveAttendeeList(String deviceId) {
+        if (attendeeList.contains(deviceId)) {
+            attendeeList.remove(deviceId);
+            notifyObservers();
+        }
+    }
+
+    public void joinCancelledList(String deviceId) {
+        if (!cancelledList.contains(deviceId)) {
+            cancelledList.add(deviceId);
             notifyObservers();
         }
     }
@@ -353,12 +396,28 @@ public class Event extends Observable {
         return attendeeLimit;
     }
 
-    public int getCurrentlyJoined() {
+    public int getWaitListSize() {
         return waitList.size();
+    }
+
+    public int getAttendeeListSize() {
+        return attendeeList.size();
     }
 
     public boolean onWaitList(String deviceId) {
         return waitList.contains(deviceId);
+    }
+
+    public boolean onInviteeList(String deviceId) {
+        return inviteeList.contains(deviceId);
+    }
+
+    public boolean onAttendeeList(String deviceId) {
+        return attendeeList.contains(deviceId);
+    }
+
+    public boolean onCancelledList(String deviceId) {
+        return cancelledList.contains(deviceId);
     }
 
     public String getId() {
