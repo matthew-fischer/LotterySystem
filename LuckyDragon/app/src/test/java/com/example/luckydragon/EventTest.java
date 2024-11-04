@@ -1,11 +1,7 @@
 package com.example.luckydragon;
 
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +23,7 @@ public class EventTest {
      * Tests that the removeFromWaitList method removes an entrant from the list.
      */
     @Test
-    public void testRemoveFromWaitList() {
+    void testRemoveFromWaitList() {
         Event event = mockEvent();
         String entrant = event.getWaitList().get(0);
         event.removeFromWaitList(entrant);
@@ -41,7 +37,7 @@ public class EventTest {
      * an entrant from the waiting list.
      */
     @Test
-    public void testDrawEntrantFromWaitList() {
+    void testDrawEntrantFromWaitList() {
         Event event = mockEvent();
         String chosenEntrant = event.drawEntrantFromWaitList();
 
