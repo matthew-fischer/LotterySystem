@@ -151,27 +151,27 @@ public class Event extends Observable {
      */
     public void save() {
         Map<String, Object> eventData = new HashMap<>();
-        eventData.put("Name", name);
-        eventData.put("OrganizerDeviceID", organizerDeviceID);
-        eventData.put("Facility", facility);
-        eventData.put("WaitlistLimit", waitListLimit);
-        eventData.put("AttendeeLimit", attendeeLimit);
-        eventData.put("Date", date);
-        eventData.put("Hours", time.hours);
-        eventData.put("Minutes", time.minutes);
-        eventData.put("HashedQR", qrHash.toString("1", "0"));
+        eventData.put("name", name);
+        eventData.put("organizerDeviceID", organizerDeviceID);
+        eventData.put("facility", facility);
+        eventData.put("waitlistLimit", waitListLimit);
+        eventData.put("attendeeLimit", attendeeLimit);
+        eventData.put("date", date);
+        eventData.put("hours", time.hours);
+        eventData.put("minutes", time.minutes);
+        eventData.put("hashedQR", qrHash.toString("1", "0"));
         eventData.put("waitList", waitList);
         eventData.put("inviteeList", inviteeList);
         eventData.put("attendeeList", attendeeList);
 
         if (id != null) {
-            db.collection("users").document(id)
+            db.collection("events").document(id)
                     .set(eventData).addOnFailureListener(e -> {
                         Log.e("SAVE DB", "event save fail");
                     });
         } else {
             Log.d("EVENT DB", "save: Creating new event with auto-generated id");
-            db.collection("users").document()
+            db.collection("events").document()
                     .set(eventData).addOnFailureListener(e -> {
                         Log.e("SAVE DB", "event save fail");
                     });
@@ -198,7 +198,7 @@ public class Event extends Observable {
                 date = (String) eventData.get("date");
                 time = new Time((int) (long) eventData.get("hours"), (int) (long) eventData.get("minutes"));
                 attendeeLimit = (int) (long) eventData.get("attendeeLimit");
-                if (eventData.get("WaitlistLimit") == null) {
+                if (eventData.get("waitListLimit") == null) {
                     waitListLimit = -1;
                 } else {
                     waitListLimit = (int) (long) eventData.get("waitListLimit");
