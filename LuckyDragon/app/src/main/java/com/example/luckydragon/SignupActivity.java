@@ -14,34 +14,35 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Switch;
+import android.widget.LinearLayout;
 
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.android.material.textfield.TextInputEditText;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.Nullable;
 
 public class SignupActivity extends AppBarActivity {
     private User user;
     private SignupController signupController;
     private SignupView signupView;
 
-    private EditText editName;
-    private EditText editEmail;
-    private EditText editPhone;
+    private TextInputEditText editName;
+    private TextInputEditText editEmail;
+    private TextInputEditText editPhone;
     private SwitchMaterial switchNotifications;
     private Button submitButton;
-    private ImageButton uploadProfilePictureButton;
-    private ActivityResultLauncher<Intent> uploadImageResultLauncher;
-    private Bitmap profilePicture;
+
+    private LinearLayout uploadProfilePictureButton;
     private ImageView profilePictureView;
+    private ActivityResultLauncher<Intent> uploadImageResultLauncher;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
+        setContentView(R.layout.activity_signup_material);
         getSupportActionBar().setTitle("Sign-Up");
 
         // Unpack intent
@@ -57,7 +58,8 @@ public class SignupActivity extends AppBarActivity {
         editPhone = findViewById(R.id.signupPhone);
 
         // Profile picture
-        uploadProfilePictureButton = findViewById(R.id.uploadProfilePicture);
+        uploadProfilePictureButton = findViewById(R.id.editProfileIcon);
+        profilePictureView = findViewById(R.id.profilePictureIcon);
 
         uploadImageResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -67,26 +69,28 @@ public class SignupActivity extends AppBarActivity {
                         if (result.getResultCode() == Activity.RESULT_OK) {
                             // There are no request codes
                             Intent data = result.getData();
+                            assert data != null;
                             Uri image = data.getData();
-                            assert(image != null);
+                            assert image != null;
 
                             try {
-                                profilePicture = MediaStore.Images.Media.getBitmap(getContentResolver(), image);
+                                Bitmap profilePicture = MediaStore.Images.Media.getBitmap(getContentResolver(), image);
+                                // TODO: Add intent to crop image and move it around when selecting if that exists
+                                // Crop image to square
+                                int n = Math.min(profilePicture.getWidth(), profilePicture.getHeight());
+                                profilePicture = Bitmap.createBitmap(profilePicture, 0, 0, n, n);
+
+                                // Scale image to proper size
+                                int width = ((GlobalApp) getApplication()).profilePictureSize.getWidth();
+                                int height = ((GlobalApp) getApplication()).profilePictureSize.getHeight();
+                                profilePicture = Bitmap.createScaledBitmap(profilePicture, width, height, false);
+                                signupController.setProfilePicture(profilePicture);
+                                profilePictureView.setImageBitmap(profilePicture);
                             } catch (Exception e) {
                                 Log.e("signup", "error uploading pfp");
                             }
 
-                            // TODO: Add intent to crop image and move it around when selecting if that exists
 
-                            // Crop image to square
-                            int n = Math.min(profilePicture.getWidth(), profilePicture.getHeight());
-                            profilePicture = Bitmap.createBitmap(profilePicture, 0, 0, n, n);
-
-                            // Scale image to proper size
-                            int width = ((GlobalApp) getApplication()).profilePictureSize.getWidth();
-                            int height = ((GlobalApp) getApplication()).profilePictureSize.getHeight();
-                            profilePicture = Bitmap.createScaledBitmap(profilePicture, width, height, false);
-                            signupController.setProfilePicture(profilePicture);
                         }
                     }
                 });
@@ -103,18 +107,21 @@ public class SignupActivity extends AppBarActivity {
     private void setupListeners() {
         setListener(editName, () -> {
             // code that will run in x seconds
-            signupController.extractName(editName);
-            // TODO: input validation
+            try {
+                signupController.extractName(editName);
+            } catch(Exception ignored) {};
         });
         setListener(editEmail, () -> {
             // code that will run in x seconds
-            signupController.extractEmail(editEmail);
-            // TODO: input validation
+            try {
+                signupController.extractEmail(editEmail);
+            } catch (Exception ignored) {};
         });
         setListener(editPhone, () -> {
             // code that will run in x seconds
-            signupController.extractPhoneNumber(editPhone);
-            // TODO: input validation
+            try {
+                signupController.extractPhoneNumber(editPhone);
+            } catch(Exception ignored) {};
         });
 
         // set listener for uploading pfp button
@@ -126,6 +133,29 @@ public class SignupActivity extends AppBarActivity {
         });
 
         submitButton.setOnClickListener(view -> {
+
+            // Validate input fields
+            boolean valid = true;
+            try {
+                signupController.extractName(editName);
+            } catch (Exception e) {
+                editName.setError(e.getMessage());
+                valid = false;
+            }
+            try {
+                signupController.extractEmail(editEmail);
+            } catch(Exception e) {
+                editEmail.setError(e.getMessage());
+                valid = false;
+            }
+            try {
+                signupController.extractPhoneNumber(editPhone);
+            } catch (Exception e) {
+                editEmail.setError(e.getMessage());
+                valid = false;
+            }
+            if (!valid) return;
+
             // tell activity to launch profile
             Intent intent = new Intent(this, ProfileActivity.class);
             intent.putExtra("role", "ENTRANT");
