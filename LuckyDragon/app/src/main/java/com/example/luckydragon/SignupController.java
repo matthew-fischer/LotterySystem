@@ -8,8 +8,6 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SignupController extends Controller {
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-
     public SignupController(User observable) {
         super(observable);
     }
