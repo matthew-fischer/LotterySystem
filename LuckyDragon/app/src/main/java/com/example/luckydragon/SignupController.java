@@ -1,12 +1,11 @@
 package com.example.luckydragon;
 
+import android.graphics.Bitmap;
 import android.widget.EditText;
-
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SignupController extends Controller {
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-
     public SignupController(User observable) {
         super(observable);
     }
@@ -16,22 +15,30 @@ public class SignupController extends Controller {
         return (User) super.getObservable();
     }
 
-    public void extractName(EditText editName) {
-        // TODO: input validation
-        String name = editName.getText().toString();
+    public void extractName(EditText editName) throws RuntimeException {
+        String name = editName.getText().toString().trim();
+        if (name.isEmpty()) throw new RuntimeException("Name is required.");
         getObservable().setName(name);
     }
 
-    public void extractEmail(EditText editEmail) {
-        // TODO: input validation
-        String email = editEmail.getText().toString();
+    public void extractEmail(EditText editEmail) throws RuntimeException {
+        String email = editEmail.getText().toString().trim();
+        if (email.isEmpty()) throw new RuntimeException("Email is required.");
         getObservable().setEmail(email);
     }
 
     public void extractPhoneNumber(EditText editPhone) {
         // TODO: input validation
-        String phoneNumber = editPhone.getText().toString();
+        String phoneNumber = editPhone.getText().toString().trim();
         getObservable().setPhoneNumber(phoneNumber);
+    }
+
+    public void setNotifications(SwitchMaterial switchNotifications) {
+        getObservable().setNotifications(switchNotifications.isChecked());
+    }
+
+    public void setProfilePicture(Bitmap image) {
+        getObservable().uploadProfilePicture(image);
     }
 
     public void becomeEntrant() {

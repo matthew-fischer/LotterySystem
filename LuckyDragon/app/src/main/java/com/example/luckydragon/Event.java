@@ -7,21 +7,24 @@ package com.example.luckydragon;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.Log;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
-import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +36,7 @@ import java.util.Objects;
  * Issues:
  *   - could add another constructor for when waitlist limit is not specified (since it is optional)
  */
-public class Event {
+public class Event extends Observable {
     /**
      * Represents a time as hours and minutes in 24 hour time.
      * e.g. 8:30 pm would have hours = 20 and minutes = 30
@@ -59,99 +62,199 @@ public class Event {
             return String.format("%02d:%02d %s", hours, minutes, AMorPM);
         }
     }
+    private transient FirebaseFirestore db = FirebaseFirestore.getInstance();
+
     private String id;
-    private String name;
-    private String organizerName;
-    private String organizerDeviceID;
-    private String facility;
-    private Integer waitlistLimit;
-    private Integer attendeeLimit;
-    private String date;
-    private Time time;
+    private String name = "";
+    private String organizerName = "";
+    private String organizerDeviceId = "";
+    private String facility = "";
+    private Integer waitListLimit = -1;
+    private Integer attendeeLimit = -1;
+    private String date = LocalDate.now().toString();
+    private Time time = new Time(0, 0);
     private BitMatrix qrHash;
     private Bitmap qrCode;
 
-    private String[] waitlist = {};
-    List<String> waitList = new ArrayList<String>(Arrays.asList(waitlist));
+    private List<String> waitList = new ArrayList<>();
+    private List<String> inviteeList = new ArrayList<>();
+    private List<String> attendeeList = new ArrayList<>();
+    private List<String> cancelledList = new ArrayList<>();
+
+    public Event() {
+        id = db.collection("events").document().getId();
+        qrHash = generateQRCode();
+    }
+
+    public Event(String id) {
+        super();
+        this.id = id;
+        qrHash = generateQRCode();  // TODO: load from db
+    }
 
     /**
-     * Creates an Event object.
-     * @param id the event id
+     * Creates an Event object with organizer name and no id
      * @param name the name of the event
      * @param organizerName the name of the event organizer
-     * @param organizerDeviceID the device ID of the event organizer
+     * @param organizerDeviceId the device ID of the event organizer
      * @param facility: the name of the event facility
-     * @param waitlistLimit: the waitlist limit of the event
+     * @param waitListLimit: the waitlist limit of the event
      * @param attendeeLimit: the attendee limit of the event
      * @param date: the date of the event, as a string YY-MM-DD
      * @param timeHours: the hour time e.g. "8" for 8:30
      * @param timeMinutes: the minute time e.g. "30" for 8:30
+     * @param waitList the waitlist for this event
      */
-    public Event(String id, String name, String organizerDeviceID, String organizerName, String facility, @Nullable Integer waitlistLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes, List<String> waitList)  {
-        this.id = id;
+    public Event(String name, String organizerDeviceId, String organizerName, String facility, @Nullable Integer waitListLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes, List<String> waitList)  {
         this.name = name;
         this.organizerName = organizerName;
-        this.organizerDeviceID = organizerDeviceID;
+        this.organizerDeviceId = organizerDeviceId;
         this.facility = facility;
-        this.waitlistLimit = waitlistLimit;
+        this.waitListLimit = waitListLimit;
         this.attendeeLimit = attendeeLimit;
         this.date = date;
         this.time = new Time(timeHours, timeMinutes);
         this.qrHash = generateQRCode();
+        this.waitList = waitList;
     }
 
+    // TODO: Do we need 2 similar constructors?
     /**
      * Creates an Event object.
      * @param id the event id
      * @param name the name of the event
-     * @param organizerDeviceID the device ID of the event organizer
+     * @param organizerDeviceId the device ID of the event organizer
      * @param facility: the name of the event facility
-     * @param waitlistLimit: the waitlist limit of the event
+     * @param waitListLimit: the waitlist limit of the event
      * @param attendeeLimit: the attendee limit of the event
      * @param date: the date of the event, as a string YY-MM-DD
      * @param timeHours: the hour time e.g. "8" for 8:30
      * @param timeMinutes: the minute time e.g. "30" for 8:30
      */
-    public Event(String id, String name, String organizerDeviceID, String facility, Integer waitlistLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes)  {
+    public Event(String id, String name, String organizerDeviceId, String facility, Integer waitListLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes)  {
         this.id = id;
         this.name = name;
         this.organizerName = organizerName;
-        this.organizerDeviceID = organizerDeviceID;
+        this.organizerDeviceId = organizerDeviceId;
         this.facility = facility;
-        this.waitlistLimit = waitlistLimit;
+        this.waitListLimit = waitListLimit;
         this.attendeeLimit = attendeeLimit;
         this.date = date;
         this.time = new Time(timeHours, timeMinutes);
         this.qrHash = generateQRCode();
         this.qrCode = createBitMap(this.qrHash);
-        this.waitList = waitList;
+    }
+
+
+    @Override
+    public void notifyObservers() {
+        super.notifyObservers();
+        save();
     }
 
     /**
-     * Creates a hash map containing the event info.
-     * Used to add an event to Firestore.
-     * @return a map containing event info
+     * Save to firestore
      */
-    public Map<String, Object> toHashMap() {
+    public void save() {
         Map<String, Object> eventData = new HashMap<>();
-        eventData.put("Name", name);
-        eventData.put("OrganizerDeviceID", organizerDeviceID);
-        eventData.put("Facility", facility);
-        eventData.put("WaitlistLimit", waitlistLimit);
-        eventData.put("AttendeeLimit", attendeeLimit);
-        eventData.put("Date", date);
-        eventData.put("Hours", time.hours);
-        eventData.put("Minutes", time.minutes);
-        eventData.put("HashedQR", qrHash.toString("1", "0"));
-        eventData.put("Waitlist", waitList);
-        return eventData;
+        eventData.put("name", name);
+        eventData.put("organizerDeviceId", organizerDeviceId);
+        eventData.put("facility", facility);
+        eventData.put("waitListLimit", waitListLimit);
+        eventData.put("attendeeLimit", attendeeLimit);
+        eventData.put("date", date);
+        eventData.put("hours", time.hours);
+        eventData.put("minutes", time.minutes);
+        eventData.put("hashedQR", qrHash.toString("1", "0"));
+        eventData.put("waitList", waitList);
+        eventData.put("inviteeList", inviteeList);
+        eventData.put("attendeeList", attendeeList);
+        eventData.put("cancelledList", cancelledList);
+
+        if (id == null || id.isEmpty()) {
+            throw new RuntimeException("Event id should not be empty!");
+        }
+        db.collection("events").document(id)
+                .set(eventData).addOnFailureListener(e -> {
+                    Log.e("SAVE DB", "event save fail");
+                });
     }
 
-    /** Remove deviceId from waitList when cancel button is clicked
-     * @param deviceID users unique deviceID
+    public void fetchData() {
+        // TODO: Ensure null attr are ok to read
+        DocumentReference docRef = db.collection("events").document(id);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    throw new RuntimeException("Database read failed.");
+                }
+                DocumentSnapshot eventDocument = task.getResult();
+                if (!eventDocument.exists()) {
+                    throw new RuntimeException("Event Document does not exist.");
+                }
+                Map<String, Object> eventData = eventDocument.getData();
+                if (eventData == null) {
+                    throw new RuntimeException("Event has no data.");
+                }
+                name = (String) eventData.get("name");
+                organizerDeviceId = (String) eventData.get("organizerDeviceId");
+                facility = (String) eventData.get("facility");
+                waitListLimit = (int) (long) eventData.get("waitListLimit");
+                attendeeLimit = (int) (long) eventData.get("attendeeLimit");
+                date = (String) eventData.get("date");
+                time = new Time((int) (long) eventData.get("hours"), (int) (long) eventData.get("minutes"));
+//                TODO: Decode qrHash
+//                qrHash
+                List<String> incWaitList = (List<String>) eventData.get("waitList");
+                List<String> incInviteeList = (List<String>) eventData.get("inviteeList");
+                List<String> incAttendeeList = (List<String>) eventData.get("attendeeList");
+                List<String> incCancelledList = (List<String>) eventData.get("cancelledList");
+                if (incWaitList != null) {
+                    waitList = incWaitList;
+                }
+                if (incInviteeList != null) {
+                    inviteeList = incInviteeList;
+                }
+                if (incAttendeeList != null) {
+                    attendeeList = incAttendeeList;
+                }
+                if (incCancelledList != null) {
+                    cancelledList = incCancelledList;
+                }
+
+                notifyObservers();
+            }
+        });
+    }
+
+    /**
+     * Returns a random entrant's deviceID from the waitlist.
+     * In the case that there is no one in the waitlist, returns null.
+     * @return the deviceID of the randomly chosen entrant, or null if list is empty
+     * TODO: Should be private method?
      */
-    public void removeFromWaitList(String deviceID) {
-        waitList.remove(deviceID);
+    public String drawEntrantFromWaitList() {
+        if (waitList.isEmpty()) {
+            return null;
+        }
+        int randomIndex = (int) (Math.random() * waitList.size());
+
+        return waitList.get(randomIndex);
+    }
+
+    /**
+     * Samples entrants from the waitlist and moves them to the invitee list.
+     * TODO: This should also notify the invited entrants.
+     * TODO: Should move other entrants to cancelled list? - Tony
+     */
+    public void sampleEntrantsFromWaitList() {
+        while (attendeeList.size() + inviteeList.size() < attendeeLimit && !waitList.isEmpty()) {
+            String sampledEntrant = drawEntrantFromWaitList();
+            inviteeList.add(sampledEntrant);
+            waitList.remove(sampledEntrant);
+        }
+        notifyObservers();
     }
 
     /**
@@ -164,7 +267,7 @@ public class Event {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Event event = (Event) o;
-        return Objects.equals(name, event.name) && Objects.equals(facility, event.facility) && Objects.equals(waitlistLimit, event.waitlistLimit) && Objects.equals(attendeeLimit, event.attendeeLimit) && Objects.equals(date, event.date) && Objects.equals(time, event.time);
+        return Objects.equals(name, event.name) && Objects.equals(facility, event.facility) && Objects.equals(waitListLimit, event.waitListLimit) && Objects.equals(attendeeLimit, event.attendeeLimit) && Objects.equals(date, event.date) && Objects.equals(time, event.time);
     }
 
     /**
@@ -173,7 +276,7 @@ public class Event {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(name, facility, waitlistLimit, attendeeLimit, date, time);
+        return Objects.hash(name, facility, waitListLimit, attendeeLimit, date, time);
     }
 
     /**
@@ -221,8 +324,53 @@ public class Event {
         // DO IMAGEVIEW HERE.
         return bitMap;
     }
-    public Time getTime() {
-        return time;
+
+    public void joinWaitList(String deviceId) {
+        if (!waitList.contains(deviceId)) {
+            waitList.add(deviceId);
+            notifyObservers();
+        }
+    }
+    /** Remove deviceId from joinWaitList when cancel button is clicked
+     * @param deviceId users unique deviceID
+     */
+    public void leaveWaitList(String deviceId) {
+        if (waitList.contains(deviceId)) {
+            waitList.remove(deviceId);
+            notifyObservers();
+        }
+    }
+
+    public void leaveInviteeList(String deviceId) {
+        if (inviteeList.contains(deviceId)) {
+            inviteeList.remove(deviceId);
+            notifyObservers();
+        }
+    }
+
+    public void joinAttendeeList(String deviceId) {
+        if (!attendeeList.contains(deviceId)) {
+            attendeeList.add(deviceId);
+            notifyObservers();
+        }
+    }
+
+    public void leaveAttendeeList(String deviceId) {
+        if (attendeeList.contains(deviceId)) {
+            attendeeList.remove(deviceId);
+            notifyObservers();
+        }
+    }
+
+    public void joinCancelledList(String deviceId) {
+        if (!cancelledList.contains(deviceId)) {
+            cancelledList.add(deviceId);
+            notifyObservers();
+        }
+    }
+
+    public String getTime12h() {
+        return time.toString12h();
     }
 
     public String getDate() {
@@ -235,5 +383,90 @@ public class Event {
 
     public String getDateAndTime() {
         return String.format("%s -- %s", time.toString12h(), date);
+    }
+
+    public String getFacility() {
+        return facility;
+    }
+
+    public int getWaitListSpots() {
+        return waitListLimit;
+    }
+
+    public int getAttendeeSpots() {
+        return attendeeLimit;
+    }
+
+    public int getWaitListSize() {
+        return waitList.size();
+    }
+
+    public int getAttendeeListSize() {
+        return attendeeList.size();
+    }
+
+    public boolean onWaitList(String deviceId) {
+        return waitList.contains(deviceId);
+    }
+
+    public boolean onInviteeList(String deviceId) {
+        return inviteeList.contains(deviceId);
+    }
+
+    public boolean onAttendeeList(String deviceId) {
+        return attendeeList.contains(deviceId);
+    }
+
+    public boolean onCancelledList(String deviceId) {
+        return cancelledList.contains(deviceId);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public List<String> getWaitList() {
+        return waitList;
+    }
+
+    public void setName(String name) {
+        // TODO: Catch empty?
+        this.name = name;
+        notifyObservers();
+    }
+
+    public void setAttendeeLimit(Integer limit) {
+        attendeeLimit = limit;
+        notifyObservers();
+    }
+
+    public void setWaitListLimit(Integer limit) {
+        waitListLimit = limit;
+        notifyObservers();
+    }
+
+    public void setOrganizerName(String organizerName) {
+        this.organizerName = organizerName;
+        notifyObservers();
+    }
+
+    public void setOrganizerDeviceId(String organizerDeviceId) {
+        this.organizerDeviceId = organizerDeviceId;
+        notifyObservers();
+    }
+
+    public void setFacility(String facility) {
+        this.facility = facility;
+        notifyObservers();
+    }
+
+    public void setTime(int timeHours, int timeMinutes) {
+        this.time = new Time(timeHours, timeMinutes);
+        notifyObservers();
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+        notifyObservers();
     }
 }

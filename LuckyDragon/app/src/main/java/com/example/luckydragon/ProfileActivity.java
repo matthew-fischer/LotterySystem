@@ -10,10 +10,14 @@
 
 package com.example.luckydragon;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Objects;
 
@@ -22,6 +26,7 @@ public class ProfileActivity extends AppBarActivity {
     enum Mode {
         ENTRANT,
         ORGANIZER,
+        ADMIN,
     }
     private User user;
     private GlobalApp.ROLE role;
@@ -68,6 +73,20 @@ public class ProfileActivity extends AppBarActivity {
             phoneNumberView.setVisibility(View.GONE);
         }
 
+        ImageView profilePictureView = findViewById(R.id.profilePicture);
+
+        nameView.setText(user.getName());
+        emailView.setText(user.getEmail());
+        phoneNumberView.setText(user.getPhoneNumber());
+        profilePictureView.setImageBitmap(user.getProfilePicture());
+
+        ImageButton edit_profile_button = findViewById(R.id.edit_profile_button);
+        edit_profile_button.setOnClickListener(view -> {
+            // Create intent to go to signup
+            Intent signupIntent = new Intent(this, SignupActivity.class);
+            signupIntent.putExtra("role", role);
+            startActivity(signupIntent);
+        });
         // Create profile fragment
         if (role == GlobalApp.ROLE.ENTRANT) {
             // Create entrant profile fragment
@@ -86,7 +105,7 @@ public class ProfileActivity extends AppBarActivity {
         }
     }
 
-    public User getUser() {
-        return user;
+    public void sendToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

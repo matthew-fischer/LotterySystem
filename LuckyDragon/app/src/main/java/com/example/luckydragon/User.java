@@ -5,16 +5,25 @@
 package com.example.luckydragon;
 
 import static java.util.Objects.nonNull;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.util.Base64;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.io.Serializable;
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 
 /**
  * Represents a User object.
@@ -27,17 +36,18 @@ public class User extends Observable {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private String deviceId;
-    private String name;
-    private String email;
-    private String phoneNumber;
+    private String name = "";
+    private String email = "";
+    private String phoneNumber = "";
+    private Boolean notifications = false;
+    private Bitmap uploadedProfilePicture;
+    private Bitmap defaultProfilePicture;
 
     private Boolean isLoaded = Boolean.FALSE;
-
     private Organizer organizer;
     private Entrant entrant;
 
     private Boolean isAdmin = Boolean.FALSE;
-
     public User(String deviceId) {
         super();
         this.deviceId = deviceId;
@@ -85,8 +95,10 @@ public class User extends Observable {
                         }
                         isAdmin = userData.get("isAdmin") != null
                                 && userData.get("isAdmin").toString().equals("true");
-
+                        uploadedProfilePicture = stringToBitmap((String)userData.get("profilePicture"));
+                        defaultProfilePicture = stringToBitmap((String)userData.get("defaultProfilePicture"));
                     }
+
                     isLoaded = true;
                     notifyObservers();
                 });
@@ -108,9 +120,13 @@ public class User extends Observable {
         map.put("name", name);
         map.put("email", nonNull(email) ? email : null);
         map.put("phoneNumber", nonNull(phoneNumber) ? phoneNumber : null);
-
+        map.put("notifications", notifications);
+        map.put("profilePicture", bitmapToString(uploadedProfilePicture));
+        map.put("defaultProfilePicture", bitmapToString(defaultProfilePicture));
         db.collection("users").document(deviceId)
-                .set(map);
+                .set(map).addOnFailureListener(e -> {
+                    Log.e("SAVE DB", "fail");
+                });
     }
 
     // TODO: Implement, send error messages
@@ -151,11 +167,26 @@ public class User extends Observable {
     }
 
     /**
+     * Gets the user's profile picture.
+     * @return the user's profile picture
+     */
+    public Bitmap getProfilePicture() {
+        if (uploadedProfilePicture != null) return uploadedProfilePicture;
+        return defaultProfilePicture;
+    }
+
+    /**
      * Set the user's name.
      * @param name: the user's new name
      */
     public void setName(String name) {
         this.name = name;
+
+        // change default profile picture
+        if (!name.isEmpty()) {
+            this.defaultProfilePicture = generateProfilePicture(this.name);
+        }
+
         notifyObservers();
     }
 
@@ -177,6 +208,25 @@ public class User extends Observable {
         notifyObservers();
     }
 
+    public void setNotifications(boolean enabled) {
+        this.notifications = enabled;
+        notifyObservers();
+    }
+
+    public boolean isNotified() {
+        return notifications;
+    }
+
+    public void setUserProfilePicture(Bitmap profilePicture) {
+        this.uploadedProfilePicture = profilePicture;
+        notifyObservers();
+    }
+
+    public void uploadProfilePicture(Bitmap profilePicture) {
+        this.uploadedProfilePicture = profilePicture;
+        notifyObservers();
+    }
+
     public Boolean isEntrant() {
         return entrant != null;
     }
@@ -188,6 +238,37 @@ public class User extends Observable {
             this.entrant = null;
         }
         notifyObservers();
+    }
+
+    public Bitmap generateProfilePicture(String s) {
+        assert !s.isEmpty();
+
+        Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+
+        // Fill background with solid color
+        Random rand = new Random(s.hashCode());
+        float hue = rand.nextFloat() * 360;
+        float saturation = (rand.nextInt(5000) + 1000) / 10000f;
+        float luminance = 0.95f;
+
+//        Log.d("COLORS", Float.toString(hue) + " " + Float.toString(saturation) + " " + Float.toString(luminance));
+        Paint background = new Paint(Paint.ANTI_ALIAS_FLAG);
+        background.setColor(Color.HSVToColor(new float[]{hue, saturation, luminance}));
+        canvas.drawRect(0, 0, 100, 100, background);
+
+        // Draw first letter of s on bitmap
+        String text = s.substring(0, 1);
+        Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        textPaint.setColor(Color.WHITE);
+        textPaint.setTextSize(70);
+        Rect bounds = new Rect();
+        textPaint.getTextBounds(text, 0, text.length(), bounds);
+        int x = (bitmap.getWidth() - bounds.width())/2;
+        int y = (bitmap.getHeight() - bounds.height())/2 + bounds.height();
+        canvas.drawText(text, x, y, textPaint);
+
+        return bitmap;
     }
 
     public Boolean isOrganizer() {
@@ -221,5 +302,32 @@ public class User extends Observable {
 
     public void setIsLoaded(Boolean newIsLoaded) {
         isLoaded = newIsLoaded;
+    }
+
+    /**
+     * Converts bitmap to string
+     * @param image: the bitmap to convert to base 64 string
+     * @return image encoded as string
+     */
+    private String bitmapToString(Bitmap image) {
+        if (image == null) return "";
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(byteArray, Base64.DEFAULT);
+    }
+
+    /**
+     * Converts base64 string to bitmap
+     * @param base64Str: The base 64 string to convert to bitmap
+     * @return base64Str decoded to bitmap
+     */
+    public static Bitmap stringToBitmap(String base64Str) {
+        if (base64Str == null || base64Str.isEmpty()) return null;
+        byte[] decodedBytes = Base64.decode(
+                base64Str.substring(base64Str.indexOf(",")  + 1),
+                Base64.DEFAULT
+        );
+        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 }

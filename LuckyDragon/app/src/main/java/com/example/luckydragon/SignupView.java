@@ -1,6 +1,7 @@
 package com.example.luckydragon;
 
 import android.content.Intent;
+import android.util.Log;
 
 public class SignupView extends Observer {
     private final SignupActivity signupActivity;
@@ -22,5 +23,7 @@ public class SignupView extends Observer {
         // check if user has valid fields
         // TODO: activity creates error messages as necessary
         signupActivity.setSubmitButton(getObservable().isValid());
+
+
     }
 }
