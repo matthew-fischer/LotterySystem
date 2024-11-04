@@ -2,6 +2,7 @@ package com.example.luckydragon;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +15,9 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public abstract class AppBarActivity extends AppCompatActivity {
+    private MenuItem navProfile;
+    private boolean navProfileVisible = true;
+
     @Override
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
@@ -28,6 +32,8 @@ public abstract class AppBarActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.top_app_bar, menu);
+        navProfile = menu.findItem(R.id.nav_profile);
+        navProfile.setVisible(navProfileVisible);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -45,5 +51,15 @@ public abstract class AppBarActivity extends AppCompatActivity {
 //            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void setNavProfileVisible(boolean visible) {
+        if (navProfile == null) {
+            Log.d("Custom", "setNavProfileVisible: Nav profile does not exist yet");
+            navProfileVisible = visible;
+            return;
+        }
+        navProfile.setVisible(visible);
+        invalidateOptionsMenu();
     }
 }
