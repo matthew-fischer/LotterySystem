@@ -245,13 +245,13 @@ public class User extends Observable {
         Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
 
-
         // Fill background with solid color
         Random rand = new Random(s.hashCode());
-        float hue = rand.nextFloat();
+        float hue = rand.nextFloat() * 360;
         float saturation = (rand.nextInt(5000) + 1000) / 10000f;
         float luminance = 0.95f;
 
+//        Log.d("COLORS", Float.toString(hue) + " " + Float.toString(saturation) + " " + Float.toString(luminance));
         Paint background = new Paint(Paint.ANTI_ALIAS_FLAG);
         background.setColor(Color.HSVToColor(new float[]{hue, saturation, luminance}));
         canvas.drawRect(0, 0, 100, 100, background);

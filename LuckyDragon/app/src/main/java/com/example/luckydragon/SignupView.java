@@ -23,5 +23,7 @@ public class SignupView extends Observer {
         // check if user has valid fields
         // TODO: activity creates error messages as necessary
         signupActivity.setSubmitButton(getObservable().isValid());
+
+
     }
 }
