@@ -113,7 +113,14 @@ public class ProfileActivity extends AppBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        TextView nameView = findViewById(R.id.nameTextView);
+        TextView emailView = findViewById(R.id.emailTextView);
+        TextView phoneNumberView = findViewById(R.id.phoneNumberTextView);
         ImageView profilePictureView = findViewById(R.id.profilePicture);
+
+        nameView.setText(user.getName());
+        emailView.setText(user.getEmail());
+        phoneNumberView.setText(user.getPhoneNumber());
         profilePictureView.setImageBitmap(user.getProfilePicture());
     }
 }
