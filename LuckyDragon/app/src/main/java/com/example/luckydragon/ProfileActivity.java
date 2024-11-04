@@ -11,16 +11,19 @@
 package com.example.luckydragon;
 
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -61,6 +64,13 @@ public class ProfileActivity extends AppBarActivity {
         emailView.setText(user.getEmail());
         phoneNumberView.setText(user.getPhoneNumber());
         profilePictureView.setImageBitmap(user.getProfilePicture());
+
+        ImageButton edit_profile_button = findViewById(R.id.edit_profile_button);
+        edit_profile_button.setOnClickListener(view -> {
+            // Create intent to go to signup
+            Intent signupIntent = new Intent(this, SignupActivity.class);
+            startActivity(signupIntent);
+        });
         // Create profile fragment
         if (Objects.equals(role, "ORGANIZER")) {
             // Create Organizer

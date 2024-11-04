@@ -87,30 +87,27 @@ public class AddEventDialogFragment extends DialogFragment {
                         }
 
                         // add event to database if one with the same info does not already exist
-                        DocumentReference eventRef = db.collection("events").document();
-
+//                        DocumentReference eventRef = db.collection("events").document();
                         // create event
-                        String[] waitlist = {};
-                        List<String> waitList = new ArrayList<String>(Arrays.asList(waitlist));
-                        Event event = new Event(eventRef.getId(), eventName, organizerDeviceID, organizerName, facilityName, waitlistLimitStr.isEmpty() ? null : Integer.parseInt(waitlistLimitStr),
-                                Integer.parseInt(attendeeLimitStr), date, timeHours, timeMinutes, waitList);
+                        List<String> waitList = new ArrayList<String>();
+                        // TODO: Move to controller and then make view reply if event with same info has been created upon save attempt
+                        Event event = new Event(
+                                eventName,
+                                organizerDeviceID,
+                                organizerName,
+                                facilityName,
+                                waitlistLimitStr.isEmpty() ? null : Integer.parseInt(waitlistLimitStr),
+                                Integer.parseInt(attendeeLimitStr),
+                                date,
+                                timeHours,
+                                timeMinutes,
+                                waitList
+                        );
 
                         organizerProfile.addEvent(event);
 
                         // Add event to database
-                        eventRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if(task.isSuccessful()) {
-                                    DocumentSnapshot document = task.getResult();
-                                    if(document.exists()) {
-                                        Toast.makeText(getContext(), "You have already created an event with the same information!", Toast.LENGTH_LONG).show();
-                                    } else {
-                                        eventRef.set(event.toHashMap());
-                                    }
-                                }
-                            }
-                        });
+                        event.save();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

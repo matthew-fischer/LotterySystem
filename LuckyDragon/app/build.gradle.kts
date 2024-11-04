@@ -59,7 +59,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    //noinspection UseTomlInstead
+    // noinspection UseTomlInstead
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
     implementation("com.google.zxing:core:3.3.0")
     androidTestImplementation(libs.junit.jupiter)
