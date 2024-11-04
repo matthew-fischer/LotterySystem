@@ -39,7 +39,7 @@ public class SignupActivity extends AppBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
+        setContentView(R.layout.activity_signup_material);
         getSupportActionBar().setTitle("Sign-Up");
 
         // Unpack intent
@@ -55,7 +55,7 @@ public class SignupActivity extends AppBarActivity {
         editPhone = findViewById(R.id.signupPhone);
 
         // Profile picture
-        uploadProfilePictureButton = findViewById(R.id.uploadProfilePicture);
+        uploadProfilePictureButton = findViewById(R.id.editProfileIcon);
 
         uploadImageResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
