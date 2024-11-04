@@ -356,4 +356,8 @@ public class Event extends Observable {
     public String getId() {
         return id;
     }
+
+    public List<String> getWaitList() {
+        return waitList;
+    }
 }

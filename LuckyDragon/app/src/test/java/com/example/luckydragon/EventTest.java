@@ -1,7 +1,11 @@
 package com.example.luckydragon;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,9 +19,7 @@ public class EventTest {
 
     private Event mockEvent() {
         List<String> waitList = new ArrayList<String>(Arrays.asList("device-1"));
-        return new Event("t_event_id", "t_event", "t_organizer_id",
-                "t_organizer", "t_facility", 5, 5,
-                "20241101",24, 0, waitList);
+        return new Event("t_event_id");
     }
 
     /**
@@ -25,12 +27,12 @@ public class EventTest {
      * Tests that the removeFromWaitList method removes an entrant from the list.
      */
     @Test
-    void testRemoveFromWaitList() {
+    public void testRemoveFromWaitList() {
         Event event = mockEvent();
-        String entrant = event.waitList.get(0);
+        String entrant = event.getWaitList().get(0);
         event.removeFromWaitList(entrant);
 
-        assertFalse(event.waitList.contains(entrant));
+        assertFalse(event.getWaitList().contains(entrant));
     }
 
     /**
@@ -39,12 +41,12 @@ public class EventTest {
      * an entrant from the waiting list.
      */
     @Test
-    void testDrawEntrantFromWaitList() {
+    public void testDrawEntrantFromWaitList() {
         Event event = mockEvent();
         String chosenEntrant = event.drawEntrantFromWaitList();
 
 
-        assertTrue(event.waitList.contains(chosenEntrant));
+        assertTrue(event.getWaitList().contains(chosenEntrant));
 
         event.removeFromWaitList(chosenEntrant);
         chosenEntrant = event.drawEntrantFromWaitList();
