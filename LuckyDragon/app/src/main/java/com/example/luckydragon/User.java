@@ -167,11 +167,18 @@ public class User extends Observable {
 
     /**
      * Gets the user's profile picture.
-     * @return the user's profile picture
+     * @return the user's profile picture if it exists, otherwise the default profile picture.
      */
     public Bitmap getProfilePicture() {
         if (uploadedProfilePicture != null) return uploadedProfilePicture;
         return defaultProfilePicture;
+    }
+    /**
+     * Gets the user's uploaded profile picture.
+     * @return the user's uploaded profile picture
+     */
+    public Bitmap getUploadedProfilePicture() {
+        return uploadedProfilePicture;
     }
 
     /**
