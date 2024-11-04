@@ -29,30 +29,36 @@
             android:text="Fill in your personal information."
             android:textAlignment="center"/>
 
-        <androidx.cardview.widget.CardView
-            android:layout_marginTop="5dp"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:id="@+id/editProfileIcon"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center_horizontal"
-            app:cardCornerRadius="250dp"
-            app:cardBackgroundColor="@color/light_grey">
-
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
             <androidx.cardview.widget.CardView
+                android:layout_marginTop="5dp"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 app:cardCornerRadius="250dp"
-                app:cardBackgroundColor="@color/light_grey"
-                android:layout_gravity="center">
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:scaleType="centerCrop"
-                    android:layout_gravity="center|center_vertical"
-                    android:src="@drawable/person_edit_24dp_5f6368_fill0_wght400_grad0_opsz24"
-                    android:background="@color/light_grey"/>
+                app:cardBackgroundColor="@color/light_grey">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    app:cardCornerRadius="250dp"
+                    app:cardBackgroundColor="@color/light_grey"
+                    android:layout_gravity="center">
+                    <ImageView
+                        android:id="@+id/profilePictureIcon"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:scaleType="centerCrop"
+                        android:layout_gravity="center|center_vertical"
+                        android:src="@drawable/person_edit_24dp_5f6368_fill0_wght400_grad0_opsz24"
+                        android:background="@color/light_grey"/>
+                </androidx.cardview.widget.CardView>
             </androidx.cardview.widget.CardView>
-        </androidx.cardview.widget.CardView>
+        </LinearLayout>
+
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
@@ -62,7 +68,7 @@
             android:hint="Name"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/eventNameEditText"
+                android:id="@+id/signupName"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </com.google.android.material.textfield.TextInputLayout>

@@ -14,8 +14,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.android.material.textfield.TextInputEditText;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -27,15 +30,15 @@ public class SignupActivity extends AppBarActivity {
     private SignupController signupController;
     private SignupView signupView;
 
-    private EditText editName;
-    private EditText editEmail;
-    private EditText editPhone;
+    private TextInputEditText editName;
+    private TextInputEditText editEmail;
+    private TextInputEditText editPhone;
     private SwitchMaterial switchNotifications;
     private Button submitButton;
-    private ImageButton uploadProfilePictureButton;
-    private ActivityResultLauncher<Intent> uploadImageResultLauncher;
-    private Bitmap profilePicture;
+
+    private LinearLayout uploadProfilePictureButton;
     private ImageView profilePictureView;
+    private ActivityResultLauncher<Intent> uploadImageResultLauncher;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +59,7 @@ public class SignupActivity extends AppBarActivity {
 
         // Profile picture
         uploadProfilePictureButton = findViewById(R.id.editProfileIcon);
+        profilePictureView = findViewById(R.id.profilePictureIcon);
 
         uploadImageResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -65,26 +69,28 @@ public class SignupActivity extends AppBarActivity {
                         if (result.getResultCode() == Activity.RESULT_OK) {
                             // There are no request codes
                             Intent data = result.getData();
+                            assert data != null;
                             Uri image = data.getData();
-                            assert(image != null);
+                            assert image != null;
 
                             try {
-                                profilePicture = MediaStore.Images.Media.getBitmap(getContentResolver(), image);
+                                Bitmap profilePicture = MediaStore.Images.Media.getBitmap(getContentResolver(), image);
+                                // TODO: Add intent to crop image and move it around when selecting if that exists
+                                // Crop image to square
+                                int n = Math.min(profilePicture.getWidth(), profilePicture.getHeight());
+                                profilePicture = Bitmap.createBitmap(profilePicture, 0, 0, n, n);
+
+                                // Scale image to proper size
+                                int width = ((GlobalApp) getApplication()).profilePictureSize.getWidth();
+                                int height = ((GlobalApp) getApplication()).profilePictureSize.getHeight();
+                                profilePicture = Bitmap.createScaledBitmap(profilePicture, width, height, false);
+                                signupController.setProfilePicture(profilePicture);
+                                profilePictureView.setImageBitmap(profilePicture);
                             } catch (Exception e) {
                                 Log.e("signup", "error uploading pfp");
                             }
 
-                            // TODO: Add intent to crop image and move it around when selecting if that exists
 
-                            // Crop image to square
-                            int n = Math.min(profilePicture.getWidth(), profilePicture.getHeight());
-                            profilePicture = Bitmap.createBitmap(profilePicture, 0, 0, n, n);
-
-                            // Scale image to proper size
-                            int width = ((GlobalApp) getApplication()).profilePictureSize.getWidth();
-                            int height = ((GlobalApp) getApplication()).profilePictureSize.getHeight();
-                            profilePicture = Bitmap.createScaledBitmap(profilePicture, width, height, false);
-                            signupController.setProfilePicture(profilePicture);
                         }
                     }
                 });
