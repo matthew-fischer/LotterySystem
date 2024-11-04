@@ -67,9 +67,9 @@ public class ProfileActivity extends AppBarActivity {
 
         ImageButton edit_profile_button = findViewById(R.id.edit_profile_button);
         edit_profile_button.setOnClickListener(view -> {
-            // Create dialog to go to signup
-            DialogFragment editProfileDialog = new EditProfileDialogFragment();
-            editProfileDialog.show(getSupportFragmentManager(), "EditProfileDialogFragment");
+            // Create intent to go to signup
+            Intent signupIntent = new Intent(this, SignupActivity.class);
+            startActivity(signupIntent);
         });
         // Create profile fragment
         if (Objects.equals(role, "ORGANIZER")) {

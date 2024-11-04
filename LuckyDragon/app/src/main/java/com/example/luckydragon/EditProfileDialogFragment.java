@@ -4,16 +4,26 @@
 
 package com.example.luckydragon;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
@@ -27,7 +37,10 @@ public class EditProfileDialogFragment extends DialogFragment {
     private TextInputEditText editEmail;
     private TextInputLayout phoneLayout;
     private TextInputEditText editPhone;
+    private ImageButton editProfilePhotoButton;
 
+    private Bitmap profilePicture;
+    private ActivityResultLauncher uploadImageResultLauncher;
     private EditProfileView editProfileView;
     private EditProfileController editProfileController;
 
@@ -60,14 +73,51 @@ public class EditProfileDialogFragment extends DialogFragment {
         phoneLayout = dialog.findViewById(R.id.editProfilePhoneLayout);
         editPhone = dialog.findViewById(R.id.editProfileEditPhone);
 
+        editProfilePhotoButton = dialog.findViewById(R.id.uploadProfilePicture);
+
         // TODO: ASK should be in view? Set text to existing value
         editName.setText(user.getName());
         editEmail.setText(user.getEmail());
         editPhone.setText(user.getPhoneNumber());
 
+        buildUploadImageResultLauncher();
         setupListeners();
 
         return dialog;
+    }
+
+    private void buildUploadImageResultLauncher () {
+        uploadImageResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            // There are no request codes
+                            Intent data = result.getData();
+                            Uri image = data.getData();
+                            assert(image != null);
+
+                            try {
+                                profilePicture = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), image);
+                            } catch (Exception e) {
+                                Log.e("signup", "error uploading pfp");
+                            }
+
+                            // TODO: Add intent to crop image and move it around when selecting if that exists
+
+                            // Crop image to square
+                            int n = Math.min(profilePicture.getWidth(), profilePicture.getHeight());
+                            profilePicture = Bitmap.createBitmap(profilePicture, 0, 0, n, n);
+
+                            // Scale image to proper size
+                            int width = ((GlobalApp) requireActivity().getApplication()).profilePictureSize.getWidth();
+                            int height = ((GlobalApp) requireActivity().getApplication()).profilePictureSize.getHeight();
+                            profilePicture = Bitmap.createScaledBitmap(profilePicture, width, height, false);
+                            editProfileController.setProfilePicture(profilePicture);
+                        }
+                    }
+                });
     }
 
     private void setupListeners() {
@@ -97,26 +147,13 @@ public class EditProfileDialogFragment extends DialogFragment {
             editPhone.setText("");
         });
 
-//        // set listener for uploading pfp button
-//        uploadProfilePictureButton.setOnClickListener(view -> {
-//            Intent intent = new Intent();
-//            intent.setType("image/*");
-//            intent.setAction(Intent.ACTION_GET_CONTENT);
-//            uploadImageResultLauncher.launch(intent);
-//        });
-//
-//        submitButton.setOnClickListener(view -> {
-//            // tell activity to launch profile
-//            Intent intent = new Intent(this, ProfileActivity.class);
-//            intent.putExtra("role", "ENTRANT");
-//
-//            // Start profile activity
-//            startActivity(intent);
-//            finish();
-//
-//            // become entrant
-//            signupController.becomeEntrant();
-//        });
+        // set listener for uploading pfp button
+        editProfilePhotoButton.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            uploadImageResultLauncher.launch(intent);
+        });
     }
 
     private void setListener(EditText editText, Runnable runnable) {

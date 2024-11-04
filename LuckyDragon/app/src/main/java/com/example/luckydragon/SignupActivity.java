@@ -36,7 +36,7 @@ public class SignupActivity extends AppBarActivity {
     private Button submitButton;
     private ImageButton uploadProfilePictureButton;
     private ActivityResultLauncher<Intent> uploadImageResultLauncher;
-    private Bitmap profilePicture;
+
     private ImageView profilePictureView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,17 +44,16 @@ public class SignupActivity extends AppBarActivity {
         setContentView(R.layout.activity_signup);
         getSupportActionBar().setTitle("Sign-Up");
 
-        // Unpack intent
-        user = ((GlobalApp) getApplication()).getUser();
-        signupController = new SignupController(user);
-        signupView = new SignupView(user, this, signupController);
-
-        user.addObserver(signupView);
-
         // Get input fields
         editName = findViewById(R.id.signupName);
         editEmail = findViewById(R.id.signupEmail);
         editPhone = findViewById(R.id.signupPhone);
+        switchNotifications = findViewById(R.id.signupNotifications);
+        submitButton = findViewById(R.id.signupSubmit);
+
+        user = ((GlobalApp) getApplication()).getUser();
+        signupController = new SignupController(user);
+        signupView = new SignupView(user, this, signupController);
 
         // Profile picture
         uploadProfilePictureButton = findViewById(R.id.uploadProfilePicture);
@@ -71,33 +70,36 @@ public class SignupActivity extends AppBarActivity {
                             assert(image != null);
 
                             try {
-                                profilePicture = MediaStore.Images.Media.getBitmap(getContentResolver(), image);
+                                Bitmap profilePicture = MediaStore.Images.Media.getBitmap(getContentResolver(), image);
+                                // TODO: Add intent to crop image and move it around when selecting if that exists
+
+                                // Crop image to square
+                                int n = Math.min(profilePicture.getWidth(), profilePicture.getHeight());
+                                profilePicture = Bitmap.createBitmap(profilePicture, 0, 0, n, n);
+
+                                // Scale image to proper size
+                                int width = ((GlobalApp) getApplication()).profilePictureSize.getWidth();
+                                int height = ((GlobalApp) getApplication()).profilePictureSize.getHeight();
+                                profilePicture = Bitmap.createScaledBitmap(profilePicture, width, height, false);
+                                signupController.setProfilePicture(profilePicture);
                             } catch (Exception e) {
                                 Log.e("signup", "error uploading pfp");
                             }
-
-                            // TODO: Add intent to crop image and move it around when selecting if that exists
-
-                            // Crop image to square
-                            int n = Math.min(profilePicture.getWidth(), profilePicture.getHeight());
-                            profilePicture = Bitmap.createBitmap(profilePicture, 0, 0, n, n);
-
-                            // Scale image to proper size
-                            int width = ((GlobalApp) getApplication()).profilePictureSize.getWidth();
-                            int height = ((GlobalApp) getApplication()).profilePictureSize.getHeight();
-                            profilePicture = Bitmap.createScaledBitmap(profilePicture, width, height, false);
-                            signupController.setProfilePicture(profilePicture);
                         }
                     }
                 });
-        switchNotifications = findViewById(R.id.signupNotifications);
-        submitButton = findViewById(R.id.signupSubmit);
-
+        setDefaults();
         setupListeners();
     }
 
     public void setSubmitButton(boolean enabled) {
         submitButton.setEnabled(enabled);
+    }
+
+    private void setDefaults() {
+        editName.setText(user.isValid() ? user.getName() : "");
+        editEmail.setText(user.isValid() ? user.getEmail() : "");
+        editPhone.setText(user.isValid() ? user.getPhoneNumber() : "");
     }
 
     private void setupListeners() {
