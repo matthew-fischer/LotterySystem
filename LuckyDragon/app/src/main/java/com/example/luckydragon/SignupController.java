@@ -2,7 +2,9 @@ package com.example.luckydragon;
 
 import android.graphics.Bitmap;
 import android.widget.EditText;
+import android.widget.Switch;
 
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SignupController extends Controller {
@@ -33,6 +35,10 @@ public class SignupController extends Controller {
         // TODO: input validation
         String phoneNumber = editPhone.getText().toString();
         getObservable().setPhoneNumber(phoneNumber);
+    }
+
+    public void setNotifications(SwitchMaterial switchNotifications) {
+        getObservable().setNotifications(switchNotifications.isChecked());
     }
 
     public void setProfilePicture(Bitmap image) {

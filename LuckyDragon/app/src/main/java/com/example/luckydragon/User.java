@@ -36,9 +36,10 @@ public class User extends Observable {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private String deviceId;
-    private String name;
-    private String email;
-    private String phoneNumber;
+    private String name = "";
+    private String email = "";
+    private String phoneNumber = "";
+    private Boolean notifications = false;
     private Bitmap uploadedProfilePicture;
     private Bitmap defaultProfilePicture;
 
@@ -70,10 +71,11 @@ public class User extends Observable {
                         // create new user with empty info
                         save();
                     } else {
-                        email = String.format("%s", userData.get("email"));
-                        name = String.format("%s", userData.get("name"));
-                        phoneNumber = String.format("%s", userData.get("phoneNumber"));
-
+                        email = userData.get("email") != null ? String.format("%s", userData.get("email")) : "";
+                        name = userData.get("name") != null ? String.format("%s", userData.get("name")) : "";
+                        phoneNumber = userData.get("phoneNumber") != null ? String.format("%s", userData.get("phoneNumber")) : "";
+                        notifications = userData.get("notifications") != null
+                                && userData.get("notifications").toString().equals("true");
                         boolean isEntrant = userData.get("isEntrant") != null
                                 && userData.get("isEntrant").toString().equals("true");
                         if (isEntrant) {
@@ -117,6 +119,7 @@ public class User extends Observable {
         map.put("name", name);
         map.put("email", email);
         map.put("phoneNumber", phoneNumber);
+        map.put("notifications", notifications);
         map.put("profilePicture", bitmapToString(uploadedProfilePicture));
         map.put("defaultProfilePicture", bitmapToString(defaultProfilePicture));
         db.collection("users").document(deviceId)
@@ -179,7 +182,9 @@ public class User extends Observable {
         this.name = name;
 
         // change default profile picture
-        this.defaultProfilePicture = generateProfilePicture(this.name);
+        if (!name.isEmpty()) {
+            this.defaultProfilePicture = generateProfilePicture(this.name);
+        }
 
         notifyObservers();
     }
@@ -200,6 +205,15 @@ public class User extends Observable {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
         notifyObservers();
+    }
+
+    public void setNotifications(boolean enabled) {
+        this.notifications = enabled;
+        notifyObservers();
+    }
+
+    public boolean isNotified() {
+        return notifications;
     }
 
     public void setUserProfilePicture(Bitmap profilePicture) {

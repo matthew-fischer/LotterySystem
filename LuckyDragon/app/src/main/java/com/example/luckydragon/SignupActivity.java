@@ -88,9 +88,16 @@ public class SignupActivity extends AppBarActivity {
                         }
                     }
                 });
-        setDefaults();
+//        setDefaults();
         setupListeners();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setDefaults();
+    }
+
 
     public void setSubmitButton(boolean enabled) {
         submitButton.setEnabled(enabled);
@@ -100,6 +107,7 @@ public class SignupActivity extends AppBarActivity {
         editName.setText(user.isValid() ? user.getName() : "");
         editEmail.setText(user.isValid() ? user.getEmail() : "");
         editPhone.setText(user.isValid() ? user.getPhoneNumber() : "");
+        switchNotifications.setChecked(user.isNotified());
     }
 
     private void setupListeners() {
@@ -117,6 +125,9 @@ public class SignupActivity extends AppBarActivity {
             // code that will run in x seconds
             signupController.extractPhoneNumber(editPhone);
             // TODO: input validation
+        });
+        switchNotifications.setOnClickListener(view -> {
+            signupController.setNotifications(switchNotifications);
         });
 
         // set listener for uploading pfp button
