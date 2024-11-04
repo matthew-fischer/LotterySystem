@@ -36,8 +36,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class AddEventDialogFragment extends DialogFragment {
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-
     @Nullable private Integer timeHours = null;
     @Nullable private Integer timeMinutes = null;
     @Nullable private String date = null;
@@ -48,12 +46,12 @@ public class AddEventDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
-        ProfileActivity parent = (ProfileActivity)getActivity();
-        String organizerDeviceID = Objects.requireNonNull(parent).getUser().getDeviceId();
-        String organizerName = Objects.requireNonNull(parent).getUser().getName();
+        ProfileActivity activity = (ProfileActivity)getActivity();
+        String organizerDeviceID = Objects.requireNonNull(activity).getUser().getDeviceId();
+        String organizerName = Objects.requireNonNull(activity).getUser().getName();
 
         // We know the user is an organizer if they are adding an event. Thus we can cast to Organizer.
-        String facilityName = (Objects.requireNonNull(parent).getUser()).getOrganizer().getFacility();
+        String facilityName = (Objects.requireNonNull(activity).getUser()).getOrganizer().getFacility();
 
         Fragment parentFragment = getParentFragment();
         OrganizerProfileFragment organizerProfile = (OrganizerProfileFragment) parentFragment;
@@ -62,7 +60,7 @@ public class AddEventDialogFragment extends DialogFragment {
 
         // Set facility text
         TextInputEditText facilityEditText = dialogView.findViewById(R.id.facilityEditText);
-        String facility = (parent.getUser()).getOrganizer().getFacility();
+        String facility = (activity.getUser()).getOrganizer().getFacility();
         facilityEditText.setText(facility);
 
         return builder.setView(dialogView)
