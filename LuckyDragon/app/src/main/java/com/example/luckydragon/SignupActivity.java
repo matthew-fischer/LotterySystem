@@ -59,13 +59,15 @@ public class SignupActivity extends AppBarActivity {
         switchNotifications = findViewById(R.id.signupNotifications);
         submitButton = findViewById(R.id.signupSubmit);
 
+        // Profile picture
+        uploadProfilePictureButton = findViewById(R.id.editProfileIcon);
+        profilePictureView = findViewById(R.id.profilePictureIcon);
+
         user = ((GlobalApp) getApplication()).getUser();
         signupController = new SignupController(user);
         signupView = new SignupView(user, this, signupController);
 
-        // Profile picture
-        uploadProfilePictureButton = findViewById(R.id.editProfileIcon);
-        profilePictureView = findViewById(R.id.profilePictureIcon);
+
 
         uploadImageResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -91,7 +93,6 @@ public class SignupActivity extends AppBarActivity {
                                 int height = ((GlobalApp) getApplication()).profilePictureSize.getHeight();
                                 profilePicture = Bitmap.createScaledBitmap(profilePicture, width, height, false);
                                 signupController.setProfilePicture(profilePicture);
-                                profilePictureView.setImageBitmap(profilePicture);
                             } catch (Exception e) {
                                 Log.e("signup", "error uploading pfp");
                             }
@@ -144,7 +145,7 @@ public class SignupActivity extends AppBarActivity {
             signupController.setNotifications(switchNotifications);
         });
 
-        // set listener for uploading pfp button
+        // Set listener for uploading profile picture
         uploadProfilePictureButton.setOnClickListener(view -> {
             Intent intent = new Intent();
             intent.setType("image/*");
@@ -206,5 +207,11 @@ public class SignupActivity extends AppBarActivity {
                 handler.postDelayed(runnable, 1000);
             }
         });
+    }
+
+    public void updateProfilePictureIcon(Bitmap profilePicture) {
+        if (profilePicture != null) {
+            profilePictureView.setImageBitmap(profilePicture);
+        }
     }
 }

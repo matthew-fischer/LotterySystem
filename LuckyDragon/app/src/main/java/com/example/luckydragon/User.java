@@ -173,6 +173,7 @@ public class User extends Observable {
         if (uploadedProfilePicture != null) return uploadedProfilePicture;
         return defaultProfilePicture;
     }
+
     /**
      * Gets the user's uploaded profile picture.
      * @return the user's uploaded profile picture

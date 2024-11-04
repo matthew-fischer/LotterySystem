@@ -109,4 +109,11 @@ public class ProfileActivity extends AppBarActivity {
     public void sendToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ImageView profilePictureView = findViewById(R.id.profilePicture);
+        profilePictureView.setImageBitmap(user.getProfilePicture());
+    }
 }
