@@ -1,6 +1,7 @@
 package com.example.luckydragon;
 
 import android.content.Intent;
+import android.util.Log;
 
 public class SignupView extends Observer {
     private final SignupActivity signupActivity;

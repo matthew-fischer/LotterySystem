@@ -25,37 +25,43 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
+import java.util.Objects;
+
 public class SignupActivity extends AppBarActivity {
     private User user;
     private SignupController signupController;
     private SignupView signupView;
+    private String role;
 
     private TextInputEditText editName;
     private TextInputEditText editEmail;
     private TextInputEditText editPhone;
     private SwitchMaterial switchNotifications;
     private Button submitButton;
+    private ActivityResultLauncher<Intent> uploadImageResultLauncher;
 
     private LinearLayout uploadProfilePictureButton;
     private ImageView profilePictureView;
-    private ActivityResultLauncher<Intent> uploadImageResultLauncher;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup_material);
         getSupportActionBar().setTitle("Sign-Up");
 
-        // Unpack intent
-        user = ((GlobalApp) getApplication()).getUser();
-        signupController = new SignupController(user);
-        signupView = new SignupView(user, this, signupController);
-
-        user.addObserver(signupView);
+        // Get intent
+        role = getIntent().getStringExtra("role");
+        Objects.requireNonNull(role, "Signup activity launched without a role!");
 
         // Get input fields
         editName = findViewById(R.id.signupName);
         editEmail = findViewById(R.id.signupEmail);
         editPhone = findViewById(R.id.signupPhone);
+        switchNotifications = findViewById(R.id.signupNotifications);
+        submitButton = findViewById(R.id.signupSubmit);
+
+        user = ((GlobalApp) getApplication()).getUser();
+        signupController = new SignupController(user);
+        signupView = new SignupView(user, this, signupController);
 
         // Profile picture
         uploadProfilePictureButton = findViewById(R.id.editProfileIcon);
@@ -90,18 +96,29 @@ public class SignupActivity extends AppBarActivity {
                                 Log.e("signup", "error uploading pfp");
                             }
 
-
                         }
                     }
                 });
-        switchNotifications = findViewById(R.id.signupNotifications);
-        submitButton = findViewById(R.id.signupSubmit);
-
+//        setDefaults();
         setupListeners();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setDefaults();
+    }
+
+
     public void setSubmitButton(boolean enabled) {
         submitButton.setEnabled(enabled);
+    }
+
+    private void setDefaults() {
+        editName.setText(user.isValid() ? user.getName() : "");
+        editEmail.setText(user.isValid() ? user.getEmail() : "");
+        editPhone.setText(user.isValid() ? user.getPhoneNumber() : "");
+        switchNotifications.setChecked(user.isNotified());
     }
 
     private void setupListeners() {
@@ -122,6 +139,9 @@ public class SignupActivity extends AppBarActivity {
             try {
                 signupController.extractPhoneNumber(editPhone);
             } catch(Exception ignored) {};
+        });
+        switchNotifications.setOnClickListener(view -> {
+            signupController.setNotifications(switchNotifications);
         });
 
         // set listener for uploading pfp button
@@ -158,7 +178,7 @@ public class SignupActivity extends AppBarActivity {
 
             // tell activity to launch profile
             Intent intent = new Intent(this, ProfileActivity.class);
-            intent.putExtra("role", "ENTRANT");
+            intent.putExtra("role", role);
 
             // Start profile activity
             startActivity(intent);

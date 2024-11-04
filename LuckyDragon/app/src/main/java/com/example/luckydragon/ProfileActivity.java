@@ -11,16 +11,19 @@
 package com.example.luckydragon;
 
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -36,6 +39,7 @@ public class ProfileActivity extends AppBarActivity {
     enum Mode {
         ENTRANT,
         ORGANIZER,
+        ADMIN,
     }
 
     private User user;
@@ -61,6 +65,14 @@ public class ProfileActivity extends AppBarActivity {
         emailView.setText(user.getEmail());
         phoneNumberView.setText(user.getPhoneNumber());
         profilePictureView.setImageBitmap(user.getProfilePicture());
+
+        ImageButton edit_profile_button = findViewById(R.id.edit_profile_button);
+        edit_profile_button.setOnClickListener(view -> {
+            // Create intent to go to signup
+            Intent signupIntent = new Intent(this, SignupActivity.class);
+            signupIntent.putExtra("role", role);
+            startActivity(signupIntent);
+        });
         // Create profile fragment
         if (Objects.equals(role, "ORGANIZER")) {
             // Create Organizer
@@ -78,12 +90,23 @@ public class ProfileActivity extends AppBarActivity {
                             .setReorderingAllowed(true)
                             .replace(R.id.fragment_container_view, EntrantProfileFragment.class, null)
                             .commit();
+        } else if (Objects.equals(role, "ADMIN")) {
+            // Create admin profile fragment
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.fragment_container_view, AdminProfileFragment.class, null)
+                    .commit();
         } else {
             throw new RuntimeException("User mode not set.");
         }
     }
 
+    // TODO: REMOVE
     public User getUser() {
         return user;
+    }
+
+    public void sendToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

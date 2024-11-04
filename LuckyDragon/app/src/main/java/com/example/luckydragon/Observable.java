@@ -13,6 +13,7 @@ public abstract class Observable {
 
     public void addObserver(Observer observer) {
         observers.add(observer);
+        observer.update(this);
     }
 
     public void removeObserver(Observer observer) {

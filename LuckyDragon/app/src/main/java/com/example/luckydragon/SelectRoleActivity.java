@@ -65,6 +65,7 @@ public class SelectRoleActivity extends AppCompatActivity {
                 } else {
                     // Send to entrant signup
                     Intent signupIntent = new Intent(this, SignupActivity.class);
+                    signupIntent.putExtra("role", "ENTRANT");
                     startActivity(signupIntent);
                 }
             });
@@ -88,6 +89,21 @@ public class SelectRoleActivity extends AppCompatActivity {
             });
         }
         Log.e("TEST", "view initialized");
+
+        // Admin button
+        if (user.isAdmin()) {
+            Button adminButton = findViewById(R.id.adminButton);
+            if (!adminButton.hasOnClickListeners()) {
+                adminButton.setOnClickListener(v -> {
+                    // Create profile intent
+                    Intent profileIntent = new Intent(this, ProfileActivity.class);
+                    // Convert user to admin and pass into intent
+                    profileIntent.putExtra("role", "ADMIN");
+                    // Start profile activity
+                    startActivity(profileIntent);
+                });
+            }
+        }
     }
 
     public void showAdminButton() {

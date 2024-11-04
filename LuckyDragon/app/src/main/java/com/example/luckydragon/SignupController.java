@@ -2,11 +2,10 @@ package com.example.luckydragon;
 
 import android.graphics.Bitmap;
 import android.widget.EditText;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SignupController extends Controller {
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-
     public SignupController(User observable) {
         super(observable);
     }
@@ -32,6 +31,10 @@ public class SignupController extends Controller {
         // TODO: input validation
         String phoneNumber = editPhone.getText().toString().trim();
         getObservable().setPhoneNumber(phoneNumber);
+    }
+
+    public void setNotifications(SwitchMaterial switchNotifications) {
+        getObservable().setNotifications(switchNotifications.isChecked());
     }
 
     public void setProfilePicture(Bitmap image) {
