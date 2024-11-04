@@ -5,61 +5,53 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp">
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/editProfileNameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:expandedHintEnabled="false"
+        android:layout_marginTop="10dp"
+        android:hint="Full Name"
+        app:endIconMode="custom"
+        app:endIconDrawable="@drawable/baseline_clear_24"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editProfileEditName"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/editProfileEmailLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:expandedHintEnabled="false"
+        android:layout_marginTop="10dp"
+        android:hint="Email Address"
+        app:endIconMode="custom"
+        app:endIconDrawable="@drawable/baseline_clear_24"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editProfileEditEmail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <FrameLayout
-        android:padding="10dp"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/editProfilePhoneLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textSize="25dp"
-            android:layout_gravity="center_vertical"
-            android:hint="Full Name"
-            android:singleLine="true" />
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|center_vertical"
-            android:src="@drawable/baseline_clear_24"
-            android:background="@null"/>
-    </FrameLayout>
-    <FrameLayout
-        android:padding="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textSize="25dp"
-            android:layout_gravity="center_vertical"
-            android:hint="Email Address"
-            android:singleLine="true" />
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|center_vertical"
-            android:src="@drawable/baseline_clear_24"
-            android:background="@null"/>
-    </FrameLayout>
-    <FrameLayout
-        android:padding="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textSize="25dp"
-            android:layout_gravity="center_vertical"
-            android:hint="Phone (Optional)"
-            android:singleLine="true" />
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|center_vertical"
-            android:src="@drawable/baseline_clear_24"
-            android:background="@null"/>
-    </FrameLayout>
+        android:layout_height="wrap_content"
+        app:expandedHintEnabled="false"
+        android:layout_marginTop="10dp"
+        android:hint="Phone Number"
+        app:endIconMode="custom"
+        app:endIconDrawable="@drawable/baseline_clear_24"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editProfileEditPhone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.textfield.TextInputLayout>
+
     <FrameLayout
         android:padding="10dp"
         android:layout_width="match_parent"
