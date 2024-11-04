@@ -39,7 +39,6 @@ public class ProfileActivity extends AppBarActivity {
     enum Mode {
         ENTRANT,
         ORGANIZER,
-        ADMIN,
     }
 
     private User user;
