@@ -25,14 +25,14 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class OrganizerProfileFragment extends Fragment {
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private String facilityName;
-    Set<Event> eventSet = new HashSet<>();
-    ArrayList<Event> eventList;
-    EventArrayAdapter eventListAdapter;
+    private OrganizerProfileView organizerProfileView;
+    private User user;
+    private EventArrayAdapter eventListAdapter;
+
 
     public OrganizerProfileFragment() {
         super(R.layout.fragment_organizer_profile);
@@ -40,17 +40,41 @@ public class OrganizerProfileFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        // Get user from global app
+        user = ((GlobalApp) requireActivity().getApplication()).getUser();
+
+        // Create view
+        organizerProfileView = new OrganizerProfileView(user, this);
+
+        // Update view
+        user.notifyObservers();
+        /*
         // Get facility from parent activity
         ProfileActivity parent = (ProfileActivity)requireActivity();
         User user = parent.getUser();
 
-        assert user.getOrganizer() != null;  // if this runs, we messed up in coding.
-        facilityName = user.getOrganizer().getFacility();
+        //assert user.getOrganizer() != null;  // if this runs, we messed up in coding.
+        //facilityName = user.getOrganizer().getFacility();
+
+
+
+        // Set up organizer events listview
+        ListView eventsListView = parent.findViewById(R.id.organizerProfileEventsListview);
+        eventList = new ArrayList<>();
+        eventListAdapter = new EventArrayAdapter(eventList, parent.getApplicationContext());
+        eventsListView.setAdapter(eventListAdapter);
+        */
+
+    }
+
+    public void initializeView() {
+        View view = getView();
 
         // Set facility name
         MaterialTextView facilityTextView = view.findViewById(R.id.facilityTextView);
         ImageButton facilityEditButton = view.findViewById(R.id.facilityEditButton);
-        if (facilityName == null) {
+        assert user.getOrganizer() != null; // user must have an organizer by this point
+        if (user.getOrganizer().getFacility() == null) {
             // Set facility text
             String noFacilityMessage = "You have not created a facility yet.";
             facilityTextView.setText(noFacilityMessage);
@@ -58,14 +82,14 @@ public class OrganizerProfileFragment extends Fragment {
             facilityEditButton.setImageResource(R.drawable.baseline_add_24);
         } else {
             // Set facility text
-            facilityTextView.setText(facilityName);
+            facilityTextView.setText(user.getOrganizer().getFacility());
         }
 
         // Add on click listener for "Add Event" button
+        /* DISABLE EVENT ADDING UNTIL TONY REFACTORS IT
         Button addEventButton = view.findViewById(R.id.addEventButton);
         addEventButton.setOnClickListener((View v) -> {
-            facilityName = user.getOrganizer().getFacility();
-            if(facilityName == null) { // if no facility, open the facility edit fragment instead
+            if(user.getOrganizer().getFacility() == null) { // if no facility, open the facility edit fragment instead
                 DialogFragment editFacilityDialog = new EditFacilityDialogFragment("Add a facility before you create an event!");
                 editFacilityDialog.show(getChildFragmentManager(), "EditFacilityDialogFragment");
             } else {
@@ -73,48 +97,12 @@ public class OrganizerProfileFragment extends Fragment {
                 addEventDialog.show(getChildFragmentManager(), "AddEventDialogFragment");
             }
         });
+         */
         // Add on click listener for facility edit button
         facilityEditButton.setOnClickListener((View v) -> {
             DialogFragment editFacilityDialog = new EditFacilityDialogFragment();
             editFacilityDialog.show(getChildFragmentManager(), "EditFacilityDialogFragment");
         });
-
-        // Set up organizer events listview
-        ListView eventsListView = parent.findViewById(R.id.organizerProfileEventsListview);
-        eventList = new ArrayList<>();
-        eventListAdapter = new EventArrayAdapter(eventList, parent.getApplicationContext());
-        eventsListView.setAdapter(eventListAdapter);
-
-        // Get events
-        db.collection("events")
-                .whereEqualTo("OrganizerDeviceID", parent.getUser().getDeviceId())
-                .get()
-                .addOnCompleteListener((task) -> {
-                    if (task.isSuccessful()) {
-                        Log.d(TAG, "Got documents");
-                        Map<String, Object> eventData;
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            eventData = document.getData();
-                            System.out.println(eventData.get("WaitlistLimit"));
-                            Event event = new Event(
-                                    document.getId(),
-                                    eventData.get("Name") == null ? null : String.format("%s", eventData.get("Name")),
-                                    eventData.get("OrganizerDeviceID") == null ? null : String.format("%s", eventData.get("OrganizerDeviceID")),
-                                    eventData.get("Facility") == null ? null : String.format("%s", eventData.get("Facility")),
-                                    eventData.get("WaitlistLimit") == null ? null : Integer.valueOf(String.format("%s", eventData.get("WaitlistLimit"))),
-                                    eventData.get("AttendeeLimit") == null ? null : Integer.valueOf(String.format("%s", eventData.get("AttendeeLimit"))),
-                                    eventData.get("Date") == null ? null : String.format("%s", eventData.get("Date")),
-                                    eventData.get("Hours") == null ? null : Integer.valueOf(String.format("%s", eventData.get("Hours"))),
-                                    eventData.get("Minutes") == null ? null : Integer.valueOf(String.format("%s", eventData.get("Minutes")))
-                            );
-                            eventSet.add(event);
-                            eventList.add(event);
-                        }
-                        eventListAdapter.notifyDataSetChanged();
-                    } else {
-                        Log.d(TAG, "Error getting documents: ", task.getException());
-                    }
-                });
     }
 
     // EditFacilityDialogFragment uses this function to update the facility textview after a change is made.
@@ -130,15 +118,5 @@ public class OrganizerProfileFragment extends Fragment {
         Activity activity = requireActivity();
         ImageButton facilityButton = activity.findViewById(R.id.facilityEditButton);
         facilityButton.setImageResource(newResId);
-    }
-
-    public void addEvent(Event event) {
-        System.out.println("event added");
-
-        eventList.add(event);
-        eventSet.add(event);
-
-        System.out.println(eventList);
-        eventListAdapter.notifyDataSetChanged();
     }
 }

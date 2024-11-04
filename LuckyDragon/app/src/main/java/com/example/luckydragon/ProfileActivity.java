@@ -42,7 +42,6 @@ public class ProfileActivity extends AppBarActivity {
 
         // If user exists, update view
         if(user != null) {
-            Log.e("USER", "NOTIFY USER");
             user.notifyObservers();
         }
     }

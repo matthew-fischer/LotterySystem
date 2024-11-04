@@ -77,17 +77,16 @@ public class User extends Observable {
                             String facility = String.format("%s", userData.get("facility"));
 
                             if (facility != null) {
-                                organizer = new Organizer(facility);
+                                organizer = new Organizer(deviceId, facility, this::notifyObservers);
                             } else {
-                                organizer = new Organizer();
+                                organizer = new Organizer(deviceId, this::notifyObservers);
                             }
+                            organizer.fetchEvents();
                         }
                         isAdmin = userData.get("isAdmin") != null
                                 && userData.get("isAdmin").toString().equals("true");
 
                     }
-
-
                     isLoaded = true;
                     notifyObservers();
                 });
@@ -202,7 +201,7 @@ public class User extends Observable {
 
     public void setOrganizer(Boolean organizer) {
         if (organizer) {
-            this.organizer = new Organizer();
+            this.organizer = new Organizer(deviceId, this::notifyObservers);
         } else {
             this.organizer = null;
         }
