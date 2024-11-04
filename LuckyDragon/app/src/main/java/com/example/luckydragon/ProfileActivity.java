@@ -39,6 +39,7 @@ public class ProfileActivity extends AppBarActivity {
     enum Mode {
         ENTRANT,
         ORGANIZER,
+        ADMIN,
     }
 
     private User user;
@@ -88,6 +89,12 @@ public class ProfileActivity extends AppBarActivity {
                             .setReorderingAllowed(true)
                             .replace(R.id.fragment_container_view, EntrantProfileFragment.class, null)
                             .commit();
+        } else if (Objects.equals(role, "ADMIN")) {
+            // Create admin profile fragment
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.fragment_container_view, AdminProfileFragment.class, null)
+                    .commit();
         } else {
             throw new RuntimeException("User mode not set.");
         }

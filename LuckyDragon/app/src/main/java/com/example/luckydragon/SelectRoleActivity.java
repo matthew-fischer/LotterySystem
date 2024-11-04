@@ -95,7 +95,9 @@ public class SelectRoleActivity extends AppCompatActivity {
             if (!adminButton.hasOnClickListeners()) {
                 adminButton.setOnClickListener(v -> {
                     // Create profile intent
-                    Intent profileIntent = new Intent(this, AdminProfileActivity.class);
+                    Intent profileIntent = new Intent(this, ProfileActivity.class);
+                    // Convert user to admin and pass into intent
+                    profileIntent.putExtra("role", "ADMIN");
                     // Start profile activity
                     startActivity(profileIntent);
                 });
