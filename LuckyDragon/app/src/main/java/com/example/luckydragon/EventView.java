@@ -1,6 +1,7 @@
 package com.example.luckydragon;
 
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -11,30 +12,30 @@ public class EventView extends Observer {
     private TextView waitlistSpotsView;
     private TextView attendeeSpotsView;
     private TextView currentlyJoinedView;
-    private Button signUpButton;
+
+    private TextView notSelectedText;
+    private Button cancel;
+    private Button decline;
+    private Button accept;
+    private Button signUp;
 
     private String deviceId;
 
-    public EventView(
-            Event event,
-            String deviceId,
-            TextView eventNameView,
-            TextView facilityNameView,
-            TextView dateAndTimeView,
-            TextView waitlistSpotsView,
-            TextView attendeeSpotsView,
-            TextView currentlyJoinedView,
-            Button signUpButton
-    ) {
+    public EventView(Event event, String deviceId, EventActivity eventActivity) {
         this.deviceId = deviceId;
 
-        this.eventNameView = eventNameView;
-        this.facilityNameView = facilityNameView;
-        this.dateAndTimeView = dateAndTimeView;
-        this.waitlistSpotsView = waitlistSpotsView;
-        this.attendeeSpotsView = attendeeSpotsView;
-        this.currentlyJoinedView = currentlyJoinedView;
-        this.signUpButton = signUpButton;
+        eventNameView = eventActivity.findViewById(R.id.eventName);
+        facilityNameView = eventActivity.findViewById(R.id.facilityName);
+        dateAndTimeView = eventActivity.findViewById(R.id.dateAndTime);
+        waitlistSpotsView = eventActivity.findViewById(R.id.waitlistSpots);
+        attendeeSpotsView = eventActivity.findViewById(R.id.attendeeSpots);
+        currentlyJoinedView = eventActivity.findViewById(R.id.currentlyJoined);
+
+        signUp = eventActivity.findViewById(R.id.signUpButton);
+        notSelectedText = eventActivity.findViewById(R.id.eventNotSelectedText);
+        cancel = eventActivity.findViewById(R.id.eventCancel);
+        decline = eventActivity.findViewById(R.id.eventDecline);
+        accept = eventActivity.findViewById(R.id.eventAccept);
 
         startObserving(event);
     }
@@ -55,7 +56,13 @@ public class EventView extends Observer {
         // Switch mode to waitlist view
         if (getObservable().onWaitList(deviceId)) {
             // TODO:
-            signUpButton.setVisibility(TextView.GONE);
+            signUp.setVisibility(View.GONE);
+            notSelectedText.setVisibility(View.GONE);
+            cancel.setVisibility(View.VISIBLE);
+            decline.setVisibility(View.GONE);
+            accept.setVisibility(View.GONE);
+        } else if (true) {
+
         }
         // Default mode is signup view
     }

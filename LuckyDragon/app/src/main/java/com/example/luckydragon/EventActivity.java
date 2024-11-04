@@ -43,29 +43,10 @@ public class EventActivity extends AppBarActivity {
             throw new RuntimeException("Event Id is Null!");
         }
 
-        // Locate views
-        TextView eventNameView = findViewById(R.id.eventName);
-        TextView facilityNameView = findViewById(R.id.facilityName);
-        TextView dateAndTimeView = findViewById(R.id.dateAndTime);
-        TextView waitlistSpotsView = findViewById(R.id.waitlistSpots);
-        TextView attendeeSpotsView = findViewById(R.id.attendeeSpots);
-        TextView currentlyJoinedView = findViewById(R.id.currentlyJoined);
-        signUp = findViewById(R.id.signUpButton);
-
         event = ((GlobalApp) getApplication()).getEvent(eventId);  // TODO: Might have to move this onResume in case viewing diff event does not work
         eventController = new EventController(event);
 
-        eventView = new EventView(
-                event,
-                deviceId,
-                eventNameView,
-                facilityNameView,
-                dateAndTimeView,
-                waitlistSpotsView,
-                attendeeSpotsView,
-                currentlyJoinedView,
-                signUp
-        );
+        eventView = new EventView(event, deviceId, this);
 
         // Signup button will put their deviceID on the waitlist.
         signUp.setOnClickListener(v -> {

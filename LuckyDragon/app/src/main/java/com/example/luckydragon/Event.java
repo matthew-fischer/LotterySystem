@@ -108,6 +108,7 @@ public class Event extends Observable {
         this.qrHash = generateQRCode();
     }
 
+    // TODO: Do we need 2 similar constructors?
     /**
      * Creates an Event object.
      * @param id the event id
