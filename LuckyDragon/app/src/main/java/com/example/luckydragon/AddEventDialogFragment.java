@@ -42,11 +42,16 @@ public class AddEventDialogFragment extends DialogFragment {
     Event event;
     AddEventController controller;
     AddEventView eventView;
+    User user;
 
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        // Get user
+        user = ((GlobalApp) requireActivity().getApplication()).getUser();
+        assert user.getOrganizer() != null; // user must be an organizer by this point
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
@@ -94,7 +99,7 @@ public class AddEventDialogFragment extends DialogFragment {
 
                     // TODO: Make view reply if event with same info has been created upon save attempt
 
-                    organizerProfile.addEvent(event);
+                    user.getOrganizer().addEvent(event);
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override

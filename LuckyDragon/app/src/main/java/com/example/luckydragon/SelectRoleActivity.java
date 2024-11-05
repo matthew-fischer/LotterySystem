@@ -34,20 +34,11 @@ public class SelectRoleActivity extends AppCompatActivity {
 
         // Get user
         user = ((GlobalApp) getApplication()).getUser();
+        // Create view
         selectRoleView = new SelectRoleView(user, this);
-        // Set controller if testing
-//        Intent intent = getIntent();
-//        SelectRoleController passedInController = (SelectRoleController) intent.getSerializableExtra("controller");
-//        if (passedInController == null) {
-//            selectRoleController = new SelectRoleController(user);
-//        } else {
-//            selectRoleController = passedInController;
-//            passedInController.setObservable(user);
-//        }
     }
 
     public void initializeView() {
-        Log.e("TEST", "starting initialize view");
         // Set content view (don't do this until after user has been fetched from db)
         setContentView(R.layout.select_role_page); // set content to role page
 
@@ -59,13 +50,11 @@ public class SelectRoleActivity extends AppCompatActivity {
                 if (user.isEntrant()) {
                     // Create profile intent
                     Intent profileIntent = new Intent(this, ProfileActivity.class);
-                    profileIntent.putExtra("role", "ENTRANT");
                     // Start profile activity
                     startActivity(profileIntent);
                 } else {
                     // Send to entrant signup
                     Intent signupIntent = new Intent(this, SignupActivity.class);
-                    signupIntent.putExtra("role", "ENTRANT");
                     startActivity(signupIntent);
                 }
             });
@@ -79,8 +68,6 @@ public class SelectRoleActivity extends AppCompatActivity {
                 if (user.isOrganizer()) {
                     // Create profile intent
                     Intent profileIntent = new Intent(this, ProfileActivity.class);
-                    // Convert user to organizer and pass into intent
-                    profileIntent.putExtra("role", "ORGANIZER");
                     // Start profile activity
                     startActivity(profileIntent);
                 } else {
@@ -88,7 +75,6 @@ public class SelectRoleActivity extends AppCompatActivity {
                 }
             });
         }
-        Log.e("TEST", "view initialized");
 
         // Admin button
         if (user.isAdmin()) {
@@ -97,8 +83,6 @@ public class SelectRoleActivity extends AppCompatActivity {
                 adminButton.setOnClickListener(v -> {
                     // Create profile intent
                     Intent profileIntent = new Intent(this, ProfileActivity.class);
-                    // Convert user to admin and pass into intent
-                    profileIntent.putExtra("role", "ADMIN");
                     // Start profile activity
                     startActivity(profileIntent);
                 });
