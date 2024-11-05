@@ -8,12 +8,8 @@
     android:orientation="vertical">
 
     <include layout="@layout/toolbar"/>
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Search"
-        android:drawableLeft="@drawable/baseline_search_24"/>
     <ListView
+        android:id="@+id/adminProfileEventsListview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
