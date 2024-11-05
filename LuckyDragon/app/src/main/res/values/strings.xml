@@ -18,6 +18,8 @@
     <string name="attendee_spots">Attendee Spots:</string>
     <string name="xx">xx</string>
     <string name="profile_picture_content_description">profile picture</string>
+    <string name="qr_code_for_event">QR Code for Event:</string>
+    <string name="qr_code_for_event_description">QR Code for Event.</string>
 
     <string-array name="entrant_statuses">
         <item>Attendees</item>
