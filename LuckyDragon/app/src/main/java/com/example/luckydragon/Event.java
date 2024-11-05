@@ -157,9 +157,14 @@ public class Event extends Observable {
      * Save to firestore
      */
     public void save() {
-        // event must have device id and facility
-        assert nonNull(organizerDeviceId);
-        assert nonNull(facility);
+        if(!nonNull(organizerDeviceId)) {
+            Log.e("Event", "Tried to save an event without organizerDeviceId");
+            return;
+        }
+        if(!nonNull(facility)) {
+            Log.e("Event", "Tried to save an event without a facility");
+            return;
+        }
 
         Map<String, Object> eventData = new HashMap<>();
         if(nonNull(name)) eventData.put("name", name);
