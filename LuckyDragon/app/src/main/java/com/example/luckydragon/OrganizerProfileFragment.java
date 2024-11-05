@@ -43,10 +43,6 @@ public class OrganizerProfileFragment extends Fragment {
         // Create view
         organizerProfileView = new OrganizerProfileView(user, this);
 
-        // Update view
-        setFacilityName();
-        updateEventsList();
-
         // Add on click listener for "Add Event" button
         Button addEventButton = view.findViewById(R.id.addEventButton);
         addEventButton.setOnClickListener((View v) -> {
