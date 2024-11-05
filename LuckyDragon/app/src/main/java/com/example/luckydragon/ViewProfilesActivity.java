@@ -50,7 +50,8 @@ public class ViewProfilesActivity extends AppBarActivity {
                                     userData.get("name") instanceof String ? (String) userData.get("name") : null,
                                     userData.get("email") instanceof String ? (String) userData.get("email") : null,
                                     userData.get("phoneNumber") instanceof String ? (String) userData.get("phoneNumber") : null,
-                                    (Bitmap) User.stringToBitmap((String) userData.get("defaultProfilePicture"))
+                                    (Bitmap) User.stringToBitmap((String) userData.get("defaultProfilePicture")),
+                                    (Bitmap) User.stringToBitmap((String) userData.get("profilePicture"))
                             );
 
                             userSet.add(user);

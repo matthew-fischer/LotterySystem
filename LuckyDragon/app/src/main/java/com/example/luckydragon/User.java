@@ -53,11 +53,12 @@ public class User extends Observable {
         this.deviceId = deviceId;
     }
 
-    public User(String name, String email, String phoneNumber, Bitmap defaultProfilePicture) {
+    public User(String name, String email, String phoneNumber, Bitmap defaultProfilePicture, Bitmap profilePicture) {
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.defaultProfilePicture = defaultProfilePicture;
+        this.uploadedProfilePicture = profilePicture;
     }
 
     @Override
