@@ -1,4 +1,4 @@
-package com.example.luckydragon;
+package com.example.luckydragon.generalTest;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -13,9 +13,15 @@ import android.content.Context;
 import android.content.Intent;
 
 import androidx.test.core.app.ActivityScenario;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
+
+import com.example.luckydragon.GlobalApp;
+import com.example.luckydragon.ProfileActivity;
+import com.example.luckydragon.R;
+import com.example.luckydragon.User;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,7 +64,7 @@ public class ProfileActivityTest {
 
 
             // Assertions
-            onView(withId(R.id.nameTextView)).check(matches(withText(testName)));
+            onView(ViewMatchers.withId(R.id.nameTextView)).check(matches(withText(testName)));
             onView(withId(R.id.emailTextView)).check(matches(withText(testEmail)));
             onView(withId(R.id.phoneNumberTextView)).check(matches(withText(testPhoneNumber)));
         }
@@ -85,8 +91,8 @@ public class ProfileActivityTest {
         testUser.setName(testName);
         testUser.setEmail(testEmail);
         testUser.setPhoneNumber(null);
-        testUser.setIsLoaded(true);
         globalApp.setUser(testUser);
+        testUser.setIsLoaded(true);
         // Set app role
         globalApp.setRole(GlobalApp.ROLE.ENTRANT);
 

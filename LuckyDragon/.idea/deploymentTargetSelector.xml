@@ -11,7 +11,13 @@
       <SelectionState runConfigName="ProfileActivityTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testEntrantNameEmailPhoneNumber()">
+      <SelectionState runConfigName="Tests in 'com.example.luckydragon.generalTest'">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="All Tests">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="US_02_01_03_Test">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

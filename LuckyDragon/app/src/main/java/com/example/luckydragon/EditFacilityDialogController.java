@@ -28,6 +28,7 @@ public class EditFacilityDialogController extends Controller {
 
         if(facilityName.isEmpty()) {
             editFacilityDialogFragment.sendToast("Facility name cannot be empty!");
+            return;
         }
 
         assert getObservable().getOrganizer() != null;

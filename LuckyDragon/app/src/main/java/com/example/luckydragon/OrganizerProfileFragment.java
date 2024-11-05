@@ -74,7 +74,7 @@ public class OrganizerProfileFragment extends Fragment {
         assert user.getOrganizer() != null; // user must have an organizer by this point
         if (user.getOrganizer().getFacility() == null) {
             // Set facility text
-            String noFacilityMessage = "You have not created a facility yet.";
+            String noFacilityMessage = getString(R.string.no_facility_message);
             facilityTextView.setText(noFacilityMessage);
             // Change button to "add" icon
             facilityEditButton.setImageResource(R.drawable.baseline_add_24);

@@ -18,6 +18,7 @@
     <string name="attendee_spots">Attendee Spots:</string>
     <string name="xx">xx</string>
     <string name="profile_picture_content_description">profile picture</string>
+    <string name="no_facility_message">You have not created a facility yet.</string>
 
     <string-array name="entrant_statuses">
         <item>Attendees</item>

@@ -82,10 +82,11 @@ public class ProfileActivity extends AppBarActivity {
                     .replace(R.id.fragment_container_view, EntrantProfileFragment.class, null)
                     .commit();
         } else if (role == GlobalApp.ROLE.ORGANIZER) {
+            // Check if organizer profile fragment exsits
             // Create organizer profile fragment
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
-                    .add(R.id.fragment_container_view, OrganizerProfileFragment.class, null)
+                    .replace(R.id.fragment_container_view, OrganizerProfileFragment.class, null)
                     .commit();
         } else {
             throw new RuntimeException("User mode not set.");
