@@ -10,12 +10,15 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -25,6 +28,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.content.res.AppCompatResources;
 
 import java.util.Objects;
 
@@ -41,8 +45,8 @@ public class SignupActivity extends AppBarActivity {
     private Button submitButton;
     private ActivityResultLauncher<Intent> uploadImageResultLauncher;
 
-    private LinearLayout uploadProfilePictureButton;
-    private ImageView profilePictureView;
+//    private LinearLayout uploadProfilePictureButton;
+    private ImageButton profilePictureButtton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,8 +65,7 @@ public class SignupActivity extends AppBarActivity {
         submitButton = findViewById(R.id.signupSubmit);
 
         // Profile picture
-        uploadProfilePictureButton = findViewById(R.id.editProfileIcon);
-        profilePictureView = findViewById(R.id.profilePictureIcon);
+        profilePictureButtton = findViewById(R.id.profilePictureIcon);
 
         user = ((GlobalApp) getApplication()).getUser();
         signupController = new SignupController(user);
@@ -146,16 +149,30 @@ public class SignupActivity extends AppBarActivity {
             signupController.setNotifications(switchNotifications);
         });
 
-        // Set listener for uploading profile picture
-        uploadProfilePictureButton.setOnClickListener(view -> {
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            uploadImageResultLauncher.launch(intent);
+        // Set profile picture click to open popup menu with option to remove/upload picture
+        profilePictureButtton.setOnClickListener(view -> {
+            PopupMenu profilePicturePopup = new PopupMenu(this, profilePictureButtton);
+            profilePicturePopup.getMenuInflater().inflate(R.menu.profile_picture_popup_menu,
+                    profilePicturePopup.getMenu());
+            profilePicturePopup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    int id = menuItem.getItemId();
+                    if (id == R.id.uploadPicture) {
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        uploadImageResultLauncher.launch(intent);
+                    } else {
+                        signupController.setProfilePicture(null);
+                    }
+                    return true;
+                }
+            });
+            profilePicturePopup.show();
         });
 
         submitButton.setOnClickListener(view -> {
-
             // Validate input fields
             boolean valid = true;
             try {
@@ -211,8 +228,9 @@ public class SignupActivity extends AppBarActivity {
     }
 
     public void updateProfilePictureIcon(Bitmap profilePicture) {
-        if (profilePicture != null) {
-            profilePictureView.setImageBitmap(profilePicture);
+        profilePictureButtton.setImageBitmap(profilePicture);
+        if (profilePicture == null) {
+            profilePictureButtton.setImageResource(R.drawable.profile_edit);
         }
     }
     public String getRole() {

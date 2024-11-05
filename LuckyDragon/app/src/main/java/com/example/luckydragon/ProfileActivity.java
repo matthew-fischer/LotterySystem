@@ -109,18 +109,4 @@ public class ProfileActivity extends AppBarActivity {
     public void sendToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        TextView nameView = findViewById(R.id.nameTextView);
-        TextView emailView = findViewById(R.id.emailTextView);
-        TextView phoneNumberView = findViewById(R.id.phoneNumberTextView);
-        ImageView profilePictureView = findViewById(R.id.profilePicture);
-
-        nameView.setText(user.getName());
-        emailView.setText(user.getEmail());
-        phoneNumberView.setText(user.getPhoneNumber());
-        profilePictureView.setImageBitmap(user.getProfilePicture());
-    }
 }
