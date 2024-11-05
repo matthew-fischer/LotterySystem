@@ -3,11 +3,13 @@ package com.example.luckydragon;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class EventView extends Observer {
     private TextView eventNameView;
     private TextView facilityNameView;
     private TextView dateAndTimeView;
+    private TextView geolocationWarningView;
     private TextView waitlistSpotsView;
     private TextView attendeeSpotsView;
     private TextView currentlyJoinedView;
@@ -28,6 +30,7 @@ public class EventView extends Observer {
         eventNameView = eventActivity.findViewById(R.id.eventName);
         facilityNameView = eventActivity.findViewById(R.id.facilityName);
         dateAndTimeView = eventActivity.findViewById(R.id.dateAndTime);
+        geolocationWarningView = eventActivity.findViewById(R.id.geolcationWarning);
         waitlistSpotsView = eventActivity.findViewById(R.id.waitlistSpots);
         attendeeSpotsView = eventActivity.findViewById(R.id.attendeeSpots);
         currentlyJoinedView = eventActivity.findViewById(R.id.currentlyJoined);
@@ -53,6 +56,13 @@ public class EventView extends Observer {
         eventNameView.setText(getObservable().getName());
         facilityNameView.setText(getObservable().getFacility());
         dateAndTimeView.setText(getObservable().getDateAndTime());
+
+        // show warning if event requires geolocation (US 01.08.01)
+        if (getObservable().hasGeolocation()) {
+            geolocationWarningView.setVisibility(View.VISIBLE);
+        } else {
+            geolocationWarningView.setVisibility(View.INVISIBLE);
+        }
 
         // set list limit counts
         if (getObservable().getWaitListSpots() == -1) {
