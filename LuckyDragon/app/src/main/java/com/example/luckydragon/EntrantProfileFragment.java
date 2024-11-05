@@ -29,7 +29,7 @@ public class EntrantProfileFragment extends Fragment {
 
             // This is for testing without scanning QR Code:
             Intent intent = new Intent(getActivity(), EventActivity.class);
-            String eventId = "xW99IRUQi2EXMa9wFNWJ";
+            String eventId = "LWwd9mqQu0QNxhek5okF";
             intent.putExtra("eventID", eventId);
             // Reference: https://stackoverflow.com/questions/60503568/best-possible-way-to-get-device-id-in-android
             String deviceID = Settings.Secure.getString(getActivity().getContentResolver(), Settings.Secure.ANDROID_ID);

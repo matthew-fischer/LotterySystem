@@ -21,6 +21,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
 import com.google.android.material.timepicker.MaterialTimePicker;
@@ -86,11 +87,13 @@ public class AddEventDialogFragment extends DialogFragment {
                     TextInputEditText eventNameEditText = dialogView.findViewById(R.id.eventNameEditText);
                     TextInputEditText waitlistLimitEditText = dialogView.findViewById(R.id.waitlistLimitEditText);
                     TextInputEditText attendeeLimitEditText = dialogView.findViewById(R.id.attendeeLimitEditText);
+                    SwitchMaterial hasGeolocationSwitch = dialogView.findViewById(R.id.geolocation_switch);
 
                     // extract event (auto added to db)
                     controller.extractName(eventNameEditText);
                     controller.extractWaitLimit(waitlistLimitEditText);
                     controller.extractAttendeeLimit(attendeeLimitEditText);
+                    controller.extractHasGeolocation(hasGeolocationSwitch);
 
                     // TODO: Make view reply if event with same info has been created upon save attempt
 
