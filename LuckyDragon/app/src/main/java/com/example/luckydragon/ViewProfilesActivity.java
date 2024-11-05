@@ -46,15 +46,9 @@ public class ViewProfilesActivity extends AppBarActivity {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Map<String, Object> userData = document.getData();
                             User user = new User(
-                                    document.getId(),
-                                    userData.get("name") instanceof String ? (String) eventData.get("name") : null,
-                                    userData.get("organizerDeviceId") instanceof String ? (String) eventData.get("organizerDeviceId") : null,
-                                    userData.get("facility") instanceof String ? (String) eventData.get("facility") : null,
-                                    userData.get("waitListLimit") instanceof Number ? ((Number) eventData.get("waitListLimit")).intValue() : 0,
-                                    userData.get("attendeeLimit") instanceof Number ? ((Number) eventData.get("attendeeLimit")).intValue() : 0,
-                                    userData.get("date") instanceof String ? (String) eventData.get("date") : null,
-                                    userData.get("hours") instanceof Number ? ((Number) eventData.get("hours")).intValue() : 0,
-                                    userData.get("minutes") instanceof Number ? ((Number) eventData.get("minutes")).intValue() : 0
+                                    userData.get("name") instanceof String ? (String) userData.get("name") : null,
+                                    userData.get("email") instanceof String ? (String) userData.get("email") : null,
+                                    userData.get("phoneNumber") instanceof String ? (String) userData.get("phoneNumber") : null
                             );
 
                             userSet.add(user);
