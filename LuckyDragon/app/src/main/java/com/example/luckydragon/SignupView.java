@@ -2,6 +2,9 @@ package com.example.luckydragon;
 
 import android.content.Intent;
 import android.util.Log;
+import android.view.View;
+
+import java.util.Objects;
 
 public class SignupView extends Observer {
     private final SignupActivity signupActivity;
@@ -24,5 +27,14 @@ public class SignupView extends Observer {
         // TODO: activity creates error messages as necessary
         signupActivity.setSubmitButton(getObservable().isValid());
         signupActivity.updateProfilePictureIcon(getObservable().getUploadedProfilePicture());
+
+        // hide signup top bar if user is signing (not editing)
+        if (Objects.equals(signupActivity.getRole(), "ENTRANT") && !getObservable().isEntrant()) {
+            signupActivity.setNavProfileVisible(false);
+        } else if (Objects.equals(signupActivity.getRole(), "ORGANIZER") && !getObservable().isOrganizer()) {
+            signupActivity.setNavProfileVisible(false);
+        } else {
+            signupActivity.setNavProfileVisible(true);
+        }
     }
 }
