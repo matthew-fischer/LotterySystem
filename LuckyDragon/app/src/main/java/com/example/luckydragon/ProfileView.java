@@ -48,8 +48,8 @@ public class ProfileView extends Observer {
      * If they don't have a phone number, hide the phone number textview.
      */
     public void setPhoneNumber(TextView phoneNumber) {
-        if(getObservable().getEmail() != null) {
-            phoneNumber.setText(getObservable().getEmail());
+        if(getObservable().getPhoneNumber() != null) {
+            phoneNumber.setText(getObservable().getPhoneNumber());
         } else {
             phoneNumber.setVisibility(View.GONE);
         }
