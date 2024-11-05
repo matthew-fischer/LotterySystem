@@ -12,7 +12,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Represents an Organizer. Subclass of User.
@@ -33,7 +36,6 @@ public class Organizer {
         this.deviceId = deviceId;
         this.notifyObservers = notifyObservers;
         this.events = new ArrayList<>();
-        fetchEvents();
     }
 
     /**
@@ -46,7 +48,6 @@ public class Organizer {
         this.facility = facility;
         this.notifyObservers = notifyObservers;
         this.events = new ArrayList<>();
-        fetchEvents();
     }
 
     /**
@@ -73,9 +74,12 @@ public class Organizer {
                                     eventData.get("hours") == null ? null : Integer.valueOf(String.format("%s", eventData.get("hours"))),
                                     eventData.get("minutes") == null ? null : Integer.valueOf(String.format("%s", eventData.get("minutes")))
                             );
+                            // Check for duplicate events (could switch this to a set for performance, but event counts should be low)
+                            for(int i = 0; i < events.size(); i++) {
+                                if(Objects.equals(event.getId(), events.get(i).getId())) return;
+                            }
                             events.add(event);
                         }
-
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());
                     }

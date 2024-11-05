@@ -7,6 +7,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.not;
 
+import static java.lang.Thread.sleep;
+
 import android.content.Context;
 import android.content.Intent;
 
@@ -53,6 +55,8 @@ public class ProfileActivityTest {
                 a.runOnUiThread(testUser::notifyObservers);
             });
 
+
+
             // Assertions
             onView(withId(R.id.nameTextView)).check(matches(withText(testName)));
             onView(withId(R.id.emailTextView)).check(matches(withText(testEmail)));
@@ -80,6 +84,7 @@ public class ProfileActivityTest {
         User testUser = new User("test");
         testUser.setName(testName);
         testUser.setEmail(testEmail);
+        testUser.setPhoneNumber(null);
         testUser.setIsLoaded(true);
         globalApp.setUser(testUser);
         // Set app role
@@ -117,10 +122,13 @@ public class ProfileActivityTest {
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
         User testUser = new User("test");
         testUser.setName(testName);
+        testUser.setEmail(null);
+        testUser.setPhoneNumber(null);
         testUser.setIsLoaded(true);
         globalApp.setUser(testUser);
+        //globalApp.getUser().setOrganizer(true);
         // Set app role
-        globalApp.setRole(GlobalApp.ROLE.ORGANIZER);
+        globalApp.setRole(GlobalApp.ROLE.ENTRANT);
 
         // Test profile activity
         try(final ActivityScenario<ProfileActivity> scenario = ActivityScenario.launch(intent)) {

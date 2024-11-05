@@ -33,6 +33,7 @@ public class OrganizerProfileFragment extends Fragment {
         // Get user
         user = ((GlobalApp) requireActivity().getApplication()).getUser();
         assert user.getOrganizer() != null; // user must be an organizer by this point
+        user.getOrganizer().fetchEvents();
 
         // Set up organizer events listview
         ListView eventsListView = view.findViewById(R.id.organizerProfileEventsListview);
