@@ -205,7 +205,6 @@ public class Event extends Observable {
                 waitListLimit = (int) (long) eventData.get("waitListLimit");
                 attendeeLimit = (int) (long) eventData.get("attendeeLimit");
                 hasGeolocation = (Boolean) eventData.get("hasGeolocation");
-                System.out.println(hasGeolocation);
                 date = (String) eventData.get("date");
                 time = new Time((int) (long) eventData.get("hours"), (int) (long) eventData.get("minutes"));
 //                TODO: Decode qrHash
