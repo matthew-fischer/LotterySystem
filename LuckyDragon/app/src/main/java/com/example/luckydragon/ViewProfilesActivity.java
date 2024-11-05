@@ -2,6 +2,7 @@ package com.example.luckydragon;
 
 import static android.content.ContentValues.TAG;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
@@ -48,7 +49,8 @@ public class ViewProfilesActivity extends AppBarActivity {
                             User user = new User(
                                     userData.get("name") instanceof String ? (String) userData.get("name") : null,
                                     userData.get("email") instanceof String ? (String) userData.get("email") : null,
-                                    userData.get("phoneNumber") instanceof String ? (String) userData.get("phoneNumber") : null
+                                    userData.get("phoneNumber") instanceof String ? (String) userData.get("phoneNumber") : null,
+                                    (Bitmap) User.stringToBitmap((String) userData.get("defaultProfilePicture"))
                             );
 
                             userSet.add(user);

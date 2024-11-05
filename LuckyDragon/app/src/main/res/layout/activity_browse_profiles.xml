@@ -8,24 +8,9 @@
     android:orientation="vertical">
 
     <include layout="@layout/toolbar"/>
-    <ScrollView
+    <ListView
+        android:id="@+id/adminProfileUsersListview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <ListView
-                android:id="@+id/adminProfileUsersListview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
-    </LinearLayout>
-    </ScrollView>
 </LinearLayout>
