@@ -4,11 +4,15 @@ import static android.content.ContentValues.TAG;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -19,7 +23,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class ViewEventsActivity extends AppBarActivity{
+public class ViewEventsActivity extends AppBarActivity {
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private Set<Event> eventSet = new HashSet<>();
@@ -40,46 +44,88 @@ public class ViewEventsActivity extends AppBarActivity{
         eventListAdapter = new EventArrayAdapter(eventList, this);
         eventsListView.setAdapter(eventListAdapter);
 
-        // Get all events
+        // Initial one-time load with get()
         db.collection("events")
                 .get()
-                .addOnCompleteListener((task) -> {
-                    if (task.isSuccessful()) {
-                        Log.d(TAG, "Got documents");
-                        Map<String, Object> eventData;
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        eventSet.clear();
+                        eventList.clear();
+
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            eventData = document.getData();
+                            Map<String, Object> eventData = document.getData();
                             Event event = new Event(
                                     document.getId(),
                                     eventData.get("name") instanceof String ? (String) eventData.get("name") : null,
                                     eventData.get("organizerDeviceId") instanceof String ? (String) eventData.get("organizerDeviceId") : null,
                                     eventData.get("facility") instanceof String ? (String) eventData.get("facility") : null,
-                                    eventData.get("waitListLimit") instanceof Number ? ((Number) eventData.get("waitListLimit")).intValue() : 0,  // default 0
-                                    eventData.get("attendeeLimit") instanceof Number ? ((Number) eventData.get("attendeeLimit")).intValue() : 0, // default 0
+                                    eventData.get("waitListLimit") instanceof Number ? ((Number) eventData.get("waitListLimit")).intValue() : 0,
+                                    eventData.get("attendeeLimit") instanceof Number ? ((Number) eventData.get("attendeeLimit")).intValue() : 0,
                                     eventData.get("date") instanceof String ? (String) eventData.get("date") : null,
-                                    eventData.get("hours") instanceof Number ? ((Number) eventData.get("hours")).intValue() : 0, // default 0
-                                    eventData.get("minutes") instanceof Number ? ((Number) eventData.get("minutes")).intValue() : 0 // default 0
+                                    eventData.get("hours") instanceof Number ? ((Number) eventData.get("hours")).intValue() : 0,
+                                    eventData.get("minutes") instanceof Number ? ((Number) eventData.get("minutes")).intValue() : 0
                             );
+
                             eventSet.add(event);
                             eventList.add(event);
                         }
-                        View eventDescView = getLayoutInflater().inflate(R.layout.content_event_desc, null);
-                        ImageButton qrCodeIcon = eventDescView.findViewById(R.id.qrCodeIcon);
-                        qrCodeIcon.setVisibility(View.INVISIBLE);
+
                         eventListAdapter.notifyDataSetChanged();
-                        eventsListView.setOnItemClickListener((AdapterView<?> adapterView, View v, int position, long l) -> {
-                            //Log.e("TEST", "HERE");
-                            System.out.println("AAAAAA");
-                            Event event = (Event) adapterView.getItemAtPosition(position);
-                            Intent intent = new Intent(ViewEventsActivity.this, AdminEventActivity.class);
-                            intent.putExtra("event", event.getId());
-                            startActivity(intent);
-                        });
+                        Log.d(TAG, "Events loaded successfully with initial get()");
+
+                        // Set up the real-time listener for updates
+                        addRealTimeListener();
                     } else {
-                        Log.d(TAG, "Error getting documents: ", task.getException());
+                        Log.w(TAG, "Error getting initial documents.", task.getException());
                     }
                 });
 
-
+        // Set up item click listener for ListView
+        eventsListView.setOnItemClickListener((adapterView, v, position, l) -> {
+            Event event = (Event) adapterView.getItemAtPosition(position);
+            Intent intent = new Intent(ViewEventsActivity.this, AdminEventActivity.class);
+            intent.putExtra("event", event.getId());
+            startActivity(intent);
+        });
     }
+
+    // Snapchat listener for real-time updates
+    private void addRealTimeListener() {
+        db.collection("events")
+                .addSnapshotListener((snapshots, e) -> {
+                    if (e != null) {
+                        Log.w(TAG, "Listen failed.", e);
+                        return;
+                    }
+
+                    if (snapshots != null) {
+                        eventSet.clear();
+                        eventList.clear();
+
+                        for (QueryDocumentSnapshot document : snapshots) {
+                            Map<String, Object> eventData = document.getData();
+                            Event event = new Event(
+                                    document.getId(),
+                                    eventData.get("name") instanceof String ? (String) eventData.get("name") : null,
+                                    eventData.get("organizerDeviceId") instanceof String ? (String) eventData.get("organizerDeviceId") : null,
+                                    eventData.get("facility") instanceof String ? (String) eventData.get("facility") : null,
+                                    eventData.get("waitListLimit") instanceof Number ? ((Number) eventData.get("waitListLimit")).intValue() : 0,
+                                    eventData.get("attendeeLimit") instanceof Number ? ((Number) eventData.get("attendeeLimit")).intValue() : 0,
+                                    eventData.get("date") instanceof String ? (String) eventData.get("date") : null,
+                                    eventData.get("hours") instanceof Number ? ((Number) eventData.get("hours")).intValue() : 0,
+                                    eventData.get("minutes") instanceof Number ? ((Number) eventData.get("minutes")).intValue() : 0
+                            );
+
+                            eventSet.add(event);
+                            eventList.add(event);
+                        }
+
+                        eventListAdapter.notifyDataSetChanged();
+                        Log.d(TAG, "Real-time update received");
+                    } else {
+                        Log.d(TAG, "No events available or empty snapshot");
+                    }
+                });
+    }
+
 }

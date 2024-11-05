@@ -48,6 +48,9 @@
         <activity
             android:name=".ViewEventsActivity"
             android:launchMode="singleTask"/>
+        <activity
+            android:name=".AdminEventActivity"
+            android:launchMode="singleTask"/>
     </application>
 
 </manifest>
