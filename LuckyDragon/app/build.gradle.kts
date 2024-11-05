@@ -56,9 +56,9 @@ dependencies {
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
     implementation(libs.firebase.firestore)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
+//    testImplementation(libs.junit)
+//    androidTestImplementation(libs.ext.junit)
+//    androidTestImplementation(libs.espresso.core)
     // noinspection UseTomlInstead
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
     implementation("com.google.zxing:core:3.3.0")
@@ -69,4 +69,11 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.0.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.0.1")
+
+    androidTestImplementation("org.mockito:mockito-core:5.14.2")
+    androidTestImplementation("org.mockito:mockito-android:5.14.2")
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+
 }

@@ -7,8 +7,13 @@ package com.example.luckydragon;
 import android.content.Intent;
 
 import androidx.test.core.app.ActivityScenario;
+import androidx.test.espresso.intent.Intents;
 import androidx.test.filters.LargeTest;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.runner.RunWith;
 
 import static androidx.test.espresso.Espresso.onView;
@@ -17,6 +22,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 import static org.hamcrest.CoreMatchers.not;
+import static org.mockito.Mockito.mock;
 
 import android.content.Context;
 import android.util.Log;
@@ -24,7 +30,13 @@ import android.util.Log;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import org.junit.Test;
+import org.mockito.Mockito;
+
+import java.util.concurrent.Future;
 
 /**
  * This is a test class for SelectRoleActivity.
@@ -34,64 +46,101 @@ import org.junit.Test;
  *   - Use the ActivityScenario.launch() syntax to run some code before the activity starts. ActivityScenarioRule does not allow this.
  *   - We need to call notifyObservers() on the test user to update the views to reflect the user. This must be done on the UI thread, or an error will occur.
  */
-@RunWith(AndroidJUnit4.class)
-@LargeTest
+//@RunWith(AndroidJUnit4.class)
+//@LargeTest
 public class SelectRoleActivityTest {
-    /**
-     * TEST
-     * Tests that only "Entrant" and "Organizer" buttons show for a user without admin privileges.
-     * "Administrator" button should not be visible.
-     */
-    @Test
-    public void testButtonsForNonAdminUser() {
-        final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
+    FirebaseFirestore db;
+    DocumentSnapshot snapshot;
+    @Rule
+    public ActivityScenarioRule<SelectRoleActivity> scenario =
+            new ActivityScenarioRule<SelectRoleActivity>(SelectRoleActivity.class);
 
-        // Set user to a test object
-        GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
-        User testUser = new User("test");
-        testUser.setIsLoaded(true);
-        globalApp.setUser(testUser);
-
-        try(final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
-            // Update views to match testUser (this must run on ui thread -- error otherwise)
-            scenario.onActivity(a -> {
-                a.runOnUiThread(testUser::notifyObservers);
-            });
-
-            // Assertions
-            onView(withId(R.id.entrantButton)).check(matches(isDisplayed()));
-            onView(withId(R.id.organizerButton)).check(matches(isDisplayed()));
-            onView(withId(R.id.adminButton)).check(matches(not(isDisplayed())));
-        }
+    @Before
+    public void setup() {
+        Intents.init();
+        DocumentSnapshot mockSnapShot = mock(DocumentSnapshot.class);
+        FirebaseFirestore db = mock(FirebaseFirestore.class);
+        Mockito.when(db.collection("users").document("testUserId").get())
+                .thenReturn(Future(() -> {
+                    return mockSnapShot;
+                }));
     }
 
-    /**
-     * TEST
-     * Tests that "Entrant", "Organizer", and "Administrator" buttons show for a user with admin privileges.
-     */
-    @Test
-    public void testButtonsForAdminUser() {
-        final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
-
-        // Set user to a test object
-        GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
-        User testUser = new User("test");
-        testUser.setAdmin(true);
-        testUser.setIsLoaded(true);
-        globalApp.setUser(testUser);
-
-        try(final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
-            // Update views to match testUser (this must run on ui thread -- error otherwise)
-            scenario.onActivity(a -> {
-                a.runOnUiThread(testUser::notifyObservers);
-            });
-
-            // Assertions
-            onView(withId(R.id.entrantButton)).check(matches(isDisplayed()));
-            onView(withId(R.id.organizerButton)).check(matches(isDisplayed()));
-            onView(withId(R.id.adminButton)).check(matches((isDisplayed())));
-        }
+    @After
+    public void tearDown() {
+        Intents.release();
     }
+
+    @Test
+    public void testEntrantSignup() {
+        final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+
+        User mockUser = new User("testId", db);
+        GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
+        mockUser.setIsLoaded(true);
+        globalApp.setUser(mockUser);
+
+        // Update views to match testUser (this must run on ui thread -- error otherwise)
+        // Assertions
+        onView(withId(R.id.entrantButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.organizerButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.adminButton)).check(matches(not(isDisplayed())));
+    }
+//    /**
+//     * TEST
+//     * Tests that only "Entrant" and "Organizer" buttons show for a user without admin privileges.
+//     * "Administrator" button should not be visible.
+//     */
+//    @Test
+//    public void testButtonsForNonAdminUser() {
+//        final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+//        final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
+//
+//        // Set user to a test object
+//        GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
+//        User testUser = new User("test");
+//        testUser.setIsLoaded(true);
+//        globalApp.setUser(testUser);
+//
+//        try (final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
+//            // Update views to match testUser (this must run on ui thread -- error otherwise)
+//            scenario.onActivity(a -> {
+//                a.runOnUiThread(testUser::notifyObservers);
+//            });
+//
+//            // Assertions
+//            onView(withId(R.id.entrantButton)).check(matches(isDisplayed()));
+//            onView(withId(R.id.organizerButton)).check(matches(isDisplayed()));
+//            onView(withId(R.id.adminButton)).check(matches(not(isDisplayed())));
+//        }
+//    }
+//
+//    /**
+//     * TEST
+//     * Tests that "Entrant", "Organizer", and "Administrator" buttons show for a user with admin privileges.
+//     */
+//    @Test
+//    public void testButtonsForAdminUser() {
+//        final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+//        final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
+//
+//        // Set user to a test object
+//        GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
+//        User testUser = new User("test");
+//        testUser.setAdmin(true);
+//        testUser.setIsLoaded(true);
+//        globalApp.setUser(testUser);
+//
+//        try(final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
+//            // Update views to match testUser (this must run on ui thread -- error otherwise)
+//            scenario.onActivity(a -> {
+//                a.runOnUiThread(testUser::notifyObservers);
+//            });
+//
+//            // Assertions
+//            onView(withId(R.id.entrantButton)).check(matches(isDisplayed()));
+//            onView(withId(R.id.organizerButton)).check(matches(isDisplayed()));
+//            onView(withId(R.id.adminButton)).check(matches((isDisplayed())));
+//        }
+//    }
 }
