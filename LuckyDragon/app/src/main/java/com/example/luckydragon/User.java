@@ -84,7 +84,7 @@ public class User extends Observable {
                         boolean isOrganizer = userData.get("isOrganizer") != null
                                 && userData.get("isOrganizer").toString().equals("true");
                         if (isOrganizer) {
-                            String facility = String.format("%s", userData.get("facility"));
+                            String facility = userData.get("facility") != null ? Objects.requireNonNull(userData.get("facility")).toString() : null;
 
                             if (facility != null) {
                                 organizer = new Organizer(deviceId, facility, this::notifyObservers);
@@ -114,7 +114,7 @@ public class User extends Observable {
         map.put("isAdmin", isAdmin());
 
         if (isOrganizer()) {
-            map.put("facility", organizer.getFacility());
+            map.put("facility", nonNull(organizer.getFacility()) ? organizer.getFacility() : null);
         }
 
         map.put("name", name);

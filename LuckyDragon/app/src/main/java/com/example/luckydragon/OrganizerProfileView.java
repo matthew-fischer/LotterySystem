@@ -1,5 +1,7 @@
 package com.example.luckydragon;
 
+import android.util.Log;
+
 public class OrganizerProfileView extends Observer {
     private final OrganizerProfileFragment organizerProfileFragment;
 

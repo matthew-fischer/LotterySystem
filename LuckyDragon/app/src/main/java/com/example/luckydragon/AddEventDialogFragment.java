@@ -57,16 +57,16 @@ public class AddEventDialogFragment extends DialogFragment {
 
         // Now, inflate view
         View dialogView = inflater.inflate(R.layout.dialog_create_event_material, null);
-
-        ProfileActivity activity = Objects.requireNonNull((ProfileActivity) getActivity(), "Activity is null in AddEventDialogFramgent!");
-        String organizerDeviceID = activity.getUser().getDeviceId();
-        String organizerName = activity.getUser().getName();
-        // We know the user is an organizer if they are adding an event. Thus we can cast to Organizer.
-        String facilityName = activity.getUser().getOrganizer().getFacility();
+        // Get profile activity
+        ProfileActivity activity = (ProfileActivity) requireActivity();
+        // Get user info
+        String organizerDeviceID = user.getDeviceId();
+        String organizerName = user.getName();
+        String facilityName = user.getOrganizer().getFacility();
 
         // MVC
         // TODO: restore an in progress event creation OR, save to db if all data is valid.
-        event = ((GlobalApp) activity.getApplication()).makeEvent();
+        event = ((GlobalApp) requireActivity().getApplication()).makeEvent();
         // Set event attr we know (and before it is observed)
         event.setOrganizerName(organizerName);
         event.setOrganizerDeviceId(organizerDeviceID);
@@ -79,7 +79,7 @@ public class AddEventDialogFragment extends DialogFragment {
 
         // Set facility text to organizer's facility
         TextInputEditText facilityEditText = dialogView.findViewById(R.id.facilityEditText);
-        String facility = activity.getUser().getOrganizer().getFacility();
+        String facility = user.getOrganizer().getFacility();
         facilityEditText.setText(facility);
 
         return builder.setView(dialogView)
@@ -149,6 +149,4 @@ public class AddEventDialogFragment extends DialogFragment {
             picker.show(getParentFragmentManager(), "Event date picker");
         });
     }
-
-
 }

@@ -4,6 +4,8 @@
 
 package com.example.luckydragon;
 
+import static java.util.Objects.nonNull;
+
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.Log;
@@ -134,7 +136,6 @@ public class Event extends Observable {
     public Event(String id, String name, String organizerDeviceId, String facility, Integer waitListLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes)  {
         this.id = id;
         this.name = name;
-        this.organizerName = organizerName;
         this.organizerDeviceId = organizerDeviceId;
         this.facility = facility;
         this.waitListLimit = waitListLimit;
@@ -156,16 +157,20 @@ public class Event extends Observable {
      * Save to firestore
      */
     public void save() {
+        // event must have device id and facility
+        assert nonNull(organizerDeviceId);
+        assert nonNull(facility);
+
         Map<String, Object> eventData = new HashMap<>();
-        eventData.put("name", name);
-        eventData.put("organizerDeviceId", organizerDeviceId);
-        eventData.put("facility", facility);
-        eventData.put("waitListLimit", waitListLimit);
-        eventData.put("attendeeLimit", attendeeLimit);
-        eventData.put("date", date);
-        eventData.put("hours", time.hours);
-        eventData.put("minutes", time.minutes);
-        eventData.put("hashedQR", qrHash.toString("1", "0"));
+        if(nonNull(name)) eventData.put("name", name);
+        if(nonNull(organizerDeviceId) && !organizerDeviceId.isEmpty()) eventData.put("organizerDeviceId", organizerDeviceId);
+        if(nonNull(facility) && !facility.isEmpty()) eventData.put("facility", facility);
+        if(nonNull(waitListLimit)) eventData.put("waitListLimit", waitListLimit);
+        if(nonNull(attendeeLimit)) eventData.put("attendeeLimit", attendeeLimit);
+        if(nonNull(date) && !date.isEmpty()) eventData.put("date", date);
+        if(nonNull(time.hours)) eventData.put("hours", time.hours);
+        if(nonNull(time.minutes)) eventData.put("minutes", time.minutes);
+        if(nonNull(qrHash)) eventData.put("hashedQR", qrHash.toString("1", "0"));
         eventData.put("waitList", waitList);
         eventData.put("inviteeList", inviteeList);
         eventData.put("attendeeList", attendeeList);

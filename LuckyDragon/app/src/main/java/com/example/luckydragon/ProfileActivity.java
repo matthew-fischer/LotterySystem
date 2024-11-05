@@ -52,6 +52,7 @@ public class ProfileActivity extends AppBarActivity {
     }
 
     public void initializeView() {
+        Log.e("PROFILE", "init view!");
         // Set profile info views
         TextView nameView = findViewById(R.id.nameTextView);
         TextView emailView = findViewById(R.id.emailTextView);
@@ -104,6 +105,7 @@ public class ProfileActivity extends AppBarActivity {
             throw new RuntimeException("User mode not set.");
         }
     }
+
 
     public void sendToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();

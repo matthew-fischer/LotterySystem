@@ -6,10 +6,12 @@ package com.example.luckydragon;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
@@ -41,7 +43,28 @@ public class OrganizerProfileFragment extends Fragment {
         organizerProfileView = new OrganizerProfileView(user, this);
 
         // Update view
-        user.notifyObservers();
+        setFacilityName();
+        updateEventsList();
+
+        // Add on click listener for "Add Event" button
+        Button addEventButton = view.findViewById(R.id.addEventButton);
+        addEventButton.setOnClickListener((View v) -> {
+            String facilityName = user.getOrganizer().getFacility();
+            if(facilityName == null) { // if no facility, open the facility edit fragment instead
+                DialogFragment editFacilityDialog = new EditFacilityDialogFragment("Add a facility before you create an event!");
+                editFacilityDialog.show(getChildFragmentManager(), "EditFacilityDialogFragment");
+            } else {
+                DialogFragment addEventDialog = new AddEventDialogFragment();
+                addEventDialog.show(getChildFragmentManager(), "AddEventDialogFragment");
+            }
+        });
+        ImageButton facilityEditButton = view.findViewById(R.id.facilityEditButton);
+        // Add on click listener for facility edit button
+        facilityEditButton.setOnClickListener((View v) -> {
+            DialogFragment editFacilityDialog = new EditFacilityDialogFragment();
+            editFacilityDialog.show(getChildFragmentManager(), "EditFacilityDialogFragment");
+        });
+
     }
 
     public void setFacilityName() {
@@ -80,6 +103,15 @@ public class OrganizerProfileFragment extends Fragment {
     }
 
     public void updateEventsList() {
+        Log.e("EVENTS", "Update events list");
+        System.out.println(user.getOrganizer().getEvents());
         eventListAdapter.notifyDataSetChanged();
+        // Show "No events" textview if no events and hide otherwise
+        TextView noEventsTextView = getView().findViewById(R.id.noEventsTextView);
+        if(user.getOrganizer().getEvents().isEmpty()) {
+            noEventsTextView.setVisibility(View.VISIBLE);
+        } else {
+            noEventsTextView.setVisibility(View.GONE);
+        }
     }
 }

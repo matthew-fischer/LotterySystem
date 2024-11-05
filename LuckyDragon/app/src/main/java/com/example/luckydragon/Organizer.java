@@ -29,7 +29,7 @@ public class Organizer {
     private final ArrayList<Event> events;
     private final Runnable notifyObservers;
 
-    public Organizer(String deviceID, Runnable notifyObservers) {
+    public Organizer(String deviceId, Runnable notifyObservers) {
         this.deviceId = deviceId;
         this.notifyObservers = notifyObservers;
         this.events = new ArrayList<>();
@@ -53,9 +53,10 @@ public class Organizer {
      * Fetches event data from firestore
      */
     public void fetchEvents() {
+        Log.e("fetch", "fetching events");
         // Get events
         db.collection("events")
-                .whereEqualTo("organizerDeviceID", deviceId)
+                .whereEqualTo("organizerDeviceId", deviceId)
                 .get()
                 .addOnCompleteListener((task) -> {
                     if (task.isSuccessful()) {
@@ -64,17 +65,16 @@ public class Organizer {
                             eventData = document.getData();
                             Event event = new Event(
                                     document.getId(),
-                                    eventData.get("Name") == null ? null : String.format("%s", eventData.get("Name")),
-                                    eventData.get("OrganizerDeviceID") == null ? null : String.format("%s", eventData.get("OrganizerDeviceID")),
-                                    eventData.get("Facility") == null ? null : String.format("%s", eventData.get("Facility")),
-                                    eventData.get("WaitlistLimit") == null ? null : Integer.valueOf(String.format("%s", eventData.get("WaitlistLimit"))),
-                                    eventData.get("AttendeeLimit") == null ? null : Integer.valueOf(String.format("%s", eventData.get("AttendeeLimit"))),
-                                    eventData.get("Date") == null ? null : String.format("%s", eventData.get("Date")),
-                                    eventData.get("Hours") == null ? null : Integer.valueOf(String.format("%s", eventData.get("Hours"))),
-                                    eventData.get("Minutes") == null ? null : Integer.valueOf(String.format("%s", eventData.get("Minutes")))
+                                    eventData.get("name") == null ? null : String.format("%s", eventData.get("Name")),
+                                    eventData.get("organizerDeviceId") == null ? null : String.format("%s", eventData.get("OrganizerDeviceID")),
+                                    eventData.get("facility") == null ? null : String.format("%s", eventData.get("Facility")),
+                                    eventData.get("waitlistLimit") == null ? null : Integer.valueOf(String.format("%s", eventData.get("WaitlistLimit"))),
+                                    eventData.get("attendeeLimit") == null ? null : Integer.valueOf(String.format("%s", eventData.get("AttendeeLimit"))),
+                                    eventData.get("date") == null ? null : String.format("%s", eventData.get("Date")),
+                                    eventData.get("hours") == null ? null : Integer.valueOf(String.format("%s", eventData.get("Hours"))),
+                                    eventData.get("minutes") == null ? null : Integer.valueOf(String.format("%s", eventData.get("Minutes")))
                             );
                             events.add(event);
-                            notifyObservers.run(); // notify observers of the parent User
                         }
 
                     } else {

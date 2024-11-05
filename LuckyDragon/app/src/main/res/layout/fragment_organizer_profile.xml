@@ -7,7 +7,7 @@
     >
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
         <TextView
             android:layout_width="match_parent"
@@ -18,7 +18,7 @@
             android:paddingHorizontal="10dp"/>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="@color/light_grey"
             android:orientation="horizontal"
             android:paddingHorizontal="10dp"
@@ -32,7 +32,7 @@
                 android:text="Facility Name"
                 android:textSize="24sp"
                 />
-            <Space
+            <android.widget.Space
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent" />
@@ -58,16 +58,24 @@
                 android:text="Your Events:"
                 android:textStyle="bold"
                 android:textSize="25sp"/>
-            <Space
+            <android.widget.Space
+                android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="match_parent" />
             <Button
                 android:id="@+id/addEventButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Add Event"/>
         </LinearLayout>
+        <TextView
+            android:id="@+id/noEventsTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="You do not have any events."
+            android:textSize="20sp"
+            android:paddingLeft="10dp"
+            android:visibility="gone"/>
         <ListView
             android:id="@+id/organizerProfileEventsListview"
             android:layout_width="match_parent"
