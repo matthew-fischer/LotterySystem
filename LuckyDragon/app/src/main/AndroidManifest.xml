@@ -45,6 +45,12 @@
         <activity
             android:name=".SignupActivity"
             android:launchMode="singleTask"/>
+        <activity
+            android:name=".ViewEventsActivity"
+            android:launchMode="singleTask"/>
+        <activity
+            android:name=".AdminEventActivity"
+            android:launchMode="singleTask"/>
     </application>
 
 </manifest>
