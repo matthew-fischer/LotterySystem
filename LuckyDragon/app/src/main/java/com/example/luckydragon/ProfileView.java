@@ -1,5 +1,9 @@
 package com.example.luckydragon;
 
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 public class ProfileView extends Observer {
     private final ProfileActivity profileActivity;
 
@@ -18,5 +22,43 @@ public class ProfileView extends Observer {
         if(getObservable().isLoaded()) {
             profileActivity.initializeView();
         }
+    }
+
+    /**
+     * Sets the name textview to the user's name.
+     */
+    public void setName(TextView nameTextView) {
+        nameTextView.setText(getObservable().getName());
+    }
+
+    /**
+     * Sets the email textview to the user's email (if they have one).
+     * If they don't have an email, hide the email textview.
+     */
+    public void setEmail(TextView emailTextView) {
+        if(getObservable().getEmail() != null) {
+            emailTextView.setText(getObservable().getEmail());
+        } else {
+            emailTextView.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * Sets the phone number textview to the user's phone number (if they have one).
+     * If they don't have a phone number, hide the phone number textview.
+     */
+    public void setPhoneNumber(TextView phoneNumber) {
+        if(getObservable().getEmail() != null) {
+            phoneNumber.setText(getObservable().getEmail());
+        } else {
+            phoneNumber.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * Set the profile picture to the user's profile picture.
+     */
+    public void setProfilePicture(ImageView profilePictureView) {
+        profilePictureView.setImageBitmap(getObservable().getProfilePicture());
     }
 }

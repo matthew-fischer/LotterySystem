@@ -43,12 +43,12 @@ public class ProfileActivity extends AppBarActivity {
         role = ((GlobalApp) getApplication()).getRole();
 
         // Create profile view
+        // initializeView() uses profileView, but it will run before the ProfileView constructor returns so it still thinks ProfileView is null
+        // To fix I set isLoaded to false until after profileView is set
+        // I also had to add notifyObservers() to setIsLoaded() in User
+        user.setIsLoaded(false);
         profileView = new ProfileView(user, this);
-
-        // If user exists, update view
-        if(user != null) {
-            user.notifyObservers();
-        }
+        user.setIsLoaded(true);
     }
 
     public void initializeView() {
@@ -56,29 +56,16 @@ public class ProfileActivity extends AppBarActivity {
         TextView nameView = findViewById(R.id.nameTextView);
         TextView emailView = findViewById(R.id.emailTextView);
         TextView phoneNumberView = findViewById(R.id.phoneNumberTextView);
-
-        // Set name
-        nameView.setText(user.getName());
-        // Set email if it exists, otherwise hide the textview
-        if(user.getEmail() != null) {
-            emailView.setText(user.getEmail());
-        } else {
-            emailView.setVisibility(View.GONE);
-        }
-        // Set phone number if it exists, otherwise hide the textview
-        if(user.getPhoneNumber() != null) {
-            phoneNumberView.setText(user.getPhoneNumber());
-        } else {
-            Log.e("USER", "no phone number");
-            phoneNumberView.setVisibility(View.GONE);
-        }
-
         ImageView profilePictureView = findViewById(R.id.profilePicture);
 
-        nameView.setText(user.getName());
-        emailView.setText(user.getEmail());
-        phoneNumberView.setText(user.getPhoneNumber());
-        profilePictureView.setImageBitmap(user.getProfilePicture());
+        Log.e("Profile", profileView == null ? "null" : profileView.toString());
+        if(profileView != null) {
+            profileView.setName(nameView);
+            profileView.setEmail(emailView);
+            profileView.setPhoneNumber(phoneNumberView);
+            profileView.setProfilePicture(profilePictureView);
+        }
+
 
         ImageButton edit_profile_button = findViewById(R.id.edit_profile_button);
         edit_profile_button.setOnClickListener(view -> {

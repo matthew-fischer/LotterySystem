@@ -302,6 +302,7 @@ public class User extends Observable {
 
     public void setIsLoaded(Boolean newIsLoaded) {
         isLoaded = newIsLoaded;
+        notifyObservers();
     }
 
     /**
