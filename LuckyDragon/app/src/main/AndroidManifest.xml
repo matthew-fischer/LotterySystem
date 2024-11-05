@@ -51,6 +51,9 @@
         <activity
             android:name=".AdminEventActivity"
             android:launchMode="singleTask"/>
+        <activity
+            android:name=".ViewProfilesActivity"
+            android:launchMode="singleTask"/>
     </application>
 
 </manifest>
