@@ -3,6 +3,7 @@ package com.example.luckydragon.userStoryTest;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
@@ -12,5 +13,17 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class US_02_01_02_Test {
-    // TODO write tests
+    /**
+     * USER STORY TEST
+     * THIS TEST USES THE DATABASE.
+     * IF IT FAILS, CHECK THAT THE TEST USER HAS NOT BEEN DELETED FROM THE DATABASE.
+     * User opens app and selects "Organizer".
+     * User clicks "Add Event".
+     * User enters event details.
+     * Check that the QR code hash data has been stored in the database.
+     */
+    @Test
+    public void testQRCodeStoredInDB() {
+        // TODO write test
+    }
 }
