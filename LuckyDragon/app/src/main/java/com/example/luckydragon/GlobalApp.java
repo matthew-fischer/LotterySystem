@@ -3,6 +3,7 @@ package com.example.luckydragon;
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.provider.Settings;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;

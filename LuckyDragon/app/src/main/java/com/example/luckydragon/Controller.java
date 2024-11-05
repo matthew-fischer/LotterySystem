@@ -1,9 +1,10 @@
 package com.example.luckydragon;
 
+import android.widget.Toast;
+
 import java.io.Serializable;
 
-// Controllers should be serializable so they can be passed through intents for testing
-public class Controller implements Serializable {
+public class Controller {
     private Observable observable;
 
     public Controller(Observable observable) {
@@ -23,4 +24,5 @@ public class Controller implements Serializable {
     public void setObservable(Observable observable) {
         this.observable = observable;
     }
+
 }

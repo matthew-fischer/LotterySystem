@@ -102,6 +102,7 @@ public class Organizer {
      */
     public void setFacility(String facility) {
         this.facility = facility;
+        notifyObservers.run();
     }
 
     /**

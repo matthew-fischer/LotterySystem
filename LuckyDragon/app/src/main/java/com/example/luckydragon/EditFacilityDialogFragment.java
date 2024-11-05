@@ -21,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class EditFacilityDialogFragment extends DialogFragment {
     private User user;
     private EditFacilityDialogView editFacilityDialogView;
+    private EditFacilityDialogController editFacilityDialogController;
     private String dialogTitle = null;
 
     public EditFacilityDialogFragment() {}
@@ -39,24 +40,16 @@ public class EditFacilityDialogFragment extends DialogFragment {
         user = ((GlobalApp) requireActivity().getApplication()).getUser();
         // Create view
         editFacilityDialogView = new EditFacilityDialogView(user, this);
+        // Create controller
+        editFacilityDialogController = new EditFacilityDialogController(user, this);
 
         builder.setView(inflater.inflate(R.layout.dialog_edit_facility_material, null))
                 .setTitle(dialogTitle)
                 .setPositiveButton("Confirm", (dialogInterface, i) -> {
-                    // Get text from input
-                    Dialog dialog = getDialog();
+                    Dialog dialog = requireDialog();
                     final TextInputEditText facilityEditText = dialog.findViewById(R.id.edit_facility_FacilityEditText);
-                    String facilityName = facilityEditText.getText().toString();
+                    editFacilityDialogController.extractFacility(facilityEditText);
 
-                    // Validate input
-                    if(facilityName.isEmpty()) {
-                        Toast.makeText(getContext(), "Facility cannot be empty.", Toast.LENGTH_SHORT);
-                        return;
-                    }
-
-                    // Set facility in user
-                    user.getOrganizer().setFacility(facilityName);
-                    user.notifyObservers();
                 })
                 .setNegativeButton("Cancel", (dialogInterface, i) -> {
                     // cancel
@@ -80,5 +73,7 @@ public class EditFacilityDialogFragment extends DialogFragment {
         return dialog;
     }
 
-
+    public void sendToast(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
 }
