@@ -47,6 +47,8 @@ public class SelectRoleActivity extends AppCompatActivity {
         entrantButton.setVisibility(View.VISIBLE);
         if (!entrantButton.hasOnClickListeners()) {
             entrantButton.setOnClickListener(v -> {
+                // Set GlobalApp role to entrant
+                ((GlobalApp) getApplication()).setRole(GlobalApp.ROLE.ENTRANT);
                 if (user.isEntrant()) {
                     // Create profile intent
                     Intent profileIntent = new Intent(this, ProfileActivity.class);
@@ -65,6 +67,8 @@ public class SelectRoleActivity extends AppCompatActivity {
         organizerButton.setVisibility(View.VISIBLE);
         if (!organizerButton.hasOnClickListeners()) {
             organizerButton.setOnClickListener(v -> {
+                // Set GlobalApp role to organizer
+                ((GlobalApp) getApplication()).setRole(GlobalApp.ROLE.ORGANIZER);
                 if (user.isOrganizer()) {
                     // Create profile intent
                     Intent profileIntent = new Intent(this, ProfileActivity.class);

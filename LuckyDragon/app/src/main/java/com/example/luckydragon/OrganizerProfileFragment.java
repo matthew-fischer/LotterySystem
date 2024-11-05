@@ -6,7 +6,6 @@ package com.example.luckydragon;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -19,10 +18,9 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.textview.MaterialTextView;
 
 public class OrganizerProfileFragment extends Fragment {
-    private EventArrayAdapter eventListAdapter;
-    private User user;
     private OrganizerProfileView organizerProfileView;
-
+    private User user;
+    private EventArrayAdapter eventListAdapter;
 
     public OrganizerProfileFragment() {
         super(R.layout.fragment_organizer_profile);
@@ -42,28 +40,8 @@ public class OrganizerProfileFragment extends Fragment {
         // Create view
         organizerProfileView = new OrganizerProfileView(user, this);
 
-        // Set facility name
-        setFacilityName();
-
-        // Add on click listener for "Add Event" button
-        Button addEventButton = view.findViewById(R.id.addEventButton);
-        addEventButton.setOnClickListener((View v) -> {
-            String facilityName = user.getOrganizer().getFacility();
-            if(facilityName == null) { // if no facility, open the facility edit fragment instead
-                DialogFragment editFacilityDialog = new EditFacilityDialogFragment("Add a facility before you create an event!");
-                editFacilityDialog.show(getChildFragmentManager(), "EditFacilityDialogFragment");
-            } else {
-                DialogFragment addEventDialog = new AddEventDialogFragment();
-                addEventDialog.show(getChildFragmentManager(), "AddEventDialogFragment");
-            }
-        });
-
-        // Add on click listener for facility edit button
-        ImageButton facilityEditButton = view.findViewById(R.id.facilityEditButton);
-        facilityEditButton.setOnClickListener((View v) -> {
-            DialogFragment editFacilityDialog = new EditFacilityDialogFragment();
-            editFacilityDialog.show(getChildFragmentManager(), "EditFacilityDialogFragment");
-        });
+        // Update view
+        user.notifyObservers();
     }
 
     public void setFacilityName() {
@@ -73,7 +51,8 @@ public class OrganizerProfileFragment extends Fragment {
         String facilityName = user.getOrganizer().getFacility();
         MaterialTextView facilityTextView = view.findViewById(R.id.facilityTextView);
         ImageButton facilityEditButton = view.findViewById(R.id.facilityEditButton);
-        if (facilityName == null) {
+        assert user.getOrganizer() != null; // user must have an organizer by this point
+        if (user.getOrganizer().getFacility() == null) {
             // Set facility text
             String noFacilityMessage = "You have not created a facility yet.";
             facilityTextView.setText(noFacilityMessage);
@@ -81,7 +60,7 @@ public class OrganizerProfileFragment extends Fragment {
             facilityEditButton.setImageResource(R.drawable.baseline_add_24);
         } else {
             // Set facility text
-            facilityTextView.setText(facilityName);
+            facilityTextView.setText(user.getOrganizer().getFacility());
         }
     }
 

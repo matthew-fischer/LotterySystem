@@ -12,7 +12,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GlobalApp extends Application {
+    public enum ROLE {
+        ENTRANT,
+        ORGANIZER,
+        ADMINISTRATOR
+    }
     private User user;
+    private ROLE role;
     private Map<String, Event> events;
 
     final Bitmap profilePictureSize = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
@@ -25,8 +31,16 @@ public class GlobalApp extends Application {
         return user;
     }
 
+    public ROLE getRole() {
+        return role;
+    }
+
     public void setUser(User newUser) {
         user = newUser;
+    }
+
+    public void setRole(ROLE role) {
+        this.role = role;
     }
 
     public Event getEvent(String eventId) {

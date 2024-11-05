@@ -4,6 +4,7 @@
 
 package com.example.luckydragon;
 
+import static java.util.Objects.nonNull;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -19,10 +20,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -71,11 +71,11 @@ public class User extends Observable {
                         // create new user with empty info
                         save();
                     } else {
-                        email = userData.get("email") != null ? String.format("%s", userData.get("email")) : "";
-                        name = userData.get("name") != null ? String.format("%s", userData.get("name")) : "";
-                        phoneNumber = userData.get("phoneNumber") != null ? String.format("%s", userData.get("phoneNumber")) : "";
-                        notifications = userData.get("notifications") != null
-                                && userData.get("notifications").toString().equals("true");
+                        name = userData.get("name") != null ? Objects.requireNonNull(userData.get("name")).toString() : null;
+                        email = userData.get("email") != null ? Objects.requireNonNull(userData.get("email")).toString() : null;
+                        phoneNumber = userData.get("phoneNumber") != null ? Objects.requireNonNull(userData.get("phoneNumber")).toString() : null;
+                        assert(name != null);
+
                         boolean isEntrant = userData.get("isEntrant") != null
                                 && userData.get("isEntrant").toString().equals("true");
                         if (isEntrant) {
@@ -91,6 +91,7 @@ public class User extends Observable {
                             } else {
                                 organizer = new Organizer(deviceId, this::notifyObservers);
                             }
+                            organizer.fetchEvents();
                         }
                         isAdmin = userData.get("isAdmin") != null
                                 && userData.get("isAdmin").toString().equals("true");
@@ -117,8 +118,8 @@ public class User extends Observable {
         }
 
         map.put("name", name);
-        map.put("email", email);
-        map.put("phoneNumber", phoneNumber);
+        map.put("email", nonNull(email) ? email : null);
+        map.put("phoneNumber", nonNull(phoneNumber) ? phoneNumber : null);
         map.put("notifications", notifications);
         map.put("profilePicture", bitmapToString(uploadedProfilePicture));
         map.put("defaultProfilePicture", bitmapToString(defaultProfilePicture));

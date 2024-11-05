@@ -11,27 +11,14 @@
 package com.example.luckydragon;
 
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.Map;
 import java.util.Objects;
 
 public class ProfileActivity extends AppBarActivity {
@@ -41,8 +28,9 @@ public class ProfileActivity extends AppBarActivity {
         ORGANIZER,
         ADMIN,
     }
-
     private User user;
+    private GlobalApp.ROLE role;
+    private ProfileView profileView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,15 +38,41 @@ public class ProfileActivity extends AppBarActivity {
         setContentView(R.layout.activity_profile);
         getSupportActionBar().setTitle("Profile");
 
-        // Unpack intent
-        Intent intent = getIntent();
+        // Get user from global app
         user = ((GlobalApp) getApplication()).getUser();
-        String role = intent.getStringExtra("role");
+        role = ((GlobalApp) getApplication()).getRole();
 
+        // Create profile view
+        profileView = new ProfileView(user, this);
+
+        // If user exists, update view
+        if(user != null) {
+            user.notifyObservers();
+        }
+    }
+
+    public void initializeView() {
         // Set profile info views
         TextView nameView = findViewById(R.id.nameTextView);
         TextView emailView = findViewById(R.id.emailTextView);
         TextView phoneNumberView = findViewById(R.id.phoneNumberTextView);
+
+        // Set name
+        nameView.setText(user.getName());
+        // Set email if it exists, otherwise hide the textview
+        if(user.getEmail() != null) {
+            emailView.setText(user.getEmail());
+        } else {
+            emailView.setVisibility(View.GONE);
+        }
+        // Set phone number if it exists, otherwise hide the textview
+        if(user.getPhoneNumber() != null) {
+            phoneNumberView.setText(user.getPhoneNumber());
+        } else {
+            Log.e("USER", "no phone number");
+            phoneNumberView.setVisibility(View.GONE);
+        }
+
         ImageView profilePictureView = findViewById(R.id.profilePicture);
 
         nameView.setText(user.getName());
@@ -74,36 +88,21 @@ public class ProfileActivity extends AppBarActivity {
             startActivity(signupIntent);
         });
         // Create profile fragment
-        if (Objects.equals(role, "ORGANIZER")) {
-            // Create Organizer
-//            String facility = intent.getStringExtra("facilityName");
-//            user = new Organizer(deviceID, name, email, phoneNumber, facility);
-
+        if (role == GlobalApp.ROLE.ENTRANT) {
+            // Create entrant profile fragment
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.fragment_container_view, EntrantProfileFragment.class, null)
+                    .commit();
+        } else if (role == GlobalApp.ROLE.ORGANIZER) {
             // Create organizer profile fragment
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
                     .add(R.id.fragment_container_view, OrganizerProfileFragment.class, null)
                     .commit();
-        } else if (Objects.equals(role, "ENTRANT")) {
-            // Create entrant profile fragment
-            getSupportFragmentManager().beginTransaction()
-                            .setReorderingAllowed(true)
-                            .replace(R.id.fragment_container_view, EntrantProfileFragment.class, null)
-                            .commit();
-        } else if (Objects.equals(role, "ADMIN")) {
-            // Create admin profile fragment
-            getSupportFragmentManager().beginTransaction()
-                    .setReorderingAllowed(true)
-                    .replace(R.id.fragment_container_view, AdminProfileFragment.class, null)
-                    .commit();
         } else {
             throw new RuntimeException("User mode not set.");
         }
-    }
-
-    // TODO: REMOVE
-    public User getUser() {
-        return user;
     }
 
     public void sendToast(String message) {
