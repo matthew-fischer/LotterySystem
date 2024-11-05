@@ -103,8 +103,6 @@ public class OrganizerProfileFragment extends Fragment {
     }
 
     public void updateEventsList() {
-        Log.e("EVENTS", "Update events list");
-        System.out.println(user.getOrganizer().getEvents());
         eventListAdapter.notifyDataSetChanged();
         // Show "No events" textview if no events and hide otherwise
         TextView noEventsTextView = getView().findViewById(R.id.noEventsTextView);

@@ -53,7 +53,6 @@ public class Organizer {
      * Fetches event data from firestore
      */
     public void fetchEvents() {
-        Log.e("fetch", "fetching events");
         // Get events
         db.collection("events")
                 .whereEqualTo("organizerDeviceId", deviceId)
@@ -65,14 +64,14 @@ public class Organizer {
                             eventData = document.getData();
                             Event event = new Event(
                                     document.getId(),
-                                    eventData.get("name") == null ? null : String.format("%s", eventData.get("Name")),
-                                    eventData.get("organizerDeviceId") == null ? null : String.format("%s", eventData.get("OrganizerDeviceID")),
-                                    eventData.get("facility") == null ? null : String.format("%s", eventData.get("Facility")),
-                                    eventData.get("waitlistLimit") == null ? null : Integer.valueOf(String.format("%s", eventData.get("WaitlistLimit"))),
-                                    eventData.get("attendeeLimit") == null ? null : Integer.valueOf(String.format("%s", eventData.get("AttendeeLimit"))),
-                                    eventData.get("date") == null ? null : String.format("%s", eventData.get("Date")),
-                                    eventData.get("hours") == null ? null : Integer.valueOf(String.format("%s", eventData.get("Hours"))),
-                                    eventData.get("minutes") == null ? null : Integer.valueOf(String.format("%s", eventData.get("Minutes")))
+                                    eventData.get("name") == null ? null : String.format("%s", eventData.get("name")),
+                                    eventData.get("organizerDeviceId") == null ? null : String.format("%s", eventData.get("organizerDeviceID")),
+                                    eventData.get("facility") == null ? null : String.format("%s", eventData.get("facility")),
+                                    eventData.get("waitlistLimit") == null ? null : Integer.valueOf(String.format("%s", eventData.get("waitlistLimit"))),
+                                    eventData.get("attendeeLimit") == null ? null : Integer.valueOf(String.format("%s", eventData.get("attendeeLimit"))),
+                                    eventData.get("date") == null ? null : String.format("%s", eventData.get("date")),
+                                    eventData.get("hours") == null ? null : Integer.valueOf(String.format("%s", eventData.get("hours"))),
+                                    eventData.get("minutes") == null ? null : Integer.valueOf(String.format("%s", eventData.get("minutes")))
                             );
                             events.add(event);
                         }
@@ -115,7 +114,6 @@ public class Organizer {
      * @param event the event to be added
      */
     public void addEvent(Event event) {
-        Log.e("EVENT", "event added");
         events.add(event);
         notifyObservers.run();
     }
