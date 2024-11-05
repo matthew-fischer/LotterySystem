@@ -20,7 +20,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class EditFacilityDialogFragment extends DialogFragment {
     private User user;
-    private EditFacilityDialogView editFacilityDialogView;
     private EditFacilityDialogController editFacilityDialogController;
     private String dialogTitle = null;
 
@@ -38,8 +37,6 @@ public class EditFacilityDialogFragment extends DialogFragment {
 
         // Get user
         user = ((GlobalApp) requireActivity().getApplication()).getUser();
-        // Create view
-        editFacilityDialogView = new EditFacilityDialogView(user, this);
         // Create controller
         editFacilityDialogController = new EditFacilityDialogController(user, this);
 
