@@ -3,6 +3,7 @@ package com.example.luckydragon;
 import android.view.View;
 import android.widget.EditText;
 
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.timepicker.MaterialTimePicker;
 
 import java.time.Instant;
@@ -64,4 +65,7 @@ public class AddEventController extends Controller {
         getObservable().setDate(date);
     }
 
+    public void extractHasGeolocation(SwitchMaterial toggle) {
+        getObservable().setHasGeolocation(toggle.isEnabled());
+    }
 }

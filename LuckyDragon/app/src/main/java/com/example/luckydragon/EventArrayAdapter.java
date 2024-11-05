@@ -34,7 +34,7 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
 
         TextView eventNameTextView = rowView.findViewById(R.id.eventRowEventName);
         TextView eventDateTimeTextView = rowView.findViewById(R.id.eventRowEventDateTime);
-        ImageButton displayQRCode = rowView.findViewById(R.id.displayQRCode);
+        ImageButton displayQRCode = rowView.findViewById(R.id.qrCodeIcon);
 
         eventNameTextView.setText(event.getName());
         eventDateTimeTextView.setText(event.getDateAndTime());
