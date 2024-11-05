@@ -71,6 +71,7 @@ public class Event extends Observable {
     private String facility = "";
     private Integer waitListLimit = -1;
     private Integer attendeeLimit = -1;
+    private Boolean hasGeolocation = false;
     private String date = LocalDate.now().toString();
     private Time time = new Time(0, 0);
     private BitMatrix qrHash;
@@ -162,6 +163,7 @@ public class Event extends Observable {
         eventData.put("facility", facility);
         eventData.put("waitListLimit", waitListLimit);
         eventData.put("attendeeLimit", attendeeLimit);
+        eventData.put("hasGeolocation", hasGeolocation);
         eventData.put("date", date);
         eventData.put("hours", time.hours);
         eventData.put("minutes", time.minutes);
@@ -202,6 +204,7 @@ public class Event extends Observable {
                 facility = (String) eventData.get("facility");
                 waitListLimit = (int) (long) eventData.get("waitListLimit");
                 attendeeLimit = (int) (long) eventData.get("attendeeLimit");
+                hasGeolocation = (Boolean) eventData.get("hasGeolocation");
                 date = (String) eventData.get("date");
                 time = new Time((int) (long) eventData.get("hours"), (int) (long) eventData.get("minutes"));
 //                TODO: Decode qrHash
@@ -405,6 +408,8 @@ public class Event extends Observable {
         return attendeeList.size();
     }
 
+    public boolean hasGeolocation() { return hasGeolocation; }
+
     public boolean onWaitList(String deviceId) {
         return waitList.contains(deviceId);
     }
@@ -467,6 +472,11 @@ public class Event extends Observable {
 
     public void setDate(String date) {
         this.date = date;
+        notifyObservers();
+    }
+
+    public void setHasGeolocation(Boolean hasGeolocation) {
+        this.hasGeolocation = hasGeolocation;
         notifyObservers();
     }
 }

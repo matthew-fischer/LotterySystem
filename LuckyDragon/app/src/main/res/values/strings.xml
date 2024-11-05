@@ -13,6 +13,7 @@
     <string name="waitlist_spots">Waitlist Spots:</string>
     <string name="waitlist_status">Waitlist status</string>
     <string name="date_time">Date -- Time</string>
+    <string name="geolocation_warning">Requires geolocation!</string>
     <string name="facility_name">Facility Name</string>
     <string name="currently_joined">Currently Joined:</string>
     <string name="attendee_spots">Attendee Spots:</string>
