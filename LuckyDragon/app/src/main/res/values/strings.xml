@@ -19,6 +19,8 @@
     <string name="attendee_spots">Attendee Spots:</string>
     <string name="xx">xx</string>
     <string name="profile_picture_content_description">profile picture</string>
+    <string name="remove_qr">REMOVE QR</string>
+    <string name="delete_event">DELETE EVENT</string>
 
     <string-array name="entrant_statuses">
         <item>Attendees</item>
