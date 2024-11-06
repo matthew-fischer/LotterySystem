@@ -1,3 +1,8 @@
+/**
+ * Defines the SelectRoleActivity class.
+ * Associated with SelectRoleView.
+ */
+
 package com.example.luckydragon;
 
 import android.content.Intent;
@@ -13,16 +18,10 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Notes:
- * This activity gets the user profile from the database and passes it to the profile activity.
- * This will allow profile information in ProfileActivity to be displayed immediately, rather than with a delay.
- * ProfileActivity itself shouldn't need database access, but sub-fragments like EntrantProfileFragment and OrganizerProfileFragment will.
- * All users should be shown Entrant and Organizer roles, but the Admin button will only show for users that were set to Administrator in the database.
- * If a user has no profile in the database they should be taken to SignupActivity to make one.
- * After making one, we could bring them back to this page to select their role.
+ * NOTES
+ * If user is an admin, "Entrant"/"Organizer"/"Administrator" buttons should show.
+ * If user is not an admin, only "Entrant"/"Organizer" buttons should show.
  */
-
-
 public class SelectRoleActivity extends AppCompatActivity {
     private User user;
     private SelectRoleView selectRoleView;
@@ -38,9 +37,11 @@ public class SelectRoleActivity extends AppCompatActivity {
         selectRoleView = new SelectRoleView(user, this);
     }
 
+    /**
+     * Set button visibilities and on click listeners.
+     * This runs once the user data has been fetched, so that admin button can be hidden if user is not an admin.
+     */
     public void initializeView() {
-        // Set content view (don't do this until after user has been fetched from db)
-
         // Set up on entrant click listener
         Button entrantButton = findViewById(R.id.entrantButton);
         entrantButton.setVisibility(View.VISIBLE);
@@ -93,6 +94,9 @@ public class SelectRoleActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Sets admin button visibility to VISIBLE..
+     */
     public void showAdminButton() {
         Button adminButton = findViewById(R.id.adminButton);
         adminButton.setVisibility(View.VISIBLE);
