@@ -40,7 +40,6 @@ public class SelectRoleActivity extends AppCompatActivity {
 
     public void initializeView() {
         // Set content view (don't do this until after user has been fetched from db)
-        setContentView(R.layout.select_role_page); // set content to role page
 
         // Set up on entrant click listener
         Button entrantButton = findViewById(R.id.entrantButton);
