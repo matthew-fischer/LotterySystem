@@ -16,16 +16,13 @@
       <SelectionState runConfigName="Tests in 'com.example.luckydragon'">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="All Tests">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="US_02_01_03_Test">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="US_02_01_03_Test (1)">
+      <SelectionState runConfigName="Tests in 'com.example.luckydragon.userStoryTest'">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="Tests in 'com.example.luckydragon.userStoryTest'">
+      <SelectionState runConfigName="US_01_07_01_Test">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

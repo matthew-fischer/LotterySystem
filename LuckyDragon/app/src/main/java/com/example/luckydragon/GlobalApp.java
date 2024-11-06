@@ -1,8 +1,11 @@
 package com.example.luckydragon;
 
+import static java.util.Objects.nonNull;
+
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.provider.Settings;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -24,11 +27,13 @@ public class GlobalApp extends Application {
     private Map<String, Event> events;
     private UserList users;
     private EventList eventList;
+    private String deviceId = null;
 
     final Bitmap profilePictureSize = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
     public User getUser() {
         if (user == null) {
-            String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+            if(deviceId == null) deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+            Log.e("DEVICE ID", deviceId);
             user = new User(deviceId);
             user.fetchData();
         }
@@ -75,9 +80,12 @@ public class GlobalApp extends Application {
     }
 
     public EventList getEvents() {
-
         eventList = new EventList();
         eventList.fetchData();
         return eventList;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
     }
 }
