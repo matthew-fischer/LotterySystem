@@ -3,6 +3,7 @@ package com.example.luckydragon;
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.provider.Settings;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -18,6 +19,7 @@ public class GlobalApp extends Application {
 
     final Bitmap profilePictureSize = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
     public User getUser() {
+        Log.d("GLOBALAPP", String.valueOf(db == null));
         if (db == null) {
             setDb(FirebaseFirestore.getInstance());
         }

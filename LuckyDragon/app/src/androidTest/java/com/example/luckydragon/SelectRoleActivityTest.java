@@ -4,6 +4,7 @@
 
 package com.example.luckydragon;
 
+import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -13,6 +14,7 @@ import org.junit.Before;
 import org.junit.Rule;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -28,8 +30,11 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 
 import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.rule.ActivityTestRule;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -64,13 +69,15 @@ public class SelectRoleActivityTest {
     private DocumentReference mockDocument;
     @Mock
     private DocumentSnapshot mockDocumentSnapshot;
+    @Mock
+    private Task<DocumentSnapshot> mockTask;
 
     @Mock
     private QuerySnapshot mockQuerySnapshot;
 
-    @Rule
-    public ActivityScenarioRule<SelectRoleActivity> scenario =
-            new ActivityScenarioRule<SelectRoleActivity>(SelectRoleActivity.class);
+//    @Rule
+//    public ActivityTestRule<SelectRoleActivity> scenario =
+//            new ActivityScenarioRule<SelectRoleActivity>(SelectRoleActivity.class, true, false);
 
     @Before
     public void setup() {
@@ -79,9 +86,11 @@ public class SelectRoleActivityTest {
         when(mockFirestore.collection("users")).thenReturn(mockCollection);
         when(mockCollection.document(anyString())).thenReturn(mockDocument);
 
-        Task<DocumentSnapshot> mockTask = Tasks.forResult(mockDocumentSnapshot);
+        mockTask = Tasks.forResult(mockDocumentSnapshot);
 //        when(mockCollection.get()).thenReturn(mocktask);
         when(mockDocument.get()).thenReturn(mockTask);
+//        Task<DocumentSnapshot> anotherTask = task.forResult();
+        when(mockTask.addOnFailureListener().thenReturn(mockTask);
 
         Map<String, Object> mockData = getMockData();
         when(mockDocumentSnapshot.getData()).thenReturn(mockData);
@@ -95,78 +104,77 @@ public class SelectRoleActivityTest {
     @Test
     public void testEntrantSignup() {
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-
-        User mockUser = new User("testId", mockFirestore);
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
-//        mockUser.setIsLoaded(true);
-//        globalApp.setUser(mockUser);
         globalApp.setDb(mockFirestore);
 
-        // Update views to match testUser (this must run on ui thread -- error otherwise)
-        // Assertions
-        waitForViewToAppear(R.id.entrantButton, 5000);
-        onView(withId(R.id.entrantButton)).check(matches(withText("entrant")));
-//        onView(withId(R.id.entrantButton)).check(matches(not(isDisplayed())));
-//        onView(withId(R.id.organizerButton)).check(matches(isDisplayed()));
-//        onView(withId(R.id.adminButton)).check(matches(not(isDisplayed())));
+        final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
+        try (final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
+            waitForViewToAppear(R.id.entrantButton, 5000);
+//        onView(withId(R.id.entrantButton)).check(matches(withText("ENTRANT")));
+            // Click entrant button
+            onView(withId(R.id.entrantButton)).perform(click());
+
+            // Check we are in signup
+            onView(withId(R.id.signupName)).check(matches(isDisplayed()));
+        }
     }
-//    /**
-//     * TEST
-//     * Tests that only "Entrant" and "Organizer" buttons show for a user without admin privileges.
-//     * "Administrator" button should not be visible.
-//     */
-//    @Test
-//    public void testButtonsForNonAdminUser() {
-//        final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-//        final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
-//
-//        // Set user to a test object
-//        GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
-//        User testUser = new User("test");
-//        testUser.setIsLoaded(true);
-//        globalApp.setUser(testUser);
-//
-//        try (final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
-//            // Update views to match testUser (this must run on ui thread -- error otherwise)
-//            scenario.onActivity(a -> {
-//                a.runOnUiThread(testUser::notifyObservers);
-//            });
-//
-//            // Assertions
-//            onView(withId(R.id.entrantButton)).check(matches(isDisplayed()));
-//            onView(withId(R.id.organizerButton)).check(matches(isDisplayed()));
-//            onView(withId(R.id.adminButton)).check(matches(not(isDisplayed())));
-//        }
-//    }
-//
-//    /**
-//     * TEST
-//     * Tests that "Entrant", "Organizer", and "Administrator" buttons show for a user with admin privileges.
-//     */
-//    @Test
-//    public void testButtonsForAdminUser() {
-//        final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-//        final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
-//
-//        // Set user to a test object
-//        GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
-//        User testUser = new User("test");
-//        testUser.setAdmin(true);
-//        testUser.setIsLoaded(true);
-//        globalApp.setUser(testUser);
-//
-//        try(final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
-//            // Update views to match testUser (this must run on ui thread -- error otherwise)
-//            scenario.onActivity(a -> {
-//                a.runOnUiThread(testUser::notifyObservers);
-//            });
-//
-//            // Assertions
-//            onView(withId(R.id.entrantButton)).check(matches(isDisplayed()));
-//            onView(withId(R.id.organizerButton)).check(matches(isDisplayed()));
-//            onView(withId(R.id.adminButton)).check(matches((isDisplayed())));
-//        }
-//    }
+    /**
+     * TEST
+     * Tests that only "Entrant" and "Organizer" buttons show for a user without admin privileges.
+     * "Administrator" button should not be visible.
+     */
+    @Test
+    public void testButtonsForNonAdminUser() {
+        final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
+
+        // Set user to a test object
+        GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
+        User testUser = new User("test", FirebaseFirestore.getInstance());
+        testUser.setIsLoaded(true);
+        globalApp.setUser(testUser);
+
+        try (final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
+            // Update views to match testUser (this must run on ui thread -- error otherwise)
+            scenario.onActivity(a -> {
+                a.runOnUiThread(testUser::notifyObservers);
+            });
+
+            // Assertions
+            onView(withId(R.id.entrantButton)).check(matches(isDisplayed()));
+            onView(withId(R.id.organizerButton)).check(matches(isDisplayed()));
+            onView(withId(R.id.adminButton)).check(matches(not(isDisplayed())));
+        }
+    }
+
+    /**
+     * TEST
+     * Tests that "Entrant", "Organizer", and "Administrator" buttons show for a user with admin privileges.
+     */
+    @Test
+    public void testButtonsForAdminUser() {
+        final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
+
+        // Set user to a test object
+        GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
+        User testUser = new User("test", FirebaseFirestore.getInstance());
+        testUser.setAdmin(true);
+        testUser.setIsLoaded(true);
+        globalApp.setUser(testUser);
+
+        try(final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
+            // Update views to match testUser (this must run on ui thread -- error otherwise)
+            scenario.onActivity(a -> {
+                a.runOnUiThread(testUser::notifyObservers);
+            });
+
+            // Assertions
+            onView(withId(R.id.entrantButton)).check(matches(isDisplayed()));
+            onView(withId(R.id.organizerButton)).check(matches(isDisplayed()));
+            onView(withId(R.id.adminButton)).check(matches((isDisplayed())));
+        }
+    }
 
     private HashMap<String, Object> getMockData() {
         HashMap<String, Object> map = new HashMap<>();
