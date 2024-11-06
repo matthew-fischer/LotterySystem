@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class UserList extends Observable{
+public class UserList extends Observable {
 
     private ArrayList<User> users = new ArrayList<>();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -37,7 +37,6 @@ public class UserList extends Observable{
                             users.add(user);
                         }
 
-                        //userListAdapter.notifyDataSetChanged();
                         Log.d(TAG, "Users loaded successfully with initial get()");
                         notifyObservers();
                     } else {
