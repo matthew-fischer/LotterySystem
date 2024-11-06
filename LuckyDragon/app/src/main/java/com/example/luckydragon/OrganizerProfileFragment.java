@@ -47,7 +47,7 @@ public class OrganizerProfileFragment extends Fragment {
         Button addEventButton = view.findViewById(R.id.addEventButton);
         addEventButton.setOnClickListener((View v) -> {
             String facilityName = user.getOrganizer().getFacility();
-            if(facilityName == null) { // if no facility, open the facility edit fragment instead
+            if (facilityName == null) { // if no facility, open the facility edit fragment instead
                 DialogFragment editFacilityDialog = new EditFacilityDialogFragment("Add a facility before you create an event!");
                 editFacilityDialog.show(getChildFragmentManager(), "EditFacilityDialogFragment");
             } else {
@@ -62,25 +62,6 @@ public class OrganizerProfileFragment extends Fragment {
             editFacilityDialog.show(getChildFragmentManager(), "EditFacilityDialogFragment");
         });
 
-    }
-
-    public void setFacilityName() {
-        View view = requireView();
-
-        // Set facility name
-        MaterialTextView facilityTextView = view.findViewById(R.id.facilityTextView);
-        ImageButton facilityEditButton = view.findViewById(R.id.facilityEditButton);
-        assert user.getOrganizer() != null; // user must have an organizer by this point
-        if (user.getOrganizer().getFacility() == null) {
-            // Set facility text
-            String noFacilityMessage = getString(R.string.no_facility_message);
-            facilityTextView.setText(noFacilityMessage);
-            // Change button to "add" icon
-            facilityEditButton.setImageResource(R.drawable.baseline_add_24);
-        } else {
-            // Set facility text
-            facilityTextView.setText(user.getOrganizer().getFacility());
-        }
     }
 
     // EditFacilityDialogFragment uses this function to update the facility textview after a change is made.
@@ -100,12 +81,11 @@ public class OrganizerProfileFragment extends Fragment {
 
     public void updateEventsList() {
         eventListAdapter.notifyDataSetChanged();
+    }
+
+    public void setNoEventsVisibility(int visibility) {
         // Show "No events" textview if no events and hide otherwise
         TextView noEventsTextView = getView().findViewById(R.id.noEventsTextView);
-        if(user.getOrganizer().getEvents().isEmpty()) {
-            noEventsTextView.setVisibility(View.VISIBLE);
-        } else {
-            noEventsTextView.setVisibility(View.GONE);
-        }
+        noEventsTextView.setVisibility(visibility);
     }
 }
