@@ -46,34 +46,8 @@ public class ProfileActivity extends AppBarActivity {
         // initializeView() uses profileView, but it will run before the ProfileView constructor returns so it still thinks ProfileView is null
         // To fix I set isLoaded to false until after profileView is set
         // I also had to add notifyObservers() to setIsLoaded() in User
-        user.setIsLoaded(false);
         profileView = new ProfileView(user, this);
-        user.setIsLoaded(true);
-    }
 
-    public void initializeView() {
-        // Set profile info views
-        TextView nameView = findViewById(R.id.nameTextView);
-        TextView emailView = findViewById(R.id.emailTextView);
-        TextView phoneNumberView = findViewById(R.id.phoneNumberTextView);
-        ImageView profilePictureView = findViewById(R.id.profilePicture);
-
-        Log.e("Profile", profileView == null ? "null" : profileView.toString());
-        if(profileView != null) {
-            profileView.setName(nameView);
-            profileView.setEmail(emailView);
-            profileView.setPhoneNumber(phoneNumberView);
-            profileView.setProfilePicture(profilePictureView);
-        }
-
-
-        ImageButton edit_profile_button = findViewById(R.id.edit_profile_button);
-        edit_profile_button.setOnClickListener(view -> {
-            // Create intent to go to signup
-            Intent signupIntent = new Intent(this, SignupActivity.class);
-            signupIntent.putExtra("role", role);
-            startActivity(signupIntent);
-        });
         // Create profile fragment
         if (role == GlobalApp.ROLE.ENTRANT) {
             // Create entrant profile fragment
@@ -91,8 +65,16 @@ public class ProfileActivity extends AppBarActivity {
         } else {
             throw new RuntimeException("User mode not set.");
         }
-    }
 
+        // Initialize edit profile button on click
+        ImageButton edit_profile_button = findViewById(R.id.edit_profile_button);
+        edit_profile_button.setOnClickListener(view -> {
+            // Create intent to go to signup
+            Intent signupIntent = new Intent(this, SignupActivity.class);
+            signupIntent.putExtra("role", role);
+            startActivity(signupIntent);
+        });
+    }
 
     public void sendToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();

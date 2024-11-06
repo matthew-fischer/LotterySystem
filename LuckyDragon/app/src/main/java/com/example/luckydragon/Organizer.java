@@ -78,7 +78,7 @@ public class Organizer {
                             for(int i = 0; i < events.size(); i++) {
                                 if(Objects.equals(event.getId(), events.get(i).getId())) return;
                             }
-                            events.add(event);
+                            addEvent(event); // calls notifyObservers
                         }
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());

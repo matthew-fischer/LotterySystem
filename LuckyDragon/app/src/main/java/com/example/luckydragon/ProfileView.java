@@ -20,7 +20,10 @@ public class ProfileView extends Observer {
     @Override
     public void update(Observable whoUpdatedMe) {
         if(getObservable().isLoaded()) {
-            profileActivity.initializeView();
+            setName(profileActivity.findViewById(R.id.nameTextView));
+            setEmail(profileActivity.findViewById(R.id.emailTextView));
+            setPhoneNumber(profileActivity.findViewById(R.id.phoneNumberTextView));
+            setProfilePicture(profileActivity.findViewById(R.id.profilePicture));
         }
     }
 

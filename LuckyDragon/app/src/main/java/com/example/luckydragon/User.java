@@ -118,8 +118,8 @@ public class User extends Observable {
         }
 
         map.put("name", name);
-        map.put("email", nonNull(email) ? email : null);
-        map.put("phoneNumber", nonNull(phoneNumber) ? phoneNumber : null);
+        map.put("email", nonNull(email) && !email.isEmpty() ? email : null);
+        map.put("phoneNumber", nonNull(phoneNumber) && !phoneNumber.isEmpty() ? phoneNumber : null);
         map.put("notifications", notifications);
         map.put("profilePicture", bitmapToString(uploadedProfilePicture));
         map.put("defaultProfilePicture", bitmapToString(defaultProfilePicture));

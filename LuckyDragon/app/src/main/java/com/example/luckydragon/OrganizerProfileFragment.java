@@ -68,7 +68,6 @@ public class OrganizerProfileFragment extends Fragment {
         View view = requireView();
 
         // Set facility name
-        String facilityName = user.getOrganizer().getFacility();
         MaterialTextView facilityTextView = view.findViewById(R.id.facilityTextView);
         ImageButton facilityEditButton = view.findViewById(R.id.facilityEditButton);
         assert user.getOrganizer() != null; // user must have an organizer by this point
