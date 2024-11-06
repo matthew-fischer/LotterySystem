@@ -18,7 +18,6 @@ import java.util.Set;
 
 public class ViewProfilesActivity extends AppBarActivity {
 
-    private Set<User> userSet = new HashSet<>();
     private UserList userList;
     private UserArrayAdapter userListAdapter;
     private ListView usersListView;
@@ -35,6 +34,7 @@ public class ViewProfilesActivity extends AppBarActivity {
         usersListView = findViewById(R.id.adminProfileUsersListview);
         userListAdapter = new UserArrayAdapter(userList.getUserList(), this);
         usersListView.setAdapter(userListAdapter);
+
         viewProfilesView = new ViewProfilesView(userList, this);
 
     }
