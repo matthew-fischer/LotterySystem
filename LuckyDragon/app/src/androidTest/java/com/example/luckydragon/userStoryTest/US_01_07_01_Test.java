@@ -39,7 +39,7 @@ import java.time.Instant;
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class US_01_07_01_Test {
-    private final int DB_WAIT_LIMIT_MS = 5000;
+    private final int DB_WAIT_LIMIT_MS = 10000;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
