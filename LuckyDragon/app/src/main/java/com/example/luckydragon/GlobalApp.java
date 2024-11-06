@@ -9,11 +9,13 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GlobalApp extends Application {
     private User user;
     private Map<String, Event> events;
+    private UserList users;
 
     final Bitmap profilePictureSize = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
     public User getUser() {
@@ -23,6 +25,13 @@ public class GlobalApp extends Application {
             user.fetchData();
         }
         return user;
+    }
+
+    public UserList getUsers() {
+
+        users = new UserList();
+        users.fetchData();
+        return users;
     }
 
     public void setUser(User newUser) {
