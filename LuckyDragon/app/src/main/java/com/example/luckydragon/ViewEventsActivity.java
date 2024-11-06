@@ -15,6 +15,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import androidx.fragment.app.Fragment;
+
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -28,6 +30,7 @@ public class ViewEventsActivity extends AppBarActivity {
     private EventList eventList;
     private EventArrayAdapter eventListAdapter;
     private ListView eventsListView;
+    private Fragment fragment;
     private ViewEventsView viewEventsView;
 
     @Override
@@ -40,7 +43,7 @@ public class ViewEventsActivity extends AppBarActivity {
         // Set up admin events listview
         eventList = ((GlobalApp) getApplication()).getEvents();
         eventsListView = findViewById(R.id.adminProfileEventsListview);
-        eventListAdapter = new EventArrayAdapter(eventList.getEventList(), this);
+        eventListAdapter = new EventArrayAdapter(eventList.getEventList(), this, fragment);
         eventsListView.setAdapter(eventListAdapter);
 
         viewEventsView = new ViewEventsView(eventList, this);

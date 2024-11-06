@@ -54,6 +54,7 @@ public class ProfileActivity extends AppBarActivity {
         Intent intent = getIntent();
         user = ((GlobalApp) getApplication()).getUser();
         String role = intent.getStringExtra("role");
+        String deviceID = ((GlobalApp) getApplication()).getUser().getDeviceId();
 
         // Set profile info views
         TextView nameView = findViewById(R.id.nameTextView);
@@ -86,9 +87,11 @@ public class ProfileActivity extends AppBarActivity {
                     .commit();
         } else if (Objects.equals(role, "ENTRANT")) {
             // Create entrant profile fragment
+            Bundle args = new Bundle();
+            args.putString("deviceID", deviceID);   // passing deviceId to EntrantProfileFragment
             getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
-                            .replace(R.id.fragment_container_view, EntrantProfileFragment.class, null)
+                            .replace(R.id.fragment_container_view, EntrantProfileFragment.class, args)
                             .commit();
         } else if (Objects.equals(role, "ADMIN")) {
             // Create admin profile fragment
