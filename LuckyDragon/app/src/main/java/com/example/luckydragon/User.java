@@ -33,7 +33,7 @@ import java.util.Random;
  *   - Email and phone number may be optional. Additional constructors should be defined for these cases.
  */
 public class User extends Observable {
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseFirestore db;
 
     private String deviceId;
     private String name = "";
@@ -48,8 +48,9 @@ public class User extends Observable {
     private Entrant entrant;
 
     private Boolean isAdmin = Boolean.FALSE;
-    public User(String deviceId) {
+    public User(String deviceId, FirebaseFirestore db) {
         super();
+        this.db = db;
         this.deviceId = deviceId;
     }
 

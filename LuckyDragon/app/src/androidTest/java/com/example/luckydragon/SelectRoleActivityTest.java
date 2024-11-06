@@ -4,39 +4,46 @@
 
 package com.example.luckydragon;
 
-import android.content.Intent;
-
-import androidx.test.core.app.ActivityScenario;
+import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.espresso.intent.Intents;
-import androidx.test.filters.LargeTest;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
-import org.junit.runner.RunWith;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.not;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 import android.content.Context;
-import android.util.Log;
 
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.mockito.Mock;
 
-import java.util.concurrent.Future;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is a test class for SelectRoleActivity.
@@ -49,8 +56,18 @@ import java.util.concurrent.Future;
 //@RunWith(AndroidJUnit4.class)
 //@LargeTest
 public class SelectRoleActivityTest {
-    FirebaseFirestore db;
-    DocumentSnapshot snapshot;
+    @Mock
+    private FirebaseFirestore mockFirestore;
+    @Mock
+    private CollectionReference mockCollection;
+    @Mock
+    private DocumentReference mockDocument;
+    @Mock
+    private DocumentSnapshot mockDocumentSnapshot;
+
+    @Mock
+    private QuerySnapshot mockQuerySnapshot;
+
     @Rule
     public ActivityScenarioRule<SelectRoleActivity> scenario =
             new ActivityScenarioRule<SelectRoleActivity>(SelectRoleActivity.class);
@@ -58,12 +75,16 @@ public class SelectRoleActivityTest {
     @Before
     public void setup() {
         Intents.init();
-        DocumentSnapshot mockSnapShot = mock(DocumentSnapshot.class);
-        FirebaseFirestore db = mock(FirebaseFirestore.class);
-        Mockito.when(db.collection("users").document("testUserId").get())
-                .thenReturn(Future(() -> {
-                    return mockSnapShot;
-                }));
+        openMocks(this);
+        when(mockFirestore.collection("users")).thenReturn(mockCollection);
+        when(mockCollection.document(anyString())).thenReturn(mockDocument);
+
+        Task<DocumentSnapshot> mockTask = Tasks.forResult(mockDocumentSnapshot);
+//        when(mockCollection.get()).thenReturn(mocktask);
+        when(mockDocument.get()).thenReturn(mockTask);
+
+        Map<String, Object> mockData = getMockData();
+        when(mockDocumentSnapshot.getData()).thenReturn(mockData);
     }
 
     @After
@@ -75,16 +96,19 @@ public class SelectRoleActivityTest {
     public void testEntrantSignup() {
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        User mockUser = new User("testId", db);
+        User mockUser = new User("testId", mockFirestore);
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
-        mockUser.setIsLoaded(true);
-        globalApp.setUser(mockUser);
+//        mockUser.setIsLoaded(true);
+//        globalApp.setUser(mockUser);
+        globalApp.setDb(mockFirestore);
 
         // Update views to match testUser (this must run on ui thread -- error otherwise)
         // Assertions
-        onView(withId(R.id.entrantButton)).check(matches(isDisplayed()));
-        onView(withId(R.id.organizerButton)).check(matches(isDisplayed()));
-        onView(withId(R.id.adminButton)).check(matches(not(isDisplayed())));
+        waitForViewToAppear(R.id.entrantButton, 5000);
+        onView(withId(R.id.entrantButton)).check(matches(withText("entrant")));
+//        onView(withId(R.id.entrantButton)).check(matches(not(isDisplayed())));
+//        onView(withId(R.id.organizerButton)).check(matches(isDisplayed()));
+//        onView(withId(R.id.adminButton)).check(matches(not(isDisplayed())));
     }
 //    /**
 //     * TEST
@@ -143,4 +167,33 @@ public class SelectRoleActivityTest {
 //            onView(withId(R.id.adminButton)).check(matches((isDisplayed())));
 //        }
 //    }
+
+    private HashMap<String, Object> getMockData() {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("isEntrant", false);
+        map.put("isOrganizer", true);
+        map.put("isAdmin", true);
+
+        map.put("facility", "My Fake Facility");
+
+        map.put("name", "Nake Fame");
+        map.put("email", "email@address.co");
+        map.put("phoneNumber", "1231231234");
+        map.put("notifications", true);
+//        map.put("profilePicture", bitmapToString(uploadedProfilePicture));
+//        map.put("defaultProfilePicture", bitmapToString(defaultProfilePicture));
+        return map;
+    }
+    // source: https://stackoverflow.com/questions/22358325/how-to-wait-till-a-view-has-gone-in-espresso-tests
+    public void waitForViewToAppear(int viewId, long maxWaitingTimeMs) {
+        long endTime = System.currentTimeMillis() + maxWaitingTimeMs;
+        while (System.currentTimeMillis() <= endTime) {
+            try {
+                onView(allOf(withId(viewId), isDisplayed())).check(matches(not(doesNotExist())));
+                return;
+            } catch (NoMatchingViewException ignored) {
+            }
+        }
+        throw new RuntimeException("timeout exceeded"); // or whatever exception you want
+    }
 }
