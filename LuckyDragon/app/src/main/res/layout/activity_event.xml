@@ -113,11 +113,12 @@
             <Button
                 android:id="@+id/signUpButton"
                 android:layout_width="wrap_content"
-                android:layout_gravity="center"
                 android:layout_height="wrap_content"
-                android:text="@string/sign_up"
+                android:layout_gravity="center"
                 android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"/>
+                android:layout_marginEnd="20dp"
+                android:text="@string/sign_up" />
+
             <Button
                 android:id="@+id/viewPosterButton"
                 android:layout_width="wrap_content"
@@ -125,7 +126,22 @@
                 android:text="@string/view_poster"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"/>
+            <Button
+                android:id="@+id/deleteEventAdminView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/delete_event"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"/>
+            <Button
+                android:id="@+id/removeQRAdminView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/remove_qr"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"/>
         </LinearLayout>
+
     </LinearLayout>
 
 

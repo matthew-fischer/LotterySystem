@@ -10,22 +10,26 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <TextView
+            android:id="@+id/nameProfileAdminView"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:autoSizeTextType="uniform"
             android:text="Full Name" />
         <TextView
+            android:id="@+id/emailProfileAdminView"
             android:layout_width="match_parent"
             android:layout_height="25dp"
             android:textSize="20sp"
             android:text="email@school.com" />
         <TextView
+            android:id="@+id/phoneNumberProfileAdminView"
             android:layout_width="match_parent"
             android:layout_height="25dp"
             android:textSize="20sp"
             android:text="123-123-1234" />
     </LinearLayout>
     <ImageView
+        android:id="@+id/profilePictureAdminView"
         android:layout_width="85dp"
         android:layout_height="85dp"
         android:src="@drawable/baseline_image_24"/>

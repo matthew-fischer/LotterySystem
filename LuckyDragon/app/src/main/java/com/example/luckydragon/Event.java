@@ -373,6 +373,18 @@ public class Event extends Observable implements Serializable {
         }
     }
 
+    public void deleteEvent(String eventId) {
+        db.collection("events")
+                .document(eventId)
+                .delete();
+    }
+
+    public void removeQR(String eventId) {
+        db.collection("events")
+                .document(eventId)
+                .update("hashedQR", "null");
+    }
+
     public String getTime12h() {
         return time.toString12h();
     }

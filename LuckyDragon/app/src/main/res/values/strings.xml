@@ -21,6 +21,8 @@
     <string name="profile_picture_content_description">profile picture</string>
     <string name="qr_code_for_event">QR Code for Event:</string>
     <string name="qr_code_for_event_description">QR Code for Event.</string>
+    <string name="remove_qr">REMOVE QR</string>
+    <string name="delete_event">DELETE EVENT</string>
 
     <string-array name="entrant_statuses">
         <item>Attendees</item>
