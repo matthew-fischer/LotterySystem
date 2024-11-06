@@ -27,19 +27,6 @@ public class GlobalApp extends Application {
         return user;
     }
 
-    /*public User getUser(String userId) {
-        if (events == null) {
-            events = new HashMap<>();
-        }
-        Event event = events.get(eventId);
-        if (event == null || event.getId() != eventId) {
-            event = new Event(eventId);
-            events.put(eventId, event);
-            event.fetchData();
-        }
-        return user;
-    }*/
-
     public UserList getUsers() {
 
         users = new UserList();
