@@ -10,6 +10,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GlobalApp extends Application {
@@ -21,6 +22,8 @@ public class GlobalApp extends Application {
     private User user;
     private ROLE role;
     private Map<String, Event> events;
+    private UserList users;
+    private EventList eventList;
 
     final Bitmap profilePictureSize = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
     public User getUser() {
@@ -34,6 +37,13 @@ public class GlobalApp extends Application {
 
     public ROLE getRole() {
         return role;
+    }
+
+    public UserList getUsers() {
+
+        users = new UserList();
+        users.fetchData();
+        return users;
     }
 
     public void setUser(User newUser) {
@@ -62,5 +72,12 @@ public class GlobalApp extends Application {
         Event event = new Event();
 
         return getEvent(event.getId());
+    }
+
+    public EventList getEvents() {
+
+        eventList = new EventList();
+        eventList.fetchData();
+        return eventList;
     }
 }

@@ -8,6 +8,7 @@ public class EventView extends Observer {
     private TextView eventNameView;
     private TextView facilityNameView;
     private TextView dateAndTimeView;
+    private TextView geolocationWarningView;
     private TextView waitlistSpotsView;
     private TextView attendeeSpotsView;
     private TextView currentlyJoinedView;
@@ -19,15 +20,20 @@ public class EventView extends Observer {
     private Button accept;
     private Button signUp;
     private Button viewPoster;
+    private Button deleteEvent;
+    private Button removeQR;
 
     private String deviceId;
+    private EventActivity activity;
 
     public EventView(Event event, String deviceId, EventActivity eventActivity) {
         this.deviceId = deviceId;
+        this.activity = eventActivity;
 
         eventNameView = eventActivity.findViewById(R.id.eventName);
         facilityNameView = eventActivity.findViewById(R.id.facilityName);
         dateAndTimeView = eventActivity.findViewById(R.id.dateAndTime);
+        geolocationWarningView = eventActivity.findViewById(R.id.geolcationWarning);
         waitlistSpotsView = eventActivity.findViewById(R.id.waitlistSpots);
         attendeeSpotsView = eventActivity.findViewById(R.id.attendeeSpots);
         currentlyJoinedView = eventActivity.findViewById(R.id.currentlyJoined);
@@ -39,6 +45,8 @@ public class EventView extends Observer {
         decline = eventActivity.findViewById(R.id.eventDecline);
         accept = eventActivity.findViewById(R.id.eventAccept);
         viewPoster = eventActivity.findViewById(R.id.viewPosterButton);
+        deleteEvent = eventActivity.findViewById(R.id.deleteEventAdminView);
+        removeQR = eventActivity.findViewById(R.id.removeQRAdminView);
 
         startObserving(event);
     }
@@ -79,45 +87,67 @@ public class EventView extends Observer {
         decline.setVisibility(View.GONE);
         accept.setVisibility(View.GONE);
         viewPoster.setVisibility(View.GONE);
+        deleteEvent.setVisibility(View.GONE);
+        removeQR.setVisibility(View.GONE);
 
-        // show what we want
-        if (getObservable().onWaitList(deviceId)) {
-            // Switch mode to waitlist view
-            status.setText("You are on the waitlist");
+        if (activity.getRole().equals("ADMIN")) {
 
+            deleteEvent.setVisibility(View.VISIBLE);
+            removeQR.setVisibility(View.VISIBLE);
             currentlyJoinedView.setVisibility(View.VISIBLE);
             waitlistSpotsView.setVisibility(View.VISIBLE);
             attendeeSpotsView.setVisibility(View.VISIBLE);
+            geolocationWarningView.setVisibility(View.GONE);
 
-            cancel.setVisibility(View.VISIBLE);
-            viewPoster.setVisibility(View.VISIBLE);
-        } else if (getObservable().onInviteeList(deviceId)) {
-            // mode: invitee
-            status.setText("You have been invited to attend!");
-            decline.setVisibility(View.VISIBLE);
-            accept.setVisibility(View.VISIBLE);
-        } else if (getObservable().onAttendeeList(deviceId)) {
-            // mode: attendee
-            status.setText("You are attending this event");
-
-            currentlyJoinedView.setText(String.format("Current Attendees: %s", getObservable().getAttendeeListSize()));
-            currentlyJoinedView.setVisibility(View.VISIBLE);
-            attendeeSpotsView.setVisibility(View.VISIBLE);
-
-            viewPoster.setVisibility(View.VISIBLE);
-        } else if (getObservable().onCancelledList(deviceId)) {
-            status.setText("Unfortunately, you have not been selected. Enable notifications incase a spot opens up.");
-//            notSelectedText.setVisibility(View.VISIBLE);
         } else {
-            // Default mode is signup view
-            status.setText("You can join the waitlist");
 
-            currentlyJoinedView.setVisibility(View.VISIBLE);
-            waitlistSpotsView.setVisibility(View.VISIBLE);
-            attendeeSpotsView.setVisibility(View.VISIBLE);
+            // show warning if event requires geolocation (US 01.08.01)
+            if (getObservable().hasGeolocation()) {
+                geolocationWarningView.setVisibility(View.VISIBLE);
+            } else {
+                geolocationWarningView.setVisibility(View.INVISIBLE);
+            }
 
-            signUp.setVisibility(View.VISIBLE);
-            viewPoster.setVisibility(View.VISIBLE);
+            // show what we want
+            if (getObservable().onWaitList(deviceId)) {
+                // Switch mode to waitlist view
+                status.setText("You are on the waitlist");
+
+                currentlyJoinedView.setVisibility(View.VISIBLE);
+                waitlistSpotsView.setVisibility(View.VISIBLE);
+                attendeeSpotsView.setVisibility(View.VISIBLE);
+
+                cancel.setVisibility(View.VISIBLE);
+                viewPoster.setVisibility(View.VISIBLE);
+            } else if (getObservable().onInviteeList(deviceId)) {
+                // mode: invitee
+                status.setText("You have been invited to attend!");
+                decline.setVisibility(View.VISIBLE);
+                accept.setVisibility(View.VISIBLE);
+            } else if (getObservable().onAttendeeList(deviceId)) {
+                // mode: attendee
+                status.setText("You are attending this event");
+
+                currentlyJoinedView.setText(String.format("Current Attendees: %s", getObservable().getAttendeeListSize()));
+                currentlyJoinedView.setVisibility(View.VISIBLE);
+                attendeeSpotsView.setVisibility(View.VISIBLE);
+
+                viewPoster.setVisibility(View.VISIBLE);
+            } else if (getObservable().onCancelledList(deviceId)) {
+                status.setText("Unfortunately, you have not been selected. Enable notifications incase a spot opens up.");
+//            notSelectedText.setVisibility(View.VISIBLE);
+            } else {
+                // Default mode is signup view
+                status.setText("You can join the waitlist");
+
+                currentlyJoinedView.setVisibility(View.VISIBLE);
+                waitlistSpotsView.setVisibility(View.VISIBLE);
+                attendeeSpotsView.setVisibility(View.VISIBLE);
+
+                signUp.setVisibility(View.VISIBLE);
+                viewPoster.setVisibility(View.VISIBLE);
+            }
+
         }
     }
 }

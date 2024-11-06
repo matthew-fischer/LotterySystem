@@ -37,7 +37,7 @@ public class OrganizerProfileFragment extends Fragment {
 
         // Set up organizer events listview
         ListView eventsListView = view.findViewById(R.id.organizerProfileEventsListview);
-        eventListAdapter = new EventArrayAdapter(user.getOrganizer().getEvents(), requireActivity().getApplicationContext());
+        eventListAdapter = new EventArrayAdapter(user.getOrganizer().getEvents(), requireActivity().getApplicationContext(), this);
         eventsListView.setAdapter(eventListAdapter);
 
         // Create view
@@ -61,7 +61,6 @@ public class OrganizerProfileFragment extends Fragment {
             DialogFragment editFacilityDialog = new EditFacilityDialogFragment();
             editFacilityDialog.show(getChildFragmentManager(), "EditFacilityDialogFragment");
         });
-
     }
 
     // EditFacilityDialogFragment uses this function to update the facility textview after a change is made.

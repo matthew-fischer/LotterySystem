@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 
 public class AdminProfileFragment extends Fragment {
 
+    Intent intent;
     public AdminProfileFragment() {
         super(R.layout.fragment_admin_profile);
     }
@@ -25,14 +26,15 @@ public class AdminProfileFragment extends Fragment {
 
         viewEvents.setOnClickListener((View v) -> {
 
-            Intent intent = new Intent(getActivity(), ViewEventsActivity.class);
+            intent = new Intent(getActivity(), ViewEventsActivity.class);
             startActivity(intent);
 
         });
 
         viewProfiles.setOnClickListener((View v) -> {
 
-            // TO DO
+            intent = new Intent(getActivity(), ViewProfilesActivity.class);
+            startActivity(intent);
 
         });
 
