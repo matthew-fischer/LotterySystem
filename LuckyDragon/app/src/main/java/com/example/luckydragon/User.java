@@ -53,6 +53,15 @@ public class User extends Observable {
         this.deviceId = deviceId;
     }
 
+
+    /**
+     * User constructor for loading data in UserList
+     * @param name
+     * @param email
+     * @param phoneNumber
+     * @param defaultProfilePicture
+     * @param profilePicture
+     */
     public User(String name, String email, String phoneNumber, Bitmap defaultProfilePicture, Bitmap profilePicture) {
         this.name = name;
         this.email = email;

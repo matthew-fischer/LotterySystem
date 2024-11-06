@@ -12,17 +12,17 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class ViewProfilesActivity extends AppBarActivity {
 
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private Set<User> userSet = new HashSet<>();
-    private ArrayList<User> userList;
+    private UserList userList;
     private UserArrayAdapter userListAdapter;
     private ListView usersListView;
-
+    private ViewProfilesView viewProfilesView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -31,40 +31,18 @@ public class ViewProfilesActivity extends AppBarActivity {
         getSupportActionBar().setTitle("Profiles");
 
         // Set up admin users listview
+        userList = ((GlobalApp) getApplication()).getUsers();
         usersListView = findViewById(R.id.adminProfileUsersListview);
-        userList = new ArrayList<>();
-        userListAdapter = new UserArrayAdapter(userList, this);
+        userListAdapter = new UserArrayAdapter(userList.getUserList(), this);
         usersListView.setAdapter(userListAdapter);
-
-        // Initial one-time load with get()
-        db.collection("users")
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        userSet.clear();
-                        userList.clear();
-
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Map<String, Object> userData = document.getData();
-                            User user = new User(
-                                    userData.get("name") instanceof String ? (String) userData.get("name") : null,
-                                    userData.get("email") instanceof String ? (String) userData.get("email") : null,
-                                    userData.get("phoneNumber") instanceof String ? (String) userData.get("phoneNumber") : null,
-                                    (Bitmap) User.stringToBitmap((String) userData.get("defaultProfilePicture")),
-                                    (Bitmap) User.stringToBitmap((String) userData.get("profilePicture"))
-                            );
-
-                            userSet.add(user);
-                            userList.add(user);
-                        }
-
-                        userListAdapter.notifyDataSetChanged();
-                        Log.d(TAG, "Users loaded successfully with initial get()");
-
-                    } else {
-                        Log.w(TAG, "Error getting initial documents.", task.getException());
-                    }
-                });
+        viewProfilesView = new ViewProfilesView(userList, this);
 
     }
+
+    public void notifyAdapter() {
+
+        userListAdapter.notifyDataSetChanged();
+
+    }
+
 }
