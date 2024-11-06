@@ -19,7 +19,7 @@
     <string name="attendee_spots">Attendee Spots:</string>
     <string name="xx">xx</string>
     <string name="profile_picture_content_description">profile picture</string>
-    <string name="no_facility_message">You have not created a facility yet.</string>
+    <string name="no_facility_message">Please create a facility!</string>
     <string name="qr_code_for_event">QR Code for Event:</string>
     <string name="qr_code_for_event_description">QR Code for Event.</string>
     <string name="remove_qr">REMOVE QR</string>
