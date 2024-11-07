@@ -105,6 +105,12 @@ public class Organizer {
      */
     public void setFacility(String facility) {
         this.facility = facility;
+
+        // Set all of the organizers events to use this facility
+        for(Event e : events) {
+            e.setFacility(facility);
+        }
+
         notifyObservers.run();
     }
 
