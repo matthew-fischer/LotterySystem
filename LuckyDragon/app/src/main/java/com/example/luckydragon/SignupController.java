@@ -40,7 +40,8 @@ public class SignupController extends Controller {
         getObservable().setUploadedProfilePicture(image);
     }
 
-    public void becomeEntrant() {
+    public void becomeEntrantAndOrganizer() {
         getObservable().setEntrant(true);
+        getObservable().setOrganizer(true);
     }
 }

@@ -187,36 +187,48 @@ public class Event extends Observable implements Serializable {
                 if (eventData == null) {
                     throw new RuntimeException("Event has no data.");
                 }
-                name = (String) eventData.get("name");
-                organizerDeviceId = (String) eventData.get("organizerDeviceId");
-                facility = (String) eventData.get("facility");
-                waitListLimit = (int) (long) eventData.get("waitListLimit");
-                attendeeLimit = (int) (long) eventData.get("attendeeLimit");
-                hasGeolocation = (Boolean) eventData.get("hasGeolocation");
-                date = (String) eventData.get("date");
-                time = new Time((int) (long) eventData.get("hours"), (int) (long) eventData.get("minutes"));
+
+                parseEventDocument(eventData);
 //                TODO: Decode qrHash
 //                qrHash
-                List<String> incWaitList = (List<String>) eventData.get("waitList");
-                List<String> incInviteeList = (List<String>) eventData.get("inviteeList");
-                List<String> incAttendeeList = (List<String>) eventData.get("attendeeList");
-                List<String> incCancelledList = (List<String>) eventData.get("cancelledList");
-                if (incWaitList != null) {
-                    waitList = incWaitList;
-                }
-                if (incInviteeList != null) {
-                    inviteeList = incInviteeList;
-                }
-                if (incAttendeeList != null) {
-                    attendeeList = incAttendeeList;
-                }
-                if (incCancelledList != null) {
-                    cancelledList = incCancelledList;
-                }
 
                 notifyObservers();
             }
         });
+    }
+
+    /**
+     * Given the map data of an event returned from a Firestore call,
+     * parses the raw data into the event object. Any fields set to null will also
+     * be set to null in the event object.
+     * @param eventData the raw event data from Firestore
+     */
+    public void parseEventDocument(Map<String, Object> eventData) {
+        name = eventData.get("name") != null ? (String) eventData.get("name") : null;
+        organizerDeviceId = eventData.get("organizerDeviceId") != null ? (String) eventData.get("OrganizerDeviceId") : null;
+        facility = eventData.get("facility") != null ? (String) eventData.get("facility") : null;
+        waitListLimit = eventData.get("waitListLimit") != null ? ((Long) eventData.get("waitListLimit")).intValue() : null;
+        attendeeLimit = eventData.get("attendeeLimit") != null ? ((Long) eventData.get("attendeeLimit")).intValue() : null;
+        hasGeolocation = eventData.get("hasGeolocation") != null ? (Boolean) eventData.get("hasGeolocation") : null;
+        date = eventData.get("date") != null ? (String) eventData.get("date") : null;
+
+        int hours = eventData.get("hours") != null ? ((Long) eventData.get("hours")).intValue() : null;
+        int minutes = eventData.get("minutes") != null ? ((Long) eventData.get("minutes")).intValue() : null;
+        time = new Time(hours, minutes);
+
+
+        if (eventData.get("waitList") != null) {
+            waitList = (List<String>) eventData.get("waitList");
+        }
+        if (eventData.get("attendeeList") != null) {
+            attendeeList = (List<String>) eventData.get("attendeeList");
+        }
+        if (eventData.get("inviteeList") != null) {
+            inviteeList = (List<String>) eventData.get("inviteeList");
+        }
+        if (eventData.get("cancelledList") != null) {
+            cancelledList = (List<String>) eventData.get("cancelledList");
+        }
     }
 
     /**
