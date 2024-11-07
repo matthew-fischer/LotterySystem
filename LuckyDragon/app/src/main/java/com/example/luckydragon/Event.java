@@ -4,6 +4,8 @@
 
 package com.example.luckydragon;
 
+import static java.util.Objects.nonNull;
+
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.Log;
@@ -21,6 +23,7 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -36,7 +39,7 @@ import java.util.Objects;
  * Issues:
  *   - could add another constructor for when waitlist limit is not specified (since it is optional)
  */
-public class Event extends Observable {
+public class Event extends Observable implements Serializable {
     /**
      * Represents a time as hours and minutes in 24 hour time.
      * e.g. 8:30 pm would have hours = 20 and minutes = 30
@@ -112,7 +115,6 @@ public class Event extends Observable {
     public Event(String id, String name, String organizerDeviceId, String facility, Integer waitListLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes)  {
         this.id = id;
         this.name = name;
-        this.organizerName = organizerName;
         this.organizerDeviceId = organizerDeviceId;
         this.facility = facility;
         this.waitListLimit = waitListLimit;
@@ -134,17 +136,25 @@ public class Event extends Observable {
      * Save to firestore
      */
     public void save() {
+        if(!nonNull(organizerDeviceId)) {
+            Log.e("Event", "Tried to save an event without organizerDeviceId");
+            return;
+        }
+        if(!nonNull(facility)) {
+            Log.e("Event", "Tried to save an event without a facility");
+            return;
+        }
+
         Map<String, Object> eventData = new HashMap<>();
-        eventData.put("name", name);
-        eventData.put("organizerDeviceId", organizerDeviceId);
-        eventData.put("facility", facility);
-        eventData.put("waitListLimit", waitListLimit);
-        eventData.put("attendeeLimit", attendeeLimit);
-        eventData.put("hasGeolocation", hasGeolocation);
-        eventData.put("date", date);
-        eventData.put("hours", time.hours);
-        eventData.put("minutes", time.minutes);
-        eventData.put("hashedQR", qrHash.toString("1", "0"));
+        if(nonNull(name)) eventData.put("name", name);
+        if(nonNull(organizerDeviceId) && !organizerDeviceId.isEmpty()) eventData.put("organizerDeviceId", organizerDeviceId);
+        if(nonNull(facility) && !facility.isEmpty()) eventData.put("facility", facility);
+        if(nonNull(waitListLimit)) eventData.put("waitListLimit", waitListLimit);
+        if(nonNull(attendeeLimit)) eventData.put("attendeeLimit", attendeeLimit);
+        if(nonNull(date) && !date.isEmpty()) eventData.put("date", date);
+        if(nonNull(time.hours)) eventData.put("hours", time.hours);
+        if(nonNull(time.minutes)) eventData.put("minutes", time.minutes);
+        if(nonNull(qrHash)) eventData.put("hashedQR", qrHash.toString("1", "0"));
         eventData.put("waitList", waitList);
         eventData.put("inviteeList", inviteeList);
         eventData.put("attendeeList", attendeeList);
@@ -347,6 +357,18 @@ public class Event extends Observable {
             cancelledList.add(deviceId);
             notifyObservers();
         }
+    }
+
+    public void deleteEvent(String eventId) {
+        db.collection("events")
+                .document(eventId)
+                .delete();
+    }
+
+    public void removeQR(String eventId) {
+        db.collection("events")
+                .document(eventId)
+                .update("hashedQR", "null");
     }
 
     public String getTime12h() {

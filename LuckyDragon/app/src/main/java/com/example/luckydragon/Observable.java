@@ -1,6 +1,7 @@
 package com.example.luckydragon;
 
 import android.util.ArraySet;
+import android.util.Log;
 
 import java.util.Set;
 

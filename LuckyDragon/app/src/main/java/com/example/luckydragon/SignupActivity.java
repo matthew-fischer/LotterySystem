@@ -10,12 +10,15 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -25,6 +28,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.content.res.AppCompatResources;
 
 import java.util.Objects;
 
@@ -32,7 +36,8 @@ public class SignupActivity extends AppBarActivity {
     private User user;
     private SignupController signupController;
     private SignupView signupView;
-    private String role;
+
+    private GlobalApp.ROLE role;
 
     private TextInputEditText editName;
     private TextInputEditText editEmail;
@@ -41,17 +46,16 @@ public class SignupActivity extends AppBarActivity {
     private Button submitButton;
     private ActivityResultLauncher<Intent> uploadImageResultLauncher;
 
-    private LinearLayout uploadProfilePictureButton;
-    private ImageView profilePictureView;
+//    private LinearLayout uploadProfilePictureButton;
+    private ImageButton profilePictureButtton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup_material);
         getSupportActionBar().setTitle("Sign-Up");
 
-        // Get intent
-        role = getIntent().getStringExtra("role");
-        Objects.requireNonNull(role, "Signup activity launched without a role!");
+        // Get role
+        role = ((GlobalApp) getApplication()).getRole();
 
         // Get input fields
         editName = findViewById(R.id.signupName);
@@ -60,13 +64,12 @@ public class SignupActivity extends AppBarActivity {
         switchNotifications = findViewById(R.id.signupNotifications);
         submitButton = findViewById(R.id.signupSubmit);
 
+        // Profile picture
+        profilePictureButtton = findViewById(R.id.profilePictureIcon);
+
         user = ((GlobalApp) getApplication()).getUser();
         signupController = new SignupController(user);
         signupView = new SignupView(user, this, signupController);
-
-        // Profile picture
-        uploadProfilePictureButton = findViewById(R.id.editProfileIcon);
-        profilePictureView = findViewById(R.id.profilePictureIcon);
 
         uploadImageResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -92,7 +95,6 @@ public class SignupActivity extends AppBarActivity {
                                 int height = ((GlobalApp) getApplication()).profilePictureSize.getHeight();
                                 profilePicture = Bitmap.createScaledBitmap(profilePicture, width, height, false);
                                 signupController.setProfilePicture(profilePicture);
-                                profilePictureView.setImageBitmap(profilePicture);
                             } catch (Exception e) {
                                 Log.e("signup", "error uploading pfp");
                             }
@@ -145,16 +147,30 @@ public class SignupActivity extends AppBarActivity {
             signupController.setNotifications(switchNotifications);
         });
 
-        // set listener for uploading pfp button
-        uploadProfilePictureButton.setOnClickListener(view -> {
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            uploadImageResultLauncher.launch(intent);
+        // Set profile picture click to open popup menu with option to remove/upload picture
+        profilePictureButtton.setOnClickListener(view -> {
+            PopupMenu profilePicturePopup = new PopupMenu(this, profilePictureButtton);
+            profilePicturePopup.getMenuInflater().inflate(R.menu.profile_picture_popup_menu,
+                    profilePicturePopup.getMenu());
+            profilePicturePopup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    int id = menuItem.getItemId();
+                    if (id == R.id.uploadPicture) {
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        uploadImageResultLauncher.launch(intent);
+                    } else {
+                        signupController.setProfilePicture(null);
+                    }
+                    return true;
+                }
+            });
+            profilePicturePopup.show();
         });
 
         submitButton.setOnClickListener(view -> {
-
             // Validate input fields
             boolean valid = true;
             try {
@@ -179,8 +195,6 @@ public class SignupActivity extends AppBarActivity {
 
             // tell activity to launch profile
             Intent intent = new Intent(this, ProfileActivity.class);
-            intent.putExtra("role", role);
-
             // Start profile activity
             startActivity(intent);
             finish();
@@ -209,7 +223,13 @@ public class SignupActivity extends AppBarActivity {
         });
     }
 
-    public String getRole() {
+    public void updateProfilePictureIcon(Bitmap profilePicture) {
+        profilePictureButtton.setImageBitmap(profilePicture);
+        if (profilePicture == null) {
+            profilePictureButtton.setImageResource(R.drawable.profile_edit);
+        }
+    }
+    public GlobalApp.ROLE getRole() {
         return role;
     }
 }

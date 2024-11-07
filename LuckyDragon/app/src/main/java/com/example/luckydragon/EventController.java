@@ -29,4 +29,13 @@ public class EventController extends Controller {
         getObservable().leaveInviteeList(deviceId);
         getObservable().joinCancelledList(deviceId);
     }
+
+    public void deleteEvent(String eventId) {
+        getObservable().deleteEvent(eventId);
+    }
+
+    public void removeQR(String eventId) {
+        getObservable().removeQR(eventId);
+    }
+
 }

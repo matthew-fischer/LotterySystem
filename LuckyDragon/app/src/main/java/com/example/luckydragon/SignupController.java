@@ -3,7 +3,6 @@ package com.example.luckydragon;
 import android.graphics.Bitmap;
 import android.widget.EditText;
 import com.google.android.material.switchmaterial.SwitchMaterial;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SignupController extends Controller {
     public SignupController(User observable) {
@@ -38,7 +37,7 @@ public class SignupController extends Controller {
     }
 
     public void setProfilePicture(Bitmap image) {
-        getObservable().uploadProfilePicture(image);
+        getObservable().setUploadedProfilePicture(image);
     }
 
     public void becomeEntrant() {
