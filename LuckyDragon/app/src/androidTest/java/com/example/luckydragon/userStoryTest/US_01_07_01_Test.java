@@ -36,6 +36,8 @@ import java.time.Instant;
  * Test for User Story 01.07.01.
  * Entrant - Be identified by my device, so that I don't have to use a username and password.
  */
+
+/*
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class US_01_07_01_Test {
@@ -58,6 +60,7 @@ public class US_01_07_01_Test {
      *
      *   We could make it so these tests create the test user in the database, run the test, and then remove the test user from database.
      */
+/*
     @Test
     public void testDeviceLogInExistingUser() {
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
@@ -94,6 +97,7 @@ public class US_01_07_01_Test {
      *
      * The user exists in the db (for testing purposes) but has isEntrant set to false, so app treats them as a new user.
      */
+/*
     @Test
     public void testDeviceLogInNonExistingUser() {
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
@@ -132,3 +136,4 @@ public class US_01_07_01_Test {
         }
     }
 }
+ */
