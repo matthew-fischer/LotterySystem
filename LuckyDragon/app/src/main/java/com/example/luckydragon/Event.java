@@ -366,6 +366,12 @@ public class Event extends Observable implements Serializable {
                 .delete();
     }
 
+    public void deleteEventFromDb() {
+        db.collection("events")
+                .document(id)
+                .delete();
+    }
+
     public void removeQR(String eventId) {
         db.collection("events")
                 .document(eventId)

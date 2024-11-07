@@ -62,7 +62,6 @@ public class Organizer {
                 .get()
                 .addOnCompleteListener((task) -> {
                     if (task.isSuccessful()) {
-                        System.out.println("events are fetched");
                         Map<String, Object> eventData;
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             eventData = document.getData();
