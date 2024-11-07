@@ -11,6 +11,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -93,17 +94,9 @@ public class EventList extends Observable {
      */
     public Event createEvent(QueryDocumentSnapshot document) {
         Map<String, Object> eventData = document.getData();
-        Event event = new Event(
-                document.getId(),
-                eventData.get("name") instanceof String ? (String) eventData.get("name") : null,
-                eventData.get("organizerDeviceId") instanceof String ? (String) eventData.get("organizerDeviceId") : null,
-                eventData.get("facility") instanceof String ? (String) eventData.get("facility") : null,
-                eventData.get("waitListLimit") instanceof Number ? ((Number) eventData.get("waitListLimit")).intValue() : 0,
-                eventData.get("attendeeLimit") instanceof Number ? ((Number) eventData.get("attendeeLimit")).intValue() : 0,
-                eventData.get("date") instanceof String ? (String) eventData.get("date") : null,
-                eventData.get("hours") instanceof Number ? ((Number) eventData.get("hours")).intValue() : 0,
-                eventData.get("minutes") instanceof Number ? ((Number) eventData.get("minutes")).intValue() : 0
-        );
+        Event event = new Event(document.getId(), db);
+        event.parseEventDocument(eventData);
+
         return event;
     }
 
