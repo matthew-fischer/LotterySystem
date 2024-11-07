@@ -43,7 +43,7 @@ public class ViewEventsActivity extends AppBarActivity {
         // Set up admin events listview
         eventList = ((GlobalApp) getApplication()).getEvents();
         eventsListView = findViewById(R.id.adminProfileEventsListview);
-        eventListAdapter = new EventArrayAdapter(eventList.getEventList(), this, fragment);
+        eventListAdapter = new EventArrayAdapter(eventList.getEventList(), this, fragment, "ADMINISTRATOR");
         eventsListView.setAdapter(eventListAdapter);
 
         viewEventsView = new ViewEventsView(eventList, this);

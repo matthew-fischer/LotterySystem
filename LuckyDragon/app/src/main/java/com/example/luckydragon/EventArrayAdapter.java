@@ -15,14 +15,17 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class EventArrayAdapter extends ArrayAdapter<Event> {
     ArrayList<Event> eventData;
     private Fragment fragment;
-    public EventArrayAdapter(ArrayList<Event> eventData, Context context, Fragment fragment) {
+    private String role;
+    public EventArrayAdapter(ArrayList<Event> eventData, Context context, Fragment fragment, String role) {
         super(context, 0, eventData);
         this.eventData = eventData;
         this.fragment = fragment;
+        this.role = role;
     }
 
     public View getView(int position, View v, ViewGroup parent) {
@@ -38,6 +41,11 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
 
         eventNameTextView.setText(event.getName());
         eventDateTimeTextView.setText(event.getDateAndTime());
+
+        // Hide QR Code for admin browsing events
+        if (Objects.equals(role, "ADMINISTRATOR")) {
+            displayQRCode.setVisibility(View.GONE);
+        }
 
         // Implement onClickListener for ImageButton to show QR Code corresponding to eventID.
         displayQRCode.setOnClickListener((view) -> {
