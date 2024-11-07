@@ -84,38 +84,7 @@ public class User extends Observable {
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     Map<String, Object> userData = documentSnapshot.getData();
-                    if (userData == null) {
-                        // create new user with empty info
-                        save();
-                    } else {
-                        name = userData.get("name") != null ? Objects.requireNonNull(userData.get("name")).toString() : null;
-                        email = userData.get("email") != null ? Objects.requireNonNull(userData.get("email")).toString() : null;
-                        phoneNumber = userData.get("phoneNumber") != null ? Objects.requireNonNull(userData.get("phoneNumber")).toString() : null;
-                        assert(name != null);
-
-                        boolean isEntrant = userData.get("isEntrant") != null
-                                && userData.get("isEntrant").toString().equals("true");
-                        if (isEntrant) {
-                            entrant = new Entrant();
-                        }
-                        boolean isOrganizer = userData.get("isOrganizer") != null
-                                && userData.get("isOrganizer").toString().equals("true");
-                        if (isOrganizer) {
-                            String facility = userData.get("facility") != null ? Objects.requireNonNull(userData.get("facility")).toString() : null;
-
-                            if (facility != null) {
-                                organizer = new Organizer(deviceId, facility, this::notifyObservers);
-                            } else {
-                                organizer = new Organizer(deviceId, this::notifyObservers);
-                            }
-                            organizer.fetchEvents();
-                        }
-                        isAdmin = userData.get("isAdmin") != null
-                                && userData.get("isAdmin").toString().equals("true");
-                        uploadedProfilePicture = stringToBitmap((String)userData.get("profilePicture"));
-                        defaultProfilePicture = stringToBitmap((String)userData.get("defaultProfilePicture"));
-                    }
-
+                    buildUserFromMap(userData);
                     isLoaded = true;
                     notifyObservers();
                 });
@@ -355,5 +324,34 @@ public class User extends Observable {
                 Base64.DEFAULT
         );
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+    }
+
+    public void buildUserFromMap(Map<String, Object> userData) {
+        name = userData.get("name") != null ? Objects.requireNonNull(userData.get("name")).toString() : null;
+        email = userData.get("email") != null ? Objects.requireNonNull(userData.get("email")).toString() : null;
+        phoneNumber = userData.get("phoneNumber") != null ? Objects.requireNonNull(userData.get("phoneNumber")).toString() : null;
+        assert(name != null);
+
+        boolean isEntrant = userData.get("isEntrant") != null
+                && userData.get("isEntrant").toString().equals("true");
+        if (isEntrant) {
+            entrant = new Entrant();
+        }
+        boolean isOrganizer = userData.get("isOrganizer") != null
+                && userData.get("isOrganizer").toString().equals("true");
+        if (isOrganizer) {
+            String facility = userData.get("facility") != null ? Objects.requireNonNull(userData.get("facility")).toString() : null;
+
+            if (facility != null) {
+                organizer = new Organizer(deviceId, facility, this::notifyObservers);
+            } else {
+                organizer = new Organizer(deviceId, this::notifyObservers);
+            }
+            organizer.fetchEvents();
+        }
+        isAdmin = userData.get("isAdmin") != null
+                && userData.get("isAdmin").toString().equals("true");
+        uploadedProfilePicture = stringToBitmap((String)userData.get("profilePicture"));
+        defaultProfilePicture = stringToBitmap((String)userData.get("defaultProfilePicture"));
     }
 }

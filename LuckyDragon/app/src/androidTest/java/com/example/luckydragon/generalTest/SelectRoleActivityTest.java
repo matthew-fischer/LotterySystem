@@ -29,6 +29,7 @@ import static org.mockito.MockitoAnnotations.openMocks;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 
@@ -72,7 +73,6 @@ public class SelectRoleActivityTest {
     private DocumentSnapshot mockDocumentSnapshot;
     @Mock
     private Task<DocumentSnapshot> mockTask;
-
     @Mock
     private QuerySnapshot mockQuerySnapshot;
 
@@ -108,7 +108,9 @@ public class SelectRoleActivityTest {
 
         final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
         try (final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
+
             waitForViewToAppear(R.id.entrantButton, 5000);
+            Log.e("USER", globalApp.getUser().getName());
 //        onView(withId(R.id.entrantButton)).check(matches(withText("ENTRANT")));
             // Click entrant button
             onView(withId(R.id.entrantButton)).perform(click());
