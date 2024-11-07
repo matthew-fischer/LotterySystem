@@ -49,12 +49,14 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
 
         // Implement onClickListener for ImageButton to show QR Code corresponding to eventID.
         displayQRCode.setOnClickListener((view) -> {
-            // create a displayQRCode Dialog Fragment.
-            Bundle args = new Bundle();
-            args.putSerializable("event", event);
-            DialogFragment displayQRFragment = new DisplayQRCodeFragment();
-            displayQRFragment.setArguments(args);
-            displayQRFragment.show(fragment.getParentFragmentManager(), "DisplayQRCodeFragment");
+            if (fragment != null) {
+                // create a displayQRCode Dialog Fragment.
+                Bundle args = new Bundle();
+                args.putSerializable("event", event);
+                DialogFragment displayQRFragment = new DisplayQRCodeFragment();
+                displayQRFragment.setArguments(args);
+                displayQRFragment.show(fragment.getParentFragmentManager(), "DisplayQRCodeFragment");
+            }
         });
 
         return rowView;

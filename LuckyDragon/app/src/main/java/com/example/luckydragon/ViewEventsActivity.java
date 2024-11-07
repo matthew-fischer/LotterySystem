@@ -30,7 +30,6 @@ public class ViewEventsActivity extends AppBarActivity {
     private EventList eventList;
     private EventArrayAdapter eventListAdapter;
     private ListView eventsListView;
-    private Fragment fragment;
     private ViewEventsView viewEventsView;
 
     @Override
@@ -43,7 +42,7 @@ public class ViewEventsActivity extends AppBarActivity {
         // Set up admin events listview
         eventList = ((GlobalApp) getApplication()).getEvents();
         eventsListView = findViewById(R.id.adminProfileEventsListview);
-        eventListAdapter = new EventArrayAdapter(eventList.getEventList(), this, fragment, "ADMINISTRATOR");
+        eventListAdapter = new EventArrayAdapter(eventList.getEventList(), this, null, "ADMINISTRATOR");
         eventsListView.setAdapter(eventListAdapter);
 
         viewEventsView = new ViewEventsView(eventList, this);
