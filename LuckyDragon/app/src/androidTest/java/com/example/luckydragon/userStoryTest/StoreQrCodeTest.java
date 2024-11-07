@@ -139,6 +139,12 @@ public class StoreQrCodeTest {
 
     @After
     public void tearDown() {
+        // Reset global app state
+        final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
+        globalApp.setDb(null);
+        globalApp.setUser(null);
+
         Intents.release();
     }
 

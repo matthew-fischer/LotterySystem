@@ -1,13 +1,17 @@
 package com.example.luckydragon.userStoryTest;
 
+import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.CoreMatchers.anything;
 import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -23,6 +27,7 @@ import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.example.luckydragon.Event;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.R;
 import com.example.luckydragon.SelectRoleActivity;
@@ -43,8 +48,9 @@ import org.mockito.Mock;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-public class LogInByDeviceTest {
+public class CreateEventWithWaitlistLimitTest {
     @Mock
     private FirebaseFirestore mockFirestore;
     // User mocks
@@ -77,6 +83,7 @@ public class LogInByDeviceTest {
         // Personal info
         testUserData.put("name", "John Doe");
         testUserData.put("email", "jdoe@ualberta.ca");
+        testUserData.put("phoneNumber", "780-831-3291");
         // Roles
         testUserData.put("isEntrant", true);
         testUserData.put("isOrganizer", true);
@@ -144,12 +151,23 @@ public class LogInByDeviceTest {
 
     /**
      * USER STORY TEST
-     * User opens app and selects 'entrant'.
-     * They are brought straight to their profile.
-     * There is no login page.
+     * User opens app and selects 'Organizer'.
+     * User has an existing facility.
+     * The user's facility is displayed correctly.
+     * User clicks "Add Event" button.
+     * Add Event Dialog is displayed.
+     * User enters event details, including a waitlist limit.
+     * User clicks create event.
+     * Event is created and a QR code is generated.
+     * The waitlist limit is reflected in the created event.
      */
     @Test
-    public void loginByDeviceTest() {
+    public void testCreateEventWithWaitlistLimit() {
+        // Define test event data
+        String testEventName = "Piano Lesson";
+        String testAttendeeLimit = "5";
+        String testWaitlistLimit = "10";
+
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
 
@@ -162,14 +180,41 @@ public class LogInByDeviceTest {
             onView(withId(R.id.organizerButton)).check(matches(isDisplayed()));
             onView(withId(R.id.adminButton)).check(matches(not(isDisplayed())));
 
-            // User clicks "Entrant"
-            onView(withId(R.id.entrantButton)).perform(click());
+            // User clicks "Organizer"
+            onView(withId(R.id.organizerButton)).perform(click());
 
-            // User is brought straight to their profile
-            onView(withId(R.id.nameTextView)).check(matches(withText("John Doe")));
-            onView(withId(R.id.emailTextView)).check(matches(withText("jdoe@ualberta.ca")));
-            // User has no phone number so phone number shouldn't show
-            onView(withId(R.id.phoneNumberTextView)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
+            // Profile activity should open and organizer profile should be displayed
+            onView(withId(R.id.organizerProfileLayout)).check(matches(isDisplayed()));
+
+            // User clicks "Add Event"
+            onView(withId(R.id.addEventButton)).perform(click());
+
+            // Add event dialog is displayed
+            onView(withId(R.id.eventNameEditText)).check(matches(isDisplayed()));
+
+            // Organizer enters event details
+            // We will use default date and time since they use material components that would be hard to simulate
+            onView(withId(R.id.eventNameEditText)).perform(typeText(testEventName));
+            onView(withId(R.id.attendeeLimitEditText)).perform(typeText(testAttendeeLimit));
+            onView(withId(R.id.waitlistLimitEditText)).perform(typeText(testWaitlistLimit));
+
+            // Click CREATE
+            onView(withText("CREATE")).perform(click());
+
+            // Check that the event shows on the organizer profile
+            onData(anything()).inAdapterView(withId(R.id.organizerProfileEventsListview)).atPosition(0).
+                    onChildView(withId(R.id.eventRowEventName)).check(matches(withText(testEventName)));
+
+            // Check that the event is in the organizer's list and that the qr code has been generated
+            boolean eventIsPresent = false;
+            for(Event e : globalApp.getUser().getOrganizer().getEvents()) {
+                if(Objects.equals(e.getName(), testEventName) && (e.getAttendeeSpots() == Integer.parseInt(testAttendeeLimit))
+                    && e.getWaitListSpots() == Integer.parseInt(testWaitlistLimit)) {
+                    eventIsPresent = true;
+                    assertNotNull(e.getQrHash());
+                }
+            }
+            assertTrue(eventIsPresent);
         }
     }
 }

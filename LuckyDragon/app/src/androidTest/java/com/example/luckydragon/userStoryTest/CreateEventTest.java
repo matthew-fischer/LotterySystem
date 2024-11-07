@@ -5,8 +5,6 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.RootMatchers.isDialog;
-import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -144,6 +142,12 @@ public class CreateEventTest {
 
     @After
     public void tearDown() {
+        // Reset global app state
+        final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
+        globalApp.setDb(null);
+        globalApp.setUser(null);
+
         Intents.release();
     }
 
