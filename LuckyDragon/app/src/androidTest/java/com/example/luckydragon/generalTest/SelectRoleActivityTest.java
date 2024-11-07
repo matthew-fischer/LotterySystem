@@ -2,11 +2,12 @@
  * Contains tests for SelectRoleActivity.
  */
 
-package com.example.luckydragon;
+package com.example.luckydragon.generalTest;
 
 import android.content.Intent;
 
 import androidx.test.core.app.ActivityScenario;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.filters.LargeTest;
 
 import org.junit.runner.RunWith;
@@ -19,10 +20,14 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.CoreMatchers.not;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
+
+import com.example.luckydragon.GlobalApp;
+import com.example.luckydragon.R;
+import com.example.luckydragon.SelectRoleActivity;
+import com.example.luckydragon.User;
 
 import org.junit.Test;
 
@@ -60,7 +65,7 @@ public class SelectRoleActivityTest {
             });
 
             // Assertions
-            onView(withId(R.id.entrantButton)).check(matches(isDisplayed()));
+            onView(ViewMatchers.withId(R.id.entrantButton)).check(matches(isDisplayed()));
             onView(withId(R.id.organizerButton)).check(matches(isDisplayed()));
             onView(withId(R.id.adminButton)).check(matches(not(isDisplayed())));
         }

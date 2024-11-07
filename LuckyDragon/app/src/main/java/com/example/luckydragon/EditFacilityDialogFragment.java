@@ -6,8 +6,10 @@ package com.example.luckydragon;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
@@ -17,7 +19,8 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class EditFacilityDialogFragment extends DialogFragment {
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private User user;
+    private EditFacilityDialogController editFacilityDialogController;
     private String dialogTitle = null;
 
     public EditFacilityDialogFragment() {}
@@ -32,31 +35,18 @@ public class EditFacilityDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
-        ProfileActivity activity = (ProfileActivity)requireActivity();
-        User user = activity.getUser();
+        // Get user
+        user = ((GlobalApp) requireActivity().getApplication()).getUser();
+        // Create controller
+        editFacilityDialogController = new EditFacilityDialogController(user, this);
 
         builder.setView(inflater.inflate(R.layout.dialog_edit_facility_material, null))
                 .setTitle(dialogTitle)
                 .setPositiveButton("Confirm", (dialogInterface, i) -> {
-                    // Get text from input
-                    Dialog dialog = getDialog();
+                    Dialog dialog = requireDialog();
                     final TextInputEditText facilityEditText = dialog.findViewById(R.id.edit_facility_FacilityEditText);
-                    String facilityName = facilityEditText.getText().toString();
+                    editFacilityDialogController.extractFacility(facilityEditText);
 
-                    // Validate input
-                    if(facilityName.isEmpty()) return;
-
-                    // Update facility in Organizer class
-                    user.getOrganizer().setFacility(facilityName);
-
-                    // Update facility in user document
-                    db.collection("users").document(user.getDeviceId()).update("facility", facilityName);
-
-                    // Update facility textview in OrganizerProfileFragment
-                    OrganizerProfileFragment parent = (OrganizerProfileFragment) requireParentFragment();
-                    parent.setFacilityTextView(facilityName);
-                    // If facility was not previously set, change the button icon to edit button
-                    parent.setFacilityButtonIcon(R.drawable.baseline_edit_24);
                 })
                 .setNegativeButton("Cancel", (dialogInterface, i) -> {
                     // cancel
@@ -66,17 +56,21 @@ public class EditFacilityDialogFragment extends DialogFragment {
         Dialog dialog = builder.create();
         dialog.show();
 
+        // Set clear button click listener
         final TextInputLayout facilityInputLayout = dialog.findViewById(R.id.edit_facility_FacilityTextInputLayout);
         final TextInputEditText facilityEditText = dialog.findViewById(R.id.edit_facility_FacilityEditText);
-
-        // Set text to existing facility value
-        facilityEditText.setText(user.getOrganizer().getFacility());
-
-        // Set clear button click listener
         facilityInputLayout.setEndIconOnClickListener((v) -> {
             facilityEditText.setText("");
         });
 
+        // Set textedit starting text
+        assert user.getOrganizer() != null;
+        facilityEditText.setText(user.getOrganizer().getFacility());
+
         return dialog;
+    }
+
+    public void sendToast(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 }
