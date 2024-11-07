@@ -25,6 +25,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Activity for viewing a list of all the events.
+ * <p>
+ *     The ViewEventsActivity displays a list of events in a
+ *     ListView with functionality to view details of every
+ *     individual event.
+ * </p>
+ */
 public class ViewEventsActivity extends AppBarActivity {
 
     private EventList eventList;
@@ -32,6 +40,11 @@ public class ViewEventsActivity extends AppBarActivity {
     private ListView eventsListView;
     private ViewEventsView viewEventsView;
 
+    /**
+     * Called when the activity is first created. Initializes the view components, including
+     * setting up the event list and its adapter, and configuring the list item click behavior.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -49,7 +62,6 @@ public class ViewEventsActivity extends AppBarActivity {
 
         // Set up item click listener for ListView
         eventsListView.setOnItemClickListener((adapterView, v, position, l) -> {
-            Log.d("TEST", "ASDF");
             Event event = (Event) adapterView.getItemAtPosition(position);
             //Intent intent = new Intent(ViewEventsActivity.this, AdminEventActivity.class);
             Intent intent = new Intent(ViewEventsActivity.this, EventActivity.class);
@@ -60,6 +72,9 @@ public class ViewEventsActivity extends AppBarActivity {
         });
     }
 
+    /**
+     * Notifies the adapter that the data has changed.
+     */
     public void notifyAdapter() {
 
         eventListAdapter.notifyDataSetChanged();

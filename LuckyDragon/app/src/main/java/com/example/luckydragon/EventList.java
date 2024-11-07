@@ -13,11 +13,27 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * Class that manages and observes a list of Event objects from a
+ * firestore database.
+ * <p>
+ *     EventList listens for real-time updates from the firestore collection
+ *     "events", as well as supports manual fetching of data.
+ * </p>
+ */
 public class EventList extends Observable {
 
     private ArrayList<Event> events = new ArrayList<>();
     private FirebaseFirestore db;
 
+    /**
+     * Constructs an EventList with the specified database instance.
+     * <p>
+     *     Sets up a real-time listener on the "events" collection to keep the
+     *     events list updated with any changes from firestore.
+     * </p>
+     * @param firestore The firestore database instance
+     */
     public EventList(FirebaseFirestore firestore) {
         this.db = firestore;
 
@@ -36,6 +52,9 @@ public class EventList extends Observable {
         });
     }
 
+    /**
+     * Fetches the current events data from firestore and updates the events list.
+     */
     public void fetchData() {
 
         db.collection("events")
@@ -57,12 +76,21 @@ public class EventList extends Observable {
 
     }
 
+    /**
+     * Returns the current lists of events.
+     * @return An ArrayList of Event objects.
+     */
     public ArrayList<Event> getEventList() {
 
         return events;
 
     }
 
+    /**
+     * Creates an Event object from a firestore document.
+     * @param document The firestore QueryDocumentSnapshot containing event data
+     * @return An Event object
+     */
     public Event createEvent(QueryDocumentSnapshot document) {
         Map<String, Object> eventData = document.getData();
         Event event = new Event(
