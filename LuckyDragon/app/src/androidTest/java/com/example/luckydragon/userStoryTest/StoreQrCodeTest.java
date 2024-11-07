@@ -5,8 +5,6 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.RootMatchers.isDialog;
-import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -52,7 +50,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class CreateEventTest {
+public class StoreQrCodeTest {
     @Mock
     private FirebaseFirestore mockFirestore;
     // User mocks
@@ -78,8 +76,6 @@ public class CreateEventTest {
     @Mock
     private Task<QuerySnapshot> mockEventQueryTask;
 
-    Map<String, Object> testUserData;
-
     // Mock organizer with an existing facility
     private HashMap<String, Object> getMockData() {
         // Define test user
@@ -87,7 +83,6 @@ public class CreateEventTest {
         // Personal info
         testUserData.put("name", "John Doe");
         testUserData.put("email", "jdoe@ualberta.ca");
-        testUserData.put("phoneNumber", "780-831-3291");
         // Roles
         testUserData.put("isEntrant", true);
         testUserData.put("isOrganizer", true);
@@ -157,9 +152,10 @@ public class CreateEventTest {
      * User enters event details.
      * User clicks create event.
      * Event is created and a QR code is generated.
+     * The QR code data is stored in Event and would be saved to db by save() call.
      */
     @Test
-    public void testCreateEventExistingFacility() {
+    public void storeQrCodeTest() {
         // Define test event data
         String testEventName = "Piano Lesson";
         String testAttendeeLimit = "5";
@@ -201,6 +197,7 @@ public class CreateEventTest {
                     onChildView(withId(R.id.eventRowEventName)).check(matches(withText(testEventName)));
 
             // Check that the event is in the organizer's list and that the qr code has been generated
+            // If this passes, then the QR code would be saved to db by Event.save() if it was not mocked out
             boolean eventIsPresent = false;
             for(Event e : globalApp.getUser().getOrganizer().getEvents()) {
                 if(Objects.equals(e.getName(), testEventName) && (e.getAttendeeSpots() == Integer.parseInt(testAttendeeLimit))) {
