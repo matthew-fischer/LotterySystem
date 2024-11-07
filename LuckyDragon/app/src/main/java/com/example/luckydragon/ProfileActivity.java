@@ -11,27 +11,14 @@
 package com.example.luckydragon;
 
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.Map;
 import java.util.Objects;
 
 public class ProfileActivity extends AppBarActivity {
@@ -41,8 +28,9 @@ public class ProfileActivity extends AppBarActivity {
         ORGANIZER,
         ADMIN,
     }
-
     private User user;
+    private GlobalApp.ROLE role;
+    private ProfileView profileView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,63 +38,41 @@ public class ProfileActivity extends AppBarActivity {
         setContentView(R.layout.activity_profile);
         getSupportActionBar().setTitle("Profile");
 
-        // Unpack intent
-        Intent intent = getIntent();
+        // Get user from global app
         user = ((GlobalApp) getApplication()).getUser();
-        String role = intent.getStringExtra("role");
-        String deviceID = ((GlobalApp) getApplication()).getUser().getDeviceId();
+        role = ((GlobalApp) getApplication()).getRole();
 
-        // Set profile info views
-        TextView nameView = findViewById(R.id.nameTextView);
-        TextView emailView = findViewById(R.id.emailTextView);
-        TextView phoneNumberView = findViewById(R.id.phoneNumberTextView);
-        ImageView profilePictureView = findViewById(R.id.profilePicture);
+        // Create profile view
+        // initializeView() uses profileView, but it will run before the ProfileView constructor returns so it still thinks ProfileView is null
+        // To fix I set isLoaded to false until after profileView is set
+        // I also had to add notifyObservers() to setIsLoaded() in User
+        profileView = new ProfileView(user, this);
 
-        nameView.setText(user.getName());
-        emailView.setText(user.getEmail());
-        phoneNumberView.setText(user.getPhoneNumber());
-        profilePictureView.setImageBitmap(user.getProfilePicture());
-
-        ImageButton edit_profile_button = findViewById(R.id.edit_profile_button);
-        edit_profile_button.setOnClickListener(view -> {
-            // Create intent to go to signup
-            Intent signupIntent = new Intent(this, SignupActivity.class);
-            signupIntent.putExtra("role", role);
-            startActivity(signupIntent);
-        });
         // Create profile fragment
-        if (Objects.equals(role, "ORGANIZER")) {
-            // Create Organizer
-//            String facility = intent.getStringExtra("facilityName");
-//            user = new Organizer(deviceID, name, email, phoneNumber, facility);
-
+        if (role == GlobalApp.ROLE.ENTRANT) {
+            // Create entrant profile fragment
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.fragment_container_view, EntrantProfileFragment.class, null)
+                    .commit();
+        } else if (role == GlobalApp.ROLE.ORGANIZER) {
+            // Check if organizer profile fragment exsits
             // Create organizer profile fragment
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
-                    .add(R.id.fragment_container_view, OrganizerProfileFragment.class, null)
-                    .commit();
-        } else if (Objects.equals(role, "ENTRANT")) {
-            // Create entrant profile fragment
-            Bundle args = new Bundle();
-            args.putString("deviceID", deviceID);   // passing deviceId to EntrantProfileFragment
-            getSupportFragmentManager().beginTransaction()
-                            .setReorderingAllowed(true)
-                            .replace(R.id.fragment_container_view, EntrantProfileFragment.class, args)
-                            .commit();
-        } else if (Objects.equals(role, "ADMIN")) {
-            // Create admin profile fragment
-            getSupportFragmentManager().beginTransaction()
-                    .setReorderingAllowed(true)
-                    .replace(R.id.fragment_container_view, AdminProfileFragment.class, null)
+                    .replace(R.id.fragment_container_view, OrganizerProfileFragment.class, null)
                     .commit();
         } else {
             throw new RuntimeException("User mode not set.");
         }
-    }
 
-    // TODO: REMOVE
-    public User getUser() {
-        return user;
+        // Initialize edit profile button on click
+        ImageButton edit_profile_button = findViewById(R.id.edit_profile_button);
+        edit_profile_button.setOnClickListener(view -> {
+            Log.e("CLICK", "edit profile button clicked");
+            Intent goToSignup = new Intent(this, SignupActivity.class);
+            startActivity(goToSignup);
+        });
     }
 
     public void sendToast(String message) {

@@ -36,7 +36,8 @@ public class SignupActivity extends AppBarActivity {
     private User user;
     private SignupController signupController;
     private SignupView signupView;
-    private String role;
+
+    private GlobalApp.ROLE role;
 
     private TextInputEditText editName;
     private TextInputEditText editEmail;
@@ -53,9 +54,8 @@ public class SignupActivity extends AppBarActivity {
         setContentView(R.layout.activity_signup_material);
         getSupportActionBar().setTitle("Sign-Up");
 
-        // Get intent
-        role = getIntent().getStringExtra("role");
-        Objects.requireNonNull(role, "Signup activity launched without a role!");
+        // Get role
+        role = ((GlobalApp) getApplication()).getRole();
 
         // Get input fields
         editName = findViewById(R.id.signupName);
@@ -70,8 +70,6 @@ public class SignupActivity extends AppBarActivity {
         user = ((GlobalApp) getApplication()).getUser();
         signupController = new SignupController(user);
         signupView = new SignupView(user, this, signupController);
-
-
 
         uploadImageResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -197,8 +195,6 @@ public class SignupActivity extends AppBarActivity {
 
             // tell activity to launch profile
             Intent intent = new Intent(this, ProfileActivity.class);
-            intent.putExtra("role", role);
-
             // Start profile activity
             startActivity(intent);
             finish();
@@ -233,7 +229,7 @@ public class SignupActivity extends AppBarActivity {
             profilePictureButtton.setImageResource(R.drawable.profile_edit);
         }
     }
-    public String getRole() {
+    public GlobalApp.ROLE getRole() {
         return role;
     }
 }

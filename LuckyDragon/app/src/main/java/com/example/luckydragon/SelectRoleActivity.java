@@ -1,3 +1,8 @@
+/**
+ * Defines the SelectRoleActivity class.
+ * Associated with SelectRoleView.
+ */
+
 package com.example.luckydragon;
 
 import android.content.Intent;
@@ -13,16 +18,10 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Notes:
- * This activity gets the user profile from the database and passes it to the profile activity.
- * This will allow profile information in ProfileActivity to be displayed immediately, rather than with a delay.
- * ProfileActivity itself shouldn't need database access, but sub-fragments like EntrantProfileFragment and OrganizerProfileFragment will.
- * All users should be shown Entrant and Organizer roles, but the Admin button will only show for users that were set to Administrator in the database.
- * If a user has no profile in the database they should be taken to SignupActivity to make one.
- * After making one, we could bring them back to this page to select their role.
+ * NOTES
+ * If user is an admin, "Entrant"/"Organizer"/"Administrator" buttons should show.
+ * If user is not an admin, only "Entrant"/"Organizer" buttons should show.
  */
-
-
 public class SelectRoleActivity extends AppCompatActivity {
     private User user;
     private SelectRoleView selectRoleView;
@@ -34,38 +33,30 @@ public class SelectRoleActivity extends AppCompatActivity {
 
         // Get user
         user = ((GlobalApp) getApplication()).getUser();
+        // Create view
         selectRoleView = new SelectRoleView(user, this);
-        // Set controller if testing
-//        Intent intent = getIntent();
-//        SelectRoleController passedInController = (SelectRoleController) intent.getSerializableExtra("controller");
-//        if (passedInController == null) {
-//            selectRoleController = new SelectRoleController(user);
-//        } else {
-//            selectRoleController = passedInController;
-//            passedInController.setObservable(user);
-//        }
     }
 
+    /**
+     * Set button visibilities and on click listeners.
+     * This runs once the user data has been fetched, so that admin button can be hidden if user is not an admin.
+     */
     public void initializeView() {
-        Log.e("TEST", "starting initialize view");
-        // Set content view (don't do this until after user has been fetched from db)
-        setContentView(R.layout.select_role_page); // set content to role page
-
         // Set up on entrant click listener
         Button entrantButton = findViewById(R.id.entrantButton);
         entrantButton.setVisibility(View.VISIBLE);
         if (!entrantButton.hasOnClickListeners()) {
             entrantButton.setOnClickListener(v -> {
+                // Set GlobalApp role to entrant
+                ((GlobalApp) getApplication()).setRole(GlobalApp.ROLE.ENTRANT);
                 if (user.isEntrant()) {
                     // Create profile intent
                     Intent profileIntent = new Intent(this, ProfileActivity.class);
-                    profileIntent.putExtra("role", "ENTRANT");
                     // Start profile activity
                     startActivity(profileIntent);
                 } else {
                     // Send to entrant signup
                     Intent signupIntent = new Intent(this, SignupActivity.class);
-                    signupIntent.putExtra("role", "ENTRANT");
                     startActivity(signupIntent);
                 }
             });
@@ -76,11 +67,11 @@ public class SelectRoleActivity extends AppCompatActivity {
         organizerButton.setVisibility(View.VISIBLE);
         if (!organizerButton.hasOnClickListeners()) {
             organizerButton.setOnClickListener(v -> {
+                // Set GlobalApp role to organizer
+                ((GlobalApp) getApplication()).setRole(GlobalApp.ROLE.ORGANIZER);
                 if (user.isOrganizer()) {
                     // Create profile intent
                     Intent profileIntent = new Intent(this, ProfileActivity.class);
-                    // Convert user to organizer and pass into intent
-                    profileIntent.putExtra("role", "ORGANIZER");
                     // Start profile activity
                     startActivity(profileIntent);
                 } else {
@@ -88,7 +79,6 @@ public class SelectRoleActivity extends AppCompatActivity {
                 }
             });
         }
-        Log.e("TEST", "view initialized");
 
         // Admin button
         if (user.isAdmin()) {
@@ -97,8 +87,6 @@ public class SelectRoleActivity extends AppCompatActivity {
                 adminButton.setOnClickListener(v -> {
                     // Create profile intent
                     Intent profileIntent = new Intent(this, ProfileActivity.class);
-                    // Convert user to admin and pass into intent
-                    profileIntent.putExtra("role", "ADMIN");
                     // Start profile activity
                     startActivity(profileIntent);
                 });
@@ -106,6 +94,9 @@ public class SelectRoleActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Sets admin button visibility to VISIBLE..
+     */
     public void showAdminButton() {
         Button adminButton = findViewById(R.id.adminButton);
         adminButton.setVisibility(View.VISIBLE);
