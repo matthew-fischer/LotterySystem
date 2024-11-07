@@ -17,6 +17,14 @@ import androidx.fragment.app.FragmentManager;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/**
+ * Custom ArrayAdapter for displaying a list of Event objects within a ListView.
+ * <p>
+ *     This adapter is responsible for inflating the custom view for each event and handling
+ *     specific interactions within each row, such as displaying a QR code for an event.
+ *     The QR code is displayed or hidden based on the user's role.
+ * </p>
+ */
 public class EventArrayAdapter extends ArrayAdapter<Event> {
     ArrayList<Event> eventData;
     private Fragment fragment;
@@ -28,6 +36,18 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
         this.role = role;
     }
 
+    /**
+     * Provides a view for an AdapterView.
+     * <p>
+     *     Inflates the custom layout for each item in the list and populates it with
+     *     the event's details such as name, date/time and QR code if user's role is not .
+     *     "ADMINISTRATOR".
+     * </p>
+     * @param position The position of the item within the adapter's data set
+     * @param v The old view
+     * @param parent The parent that this view is attached to
+     * @return A view corresponding to the data at the specified position
+     */
     public View getView(int position, View v, ViewGroup parent) {
         View rowView = LayoutInflater.from(getContext()).inflate(R.layout.content_event_desc, parent, false);
 
