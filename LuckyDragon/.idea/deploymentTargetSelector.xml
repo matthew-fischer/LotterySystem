@@ -13,9 +13,12 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="SelectRoleActivityTest">
+      <SelectionState runConfigName="testEntrantSignup() (1)">
         <option name="selectionMode" value="DROPDOWN" />
-    </SelectionState>
+      </SelectionState>
+      <SelectionState runConfigName="testEntrantSignup()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>
