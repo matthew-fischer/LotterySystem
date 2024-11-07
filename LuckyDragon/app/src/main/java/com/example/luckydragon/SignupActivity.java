@@ -199,8 +199,8 @@ public class SignupActivity extends AppBarActivity {
             startActivity(intent);
             finish();
 
-            // become entrant
-            signupController.becomeEntrant();
+            // become entrant and organizer
+            signupController.becomeEntrantAndOrganizer();
         });
     }
 
