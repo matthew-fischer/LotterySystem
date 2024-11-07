@@ -29,7 +29,7 @@ public class EntrantProfileFragment extends Fragment {
 
             // This is for testing without scanning QR Code:
             Intent intent = new Intent(getActivity(), EventActivity.class);
-            String eventId = "EikpVVgE6kUDZRGYnwuE";
+            String eventId = "LWwd9mqQu0QNxhek5okF";
             intent.putExtra("eventID", eventId);
             String deviceID = requireArguments().getString("deviceID");
             intent.putExtra("deviceID", deviceID);
@@ -42,22 +42,22 @@ public class EntrantProfileFragment extends Fragment {
         });
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data){
-        super.onActivityResult(requestCode, resultCode, data);
-        IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (intentResult != null) {
-            if (intentResult.getContents() == null) {
-                Toast.makeText(getActivity(), "Cancelled", Toast.LENGTH_SHORT).show();
-            } else {
-                Intent intent = new Intent(getActivity(), EventActivity.class);
-                // Pass in event eventId (from QR CODE SCANNER)
-                String eventID = intentResult.getContents();
-                intent.putExtra("eventID", eventID);
-
-                // start EventActivity
-                startActivity(intent);
-            }
-        }
-    }
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data){
+//        super.onActivityResult(requestCode, resultCode, data);
+//        IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+//        if (intentResult != null) {
+//            if (intentResult.getContents() == null) {
+//                Toast.makeText(getActivity(), "Cancelled", Toast.LENGTH_SHORT).show();
+//            } else {
+//                Intent intent = new Intent(getActivity(), EventActivity.class);
+//                // Pass in event eventId (from QR CODE SCANNER)
+//                String eventID = intentResult.getContents();
+//                intent.putExtra("eventID", eventID);
+//
+//                // start EventActivity
+//                startActivity(intent);
+//            }
+//        }
+//    }
 }

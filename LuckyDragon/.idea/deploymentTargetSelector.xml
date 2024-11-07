@@ -24,7 +24,7 @@
       </SelectionState>
       <SelectionState runConfigName="US_01_07_01_Test">
         <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
+    </SelectionState>
     </selectionStates>
   </component>
 </project>
