@@ -151,6 +151,7 @@ public class Event extends Observable implements Serializable {
         if(nonNull(facility) && !facility.isEmpty()) eventData.put("facility", facility);
         if(nonNull(waitListLimit)) eventData.put("waitListLimit", waitListLimit);
         if(nonNull(attendeeLimit)) eventData.put("attendeeLimit", attendeeLimit);
+        if(nonNull(hasGeolocation)) eventData.put("hasGeolocation", hasGeolocation);
         if(nonNull(date) && !date.isEmpty()) eventData.put("date", date);
         if(nonNull(time.hours)) eventData.put("hours", time.hours);
         if(nonNull(time.minutes)) eventData.put("minutes", time.minutes);

@@ -28,17 +28,18 @@ public class EntrantProfileFragment extends Fragment {
         scanQRButton.setOnClickListener((View v) -> {
 
             // This is for testing without scanning QR Code:
-            Intent intent = new Intent(getActivity(), EventActivity.class);
-            String eventId = "EikpVVgE6kUDZRGYnwuE";
-            intent.putExtra("eventID", eventId);
-            String deviceID = requireArguments().getString("deviceID");
-            intent.putExtra("deviceID", deviceID);
-            startActivity(intent);
+//            Intent intent = new Intent(getActivity(), EventActivity.class);
+//            String eventId = "NR6CbgJwPFBmzmNWLYn1";
+//            intent.putExtra("eventID", eventId);
+////            String deviceID = requireArguments().getString("deviceID");
+//            String deviceID = ((GlobalApp) getActivity().getApplication()).getUser().getDeviceId();
+//            intent.putExtra("deviceID", deviceID);
+//            startActivity(intent);
 
             // This is for actually scanning the QR Code.
-//            IntentIntegrator intentIntegrator = IntentIntegrator.forSupportFragment(EntrantProfileFragment.this);
-//            intentIntegrator.setPrompt("Scan QR Code");
-//            intentIntegrator.initiateScan();
+            IntentIntegrator intentIntegrator = IntentIntegrator.forSupportFragment(EntrantProfileFragment.this);
+            intentIntegrator.setPrompt("Scan QR Code");
+            intentIntegrator.initiateScan();
         });
     }
 

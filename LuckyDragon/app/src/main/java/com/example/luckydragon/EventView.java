@@ -90,7 +90,7 @@ public class EventView extends Observer {
         deleteEvent.setVisibility(View.GONE);
         removeQR.setVisibility(View.GONE);
 
-        if (activity.getRole().equals("ADMIN")) {
+        if (((GlobalApp) activity.getApplication()).getRole() == GlobalApp.ROLE.ADMINISTRATOR) {
 
             deleteEvent.setVisibility(View.VISIBLE);
             removeQR.setVisibility(View.VISIBLE);

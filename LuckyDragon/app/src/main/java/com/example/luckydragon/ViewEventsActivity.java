@@ -50,6 +50,7 @@ public class ViewEventsActivity extends AppBarActivity {
 
         // Set up item click listener for ListView
         eventsListView.setOnItemClickListener((adapterView, v, position, l) -> {
+            Log.d("TEST", "ASDF");
             Event event = (Event) adapterView.getItemAtPosition(position);
             //Intent intent = new Intent(ViewEventsActivity.this, AdminEventActivity.class);
             Intent intent = new Intent(ViewEventsActivity.this, EventActivity.class);
