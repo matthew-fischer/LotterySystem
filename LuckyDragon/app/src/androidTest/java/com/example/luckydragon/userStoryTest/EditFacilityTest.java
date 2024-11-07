@@ -11,11 +11,12 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 import android.widget.Space;
 
@@ -23,43 +24,48 @@ import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.action.ViewActions;
+import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.matcher.ViewMatchers;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.filters.LargeTest;
-
-import org.hamcrest.Matcher;
-import org.junit.Before;
-import org.junit.Test;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.R;
 import com.example.luckydragon.SelectRoleActivity;
-import com.example.luckydragon.User;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import org.junit.runner.RunWith;
+import org.hamcrest.Matcher;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Test for User Story 02.01.03.
- * Organizer - Create and manage my facility profile.
- */
-@RunWith(AndroidJUnit4.class)
-@LargeTest
-public class US_02_01_03_Test {
+public class EditFacilityTest {
     @Mock
     private FirebaseFirestore mockFirestore;
     @Mock
-    private Task task;
+    private CollectionReference mockCollection;
+    @Mock
+    private DocumentReference mockDocument;
+    @Mock
+    private DocumentSnapshot mockDocumentSnapshot;
+    @Mock
+    private Task<DocumentSnapshot> mockTask;
+    @Mock
+    private Task<Void> mockVoidTask;
 
-    @Before
-    public void setup() {
+    Map<String, Object> testUserData;
+
+    // Mock organizer with an existing facility
+    private HashMap<String, Object> getMockData() {
         // Define test user
         HashMap<String, Object> testUserData = new HashMap<>();
         // Personal info
@@ -73,35 +79,33 @@ public class US_02_01_03_Test {
         // Facility
         testUserData.put("facility", "The Sports Centre");
 
-        mockFirestore = Mockito.mock(FirebaseFirestore.class, Mockito.RETURNS_DEEP_STUBS);
-        task = Mockito.mock(Task.class);
-
-        when(mockFirestore.collection("users")
-                .document(anyString())
-                .get()
-                .addOnSuccessListener(any()))
-                .thenAnswer((invocation) -> {
-                    final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-                    GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
-
-                    User user = globalApp.getUser();
-                    user.buildUserFromMap(testUserData);
-                    user.setIsLoaded(true);
-                    user.notifyObservers();
-                    return null;
-                });
-        when(mockFirestore.collection("users")
-                .document(anyString())
-                .set(any()))
-                .thenAnswer((invocation) -> {
-                    Log.e("MOCK", "User database save did not occur because the method was mocked for testing purposes.");
-                    return task;
-                });
-        when(task.addOnFailureListener(any()))
-                .thenAnswer((invocation -> {
-                    return null;
-                }));
+        return testUserData;
     }
+
+    @Before
+    public void setup() {
+        Intents.init();
+        openMocks(this);
+        when(mockFirestore.collection("users")).thenReturn(mockCollection);
+        when(mockCollection.document(anyString())).thenReturn(mockDocument);
+
+//        when(mockCollection.get()).thenReturn(mocktask);
+        when(mockDocument.get()).thenReturn(mockTask);
+        when(mockDocument.set(any(Map.class))).thenReturn(mockVoidTask);
+        when(mockTask.addOnFailureListener(any(OnFailureListener.class))).thenReturn(mockTask);
+        doAnswer(invocation -> {
+            OnSuccessListener<DocumentSnapshot> listener =  invocation.getArgument(0);
+            listener.onSuccess(mockDocumentSnapshot);
+            return mockTask;
+        }).when(mockTask).addOnSuccessListener(any(OnSuccessListener.class));
+        when(mockDocumentSnapshot.getData()).thenReturn(getMockData());
+    }
+
+    @After
+    public void tearDown() {
+        Intents.release();
+    }
+
     /**
      * USER STORY TEST
      * User opens app and selects "Organizer".
