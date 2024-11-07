@@ -26,6 +26,7 @@ public class SignupView extends Observer {
         // check if user has valid fields
         // TODO: activity creates error messages as necessary
         signupActivity.setSubmitButton(getObservable().isValid());
+        signupActivity.updateProfilePictureIcon(getObservable().getUploadedProfilePicture());
 
         // hide signup top bar if user is signing (not editing)
         if (Objects.equals(signupActivity.getRole(), "ENTRANT") && !getObservable().isEntrant()) {
@@ -35,6 +36,5 @@ public class SignupView extends Observer {
         } else {
             signupActivity.setNavProfileVisible(true);
         }
-
     }
 }

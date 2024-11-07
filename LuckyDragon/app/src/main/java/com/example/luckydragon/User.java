@@ -15,12 +15,9 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -184,11 +181,19 @@ public class User extends Observable {
 
     /**
      * Gets the user's profile picture.
-     * @return the user's profile picture
+     * @return the user's profile picture if it exists, otherwise the default profile picture.
      */
     public Bitmap getProfilePicture() {
         if (uploadedProfilePicture != null) return uploadedProfilePicture;
         return defaultProfilePicture;
+    }
+
+    /**
+     * Gets the user's uploaded profile picture.
+     * @return the user's uploaded profile picture
+     */
+    public Bitmap getUploadedProfilePicture() {
+        return uploadedProfilePicture;
     }
 
     /**
@@ -238,7 +243,7 @@ public class User extends Observable {
         notifyObservers();
     }
 
-    public void uploadProfilePicture(Bitmap profilePicture) {
+    public void setUploadedProfilePicture(Bitmap profilePicture) {
         this.uploadedProfilePicture = profilePicture;
         notifyObservers();
     }
