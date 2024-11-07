@@ -27,7 +27,9 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -39,6 +41,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
@@ -53,7 +56,9 @@ import com.example.luckydragon.SelectRoleActivity;
 import com.example.luckydragon.User;
 
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.stubbing.Answer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -79,6 +84,8 @@ public class SelectRoleActivityTest {
     private DocumentSnapshot mockDocumentSnapshot;
     @Mock
     private Task<DocumentSnapshot> mockTask;
+    @Mock
+    private Task<Void> mockVoidTask;
 
     @Mock
     private QuerySnapshot mockQuerySnapshot;
@@ -96,8 +103,13 @@ public class SelectRoleActivityTest {
 
 //        when(mockCollection.get()).thenReturn(mocktask);
         when(mockDocument.get()).thenReturn(mockTask);
+        when(mockDocument.set(any(Map.class))).thenReturn(mockVoidTask);
         when(mockTask.addOnFailureListener(any(OnFailureListener.class))).thenReturn(mockTask);
-
+        doAnswer(invocation -> {
+            OnSuccessListener<DocumentSnapshot> listener =  invocation.getArgument(0);
+            listener.onSuccess(mockDocumentSnapshot);
+            return mockTask;
+        }).when(mockTask).addOnSuccessListener(any(OnSuccessListener.class));
         Map<String, Object> mockData = getMockData();
         when(mockDocumentSnapshot.getData()).thenReturn(mockData);
     }
