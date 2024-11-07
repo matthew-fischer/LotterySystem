@@ -12,6 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class that manages and observes a list of User objects from a
+ * firestore database.
+ * <p>
+ *     UserList listens for real-time updates from the firestore collection
+ *     "users", as well as supports manual fetching of data.
+ * </p>
+ */
 public class UserList extends Observable {
 
     private ArrayList<User> users = new ArrayList<>();
@@ -21,6 +29,9 @@ public class UserList extends Observable {
         this.db = db;
     }
 
+    /**
+     * Fetches the current users data from firestore and updates the users list.
+     */
     public void fetchData() {
 
         db.collection("users")
@@ -50,6 +61,10 @@ public class UserList extends Observable {
 
     }
 
+    /**
+     * Returns the current lists of users.
+     * @return An ArrayList of User objects.
+     */
     public ArrayList<User> getUserList() {
 
         return users;

@@ -16,12 +16,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Activity for viewing a list of all the user profiles.
+ * <p>
+ *     The ViewProfilesActivity displays a list of users in a
+ *     ListView with functionality to view details of every
+ *     individual user.
+ * </p>
+ */
 public class ViewProfilesActivity extends AppBarActivity {
 
     private UserList userList;
     private UserArrayAdapter userListAdapter;
     private ListView usersListView;
     private ViewProfilesView viewProfilesView;
+
+    /**
+     * Called when the activity is first created. Initializes the view components, including
+     * setting up the user list and its adapter, and configuring the list item click behavior.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -39,6 +53,9 @@ public class ViewProfilesActivity extends AppBarActivity {
 
     }
 
+    /**
+     * Notifies the adapter that the data has changed.
+     */
     public void notifyAdapter() {
 
         userListAdapter.notifyDataSetChanged();

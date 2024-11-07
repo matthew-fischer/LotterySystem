@@ -75,8 +75,10 @@ public class SelectRoleActivity extends AppCompatActivity {
                     // Start profile activity
                     startActivity(profileIntent);
                 } else {
-                    // TODO: Send to organizer signup
-                }
+                // Send to signup
+                Intent signupIntent = new Intent(this, SignupActivity.class);
+                startActivity(signupIntent);
+            }
             });
         }
 

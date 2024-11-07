@@ -37,7 +37,7 @@ public class OrganizerProfileFragment extends Fragment {
 
         // Set up organizer events listview
         ListView eventsListView = view.findViewById(R.id.organizerProfileEventsListview);
-        eventListAdapter = new EventArrayAdapter(user.getOrganizer().getEvents(), requireActivity().getApplicationContext(), this);
+        eventListAdapter = new EventArrayAdapter(user.getOrganizer().getEvents(), requireActivity().getApplicationContext(), this, "ORGANIZER");
         eventsListView.setAdapter(eventListAdapter);
 
         // Create view
