@@ -26,16 +26,17 @@ import java.util.Set;
  *   Since email and phone number are optional, additional constructors should be added.
  */
 public class Organizer {
-    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private String deviceId;
     private String facility;
     private final ArrayList<Event> events;
     private final Runnable notifyObservers;
 
-    public Organizer(String deviceId, Runnable notifyObservers) {
+    public Organizer(String deviceId, Runnable notifyObservers, FirebaseFirestore db) {
         this.deviceId = deviceId;
         this.notifyObservers = notifyObservers;
         this.events = new ArrayList<>();
+        this.db = db;
     }
 
     /**
@@ -43,11 +44,12 @@ public class Organizer {
      *
      * @param facility: the organizer's facility name
      */
-    public Organizer(String deviceId, String facility, Runnable notifyObservers) {
+    public Organizer(String deviceId, String facility, Runnable notifyObservers, FirebaseFirestore db) {
         this.deviceId = deviceId;
         this.facility = facility;
         this.notifyObservers = notifyObservers;
         this.events = new ArrayList<>();
+        this.db = db;
     }
 
     /**
@@ -60,6 +62,7 @@ public class Organizer {
                 .get()
                 .addOnCompleteListener((task) -> {
                     if (task.isSuccessful()) {
+                        System.out.println("events are fetched");
                         Map<String, Object> eventData;
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             eventData = document.getData();
@@ -74,6 +77,7 @@ public class Organizer {
                                     eventData.get("hours") == null ? null : Integer.valueOf(String.format("%s", eventData.get("hours"))),
                                     eventData.get("minutes") == null ? null : Integer.valueOf(String.format("%s", eventData.get("minutes")))
                             );
+
                             // Check for duplicate events (could switch this to a set for performance, but event counts should be low)
                             for(int i = 0; i < events.size(); i++) {
                                 if(Objects.equals(event.getId(), events.get(i).getId())) return;

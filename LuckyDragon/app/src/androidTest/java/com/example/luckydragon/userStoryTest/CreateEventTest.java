@@ -1,14 +1,18 @@
 package com.example.luckydragon.userStoryTest;
 
+import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.CoreMatchers.anything;
 import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -18,17 +22,13 @@ import static org.mockito.MockitoAnnotations.openMocks;
 
 import android.content.Context;
 import android.content.Intent;
-import android.view.View;
-import android.widget.Space;
 
 import androidx.test.core.app.ActivityScenario;
-import androidx.test.espresso.UiController;
-import androidx.test.espresso.ViewAction;
-import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.example.luckydragon.Event;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.R;
 import com.example.luckydragon.SelectRoleActivity;
@@ -42,7 +42,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,8 +49,9 @@ import org.mockito.Mock;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-public class EditFacilityTest {
+public class CreateEventTest {
     @Mock
     private FirebaseFirestore mockFirestore;
     // User mocks
@@ -148,24 +148,28 @@ public class EditFacilityTest {
 
     /**
      * USER STORY TEST
-     * User opens app and selects "Organizer".
-     * User already has a facility.
-     * The user's existing facility is displayed.
-     * User clicks edit button and EditFacilityDialogFragment is started.
-     * The text input field is the user's existing facility.
-     * User enters a new facility name and selects confirm.
-     * EditFacilityDialogFragment closes.
-     * The change is reflected on the organizer's profile.
+     * User opens app and selects 'Organizer'.
+     * User has an existing facility.
+     * The user's facility is displayed correctly.
+     * User clicks "Add Event" button.
+     * Add Event Dialog is displayed.
+     * User enters event details.
+     * User clicks create event.
+     * Event is created and a QR code is generated.
      */
     @Test
-    public void testSetFacilityNotFirstTime() {
+    public void testCreateEventExistingFacility() {
+        // Define test event data
+        String testEventName = "Piano Lesson";
+        String testAttendeeLimit = "5";
+
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
 
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
         globalApp.setDb(mockFirestore);
 
-        try(final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
+        try (final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
             // User is not admin, so admin button should not show
             onView(ViewMatchers.withId(R.id.entrantButton)).check(matches(isDisplayed()));
             onView(withId(R.id.organizerButton)).check(matches(isDisplayed()));
@@ -177,53 +181,32 @@ public class EditFacilityTest {
             // Profile activity should open and organizer profile should be displayed
             onView(withId(R.id.organizerProfileLayout)).check(matches(isDisplayed()));
 
-            // The organizer's facility is displayed
-            onView(withId(R.id.facilityTextView)).check(matches(withText("The Sports Centre")));
+            // User clicks "Add Event"
+            onView(withId(R.id.addEventButton)).perform(click());
 
-            // Before clicking the facility edit button, hide the space because it causes weird espresso behaviour
-            onView(withId(R.id.facilitySpace)).perform(setSpaceVisibility(false));
+            // Add event dialog is displayed
+            onView(withId(R.id.eventNameEditText)).check(matches(isDisplayed()));
 
-            // User clicks facility edit button
-            onView(withId(R.id.facilityEditButton)).perform(click());
+            // Organizer enters event details
+            // We will use default date and time since they use material components that would be hard to simulate
+            onView(withId(R.id.eventNameEditText)).perform(typeText(testEventName));
+            onView(withId(R.id.attendeeLimitEditText)).perform(typeText(testAttendeeLimit));
 
-            // Edit Facility dialog should be displayed now
-            onView(withId(R.id.editFacilityDialog)).check(matches(isDisplayed()));
+            // Click CREATE
+            onView(withText("CREATE")).perform(click());
 
-            // The facility edittext is the previous facility
-            onView(withId(R.id.edit_facility_FacilityEditText)).check(matches(withText("The Sports Centre")));
+            // Check that the event shows on the organizer profile
+            onData(anything()).inAdapterView(withId(R.id.organizerProfileEventsListview)).atPosition(0).
+                    onChildView(withId(R.id.eventRowEventName)).check(matches(withText(testEventName)));
 
-            // Set edittext to test facility
-            onView(withId(R.id.edit_facility_FacilityEditText)).perform(ViewActions.clearText());
-            onView(withId(R.id.edit_facility_FacilityEditText)).perform(ViewActions.typeText("The Event Centre"));
-
-            // Click confirm
-            onView(withText("Confirm"))
-                    .inRoot(isDialog())
-                    .check(matches(isDisplayed()))
-                    .perform(click());
-
-            // Check that facility text matches the new facility name
-            onView(withId(R.id.facilityTextView)).check(matches(withText("The Event Centre")));
+            // Check that the event is in the organizer's list
+            boolean eventIsPresent = false;
+            for(Event e : globalApp.getUser().getOrganizer().getEvents()) {
+                if(Objects.equals(e.getName(), testEventName) && (e.getAttendeeSpots() == Integer.parseInt(testAttendeeLimit))) {
+                    eventIsPresent = true;
+                }
+            }
+            assertTrue(eventIsPresent);
         }
-    }
-
-    private static ViewAction setSpaceVisibility(final boolean value) {
-        return new ViewAction() {
-
-            @Override
-            public Matcher<View> getConstraints() {
-                return isAssignableFrom(Space.class);
-            }
-
-            @Override
-            public void perform(UiController uiController, View view) {
-                view.setVisibility(value ? View.VISIBLE : View.GONE);
-            }
-
-            @Override
-            public String getDescription() {
-                return "Show / Hide View";
-            }
-        };
     }
 }

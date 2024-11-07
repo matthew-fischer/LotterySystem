@@ -13,19 +13,19 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="SelectRoleActivityTest">
+      <SelectionState runConfigName="testSetFacilityNotFirstTime() (1)">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="US_02_03_01_Test">
+      <SelectionState runConfigName="testSetFacilityFirstTime()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testEntrantSignup()">
+      <SelectionState runConfigName="EditFacilityTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testOrganizerCreateEventWithWaitlistLimit()">
+      <SelectionState runConfigName="testCreateEventExistingFacility()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testSetFacilityNotFirstTime()">
+      <SelectionState runConfigName="CreateEventTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
