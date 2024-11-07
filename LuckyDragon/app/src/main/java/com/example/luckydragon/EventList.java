@@ -16,9 +16,11 @@ import java.util.Map;
 public class EventList extends Observable {
 
     private ArrayList<Event> events = new ArrayList<>();
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseFirestore db;
 
-    public EventList() {
+    public EventList(FirebaseFirestore firestore) {
+        this.db = firestore;
+
         db.collection("events").addSnapshotListener((value, error) -> {
             if (error != null) {
                 Log.e("Firestore", error.toString());

@@ -13,16 +13,7 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="Tests in 'com.example.luckydragon'">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="US_02_01_03_Test">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="Tests in 'com.example.luckydragon.userStoryTest'">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="US_01_07_01_Test">
+      <SelectionState runConfigName="SelectRoleActivityTest">
         <option name="selectionMode" value="DROPDOWN" />
     </SelectionState>
     </selectionStates>

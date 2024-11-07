@@ -5,6 +5,7 @@
     android:orientation="horizontal"
     android:background="@color/light_grey"
     android:paddingHorizontal="10dp"
+    android:descendantFocusability="blocksDescendants"
     android:paddingVertical="5dp">
     <LinearLayout
         android:layout_width="wrap_content"

@@ -62,8 +62,13 @@ public class ProfileActivity extends AppBarActivity {
                     .setReorderingAllowed(true)
                     .replace(R.id.fragment_container_view, OrganizerProfileFragment.class, null)
                     .commit();
+        } else if (role == GlobalApp.ROLE.ADMINISTRATOR) {
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.fragment_container_view, AdminProfileFragment.class, null)
+                    .commit();
         } else {
-            throw new RuntimeException("User mode not set.");
+            throw new RuntimeException("User role not set!");
         }
 
         // Initialize edit profile button on click

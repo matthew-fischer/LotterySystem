@@ -25,16 +25,22 @@ public class GlobalApp extends Application {
     private User user;
     private ROLE role;
     private Map<String, Event> events;
+    private FirebaseFirestore db;
+
     private UserList users;
     private EventList eventList;
     private String deviceId = null;
 
     final Bitmap profilePictureSize = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
     public User getUser() {
+        Log.d("GLOBALAPP", String.valueOf(db == null));
+        if (db == null) {
+            setDb(FirebaseFirestore.getInstance());
+        }
         if (user == null) {
             if(deviceId == null) deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
             Log.e("DEVICE ID", deviceId);
-            user = new User(deviceId);
+            user = new User(deviceId, db);
             user.fetchData();
         }
         return user;
@@ -45,14 +51,13 @@ public class GlobalApp extends Application {
     }
 
     public UserList getUsers() {
+        if (db == null) {
+            setDb(FirebaseFirestore.getInstance());
+        }
 
-        users = new UserList();
+        users = new UserList(db);
         users.fetchData();
         return users;
-    }
-
-    public void setUser(User newUser) {
-        user = newUser;
     }
 
     public void setRole(ROLE role) {
@@ -60,12 +65,15 @@ public class GlobalApp extends Application {
     }
 
     public Event getEvent(String eventId) {
+        if (db == null) {
+            setDb(FirebaseFirestore.getInstance());
+        }
         if (events == null) {
             events = new HashMap<>();
         }
         Event event = events.get(eventId);
         if (event == null || event.getId() != eventId) {
-            event = new Event(eventId);
+            event = new Event(eventId, db);
             events.put(eventId, event);
             event.fetchData();
         }
@@ -74,13 +82,23 @@ public class GlobalApp extends Application {
 
     public Event makeEvent() {
         // create an eventId
-        Event event = new Event();
+        Event event = new Event(db);
 
         return getEvent(event.getId());
     }
 
+    // functions for tests
+    public void setDb(FirebaseFirestore db) {
+        this.db = db;
+    }
+    public void setUser(User newUser) {
+        user = newUser;
+    }
     public EventList getEvents() {
-        eventList = new EventList();
+        if (db == null) {
+            setDb(FirebaseFirestore.getInstance());
+        }
+        eventList = new EventList(db);
         eventList.fetchData();
         return eventList;
     }

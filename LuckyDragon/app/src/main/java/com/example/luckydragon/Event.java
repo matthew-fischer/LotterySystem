@@ -65,6 +65,7 @@ public class Event extends Observable implements Serializable {
             return String.format("%02d:%02d %s", hours, minutes, AMorPM);
         }
     }
+    // TODO: REMOVE DEFAULT
     private transient FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private String id;
@@ -85,45 +86,21 @@ public class Event extends Observable implements Serializable {
     private List<String> attendeeList = new ArrayList<>();
     private List<String> cancelledList = new ArrayList<>();
 
-    public Event() {
+    public Event(FirebaseFirestore db) {
+        this.db = db;
         id = db.collection("events").document().getId();
         qrHash = generateQRCode();
     }
 
-    public Event(String id) {
+    public Event(String id, FirebaseFirestore db) {
         super();
+        this.db = db;
         this.id = id;
         qrHash = generateQRCode();  // TODO: load from db
     }
 
     /**
-     * Creates an Event object with organizer name and no id
-     * @param name the name of the event
-     * @param organizerName the name of the event organizer
-     * @param organizerDeviceId the device ID of the event organizer
-     * @param facility: the name of the event facility
-     * @param waitListLimit: the waitlist limit of the event
-     * @param attendeeLimit: the attendee limit of the event
-     * @param date: the date of the event, as a string YY-MM-DD
-     * @param timeHours: the hour time e.g. "8" for 8:30
-     * @param timeMinutes: the minute time e.g. "30" for 8:30
-     * @param waitList the waitlist for this event
-     */
-    public Event(String name, String organizerDeviceId, String organizerName, String facility, @Nullable Integer waitListLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes, List<String> waitList)  {
-        this.name = name;
-        this.organizerName = organizerName;
-        this.organizerDeviceId = organizerDeviceId;
-        this.facility = facility;
-        this.waitListLimit = waitListLimit;
-        this.attendeeLimit = attendeeLimit;
-        this.date = date;
-        this.time = new Time(timeHours, timeMinutes);
-        this.qrHash = generateQRCode();
-        this.waitList = waitList;
-    }
-
-    // TODO: Do we need 2 similar constructors?
-    /**
+     * TODO: REMOVE
      * Creates an Event object.
      * @param id the event id
      * @param name the name of the event
@@ -174,6 +151,7 @@ public class Event extends Observable implements Serializable {
         if(nonNull(facility) && !facility.isEmpty()) eventData.put("facility", facility);
         if(nonNull(waitListLimit)) eventData.put("waitListLimit", waitListLimit);
         if(nonNull(attendeeLimit)) eventData.put("attendeeLimit", attendeeLimit);
+        if(nonNull(hasGeolocation)) eventData.put("hasGeolocation", hasGeolocation);
         if(nonNull(date) && !date.isEmpty()) eventData.put("date", date);
         if(nonNull(time.hours)) eventData.put("hours", time.hours);
         if(nonNull(time.minutes)) eventData.put("minutes", time.minutes);

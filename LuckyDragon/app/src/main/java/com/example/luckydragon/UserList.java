@@ -15,7 +15,11 @@ import java.util.Map;
 public class UserList extends Observable {
 
     private ArrayList<User> users = new ArrayList<>();
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseFirestore db;
+
+    public UserList(FirebaseFirestore db) {
+        this.db = db;
+    }
 
     public void fetchData() {
 
