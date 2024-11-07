@@ -36,6 +36,7 @@ import android.util.Log;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
@@ -86,11 +87,9 @@ public class SelectRoleActivityTest {
         when(mockFirestore.collection("users")).thenReturn(mockCollection);
         when(mockCollection.document(anyString())).thenReturn(mockDocument);
 
-        mockTask = Tasks.forResult(mockDocumentSnapshot);
 //        when(mockCollection.get()).thenReturn(mocktask);
         when(mockDocument.get()).thenReturn(mockTask);
-//        Task<DocumentSnapshot> anotherTask = task.forResult();
-        when(mockTask.addOnFailureListener().thenReturn(mockTask);
+        when(mockTask.addOnFailureListener(any(OnFailureListener.class))).thenReturn(mockTask);
 
         Map<String, Object> mockData = getMockData();
         when(mockDocumentSnapshot.getData()).thenReturn(mockData);
