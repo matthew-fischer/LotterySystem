@@ -216,10 +216,10 @@ public class Event extends Observable implements Serializable {
             facility = (String) eventData.get("facility");
         }
         if (nonNull(eventData.get("waitListLimit"))) {
-            waitListLimit = ((Long) eventData.get("waitListLimit")).intValue();
+            waitListLimit = ((Number) eventData.get("waitListLimit")).intValue();
         }
         if (nonNull(eventData.get("attendeeLimit"))) {
-            attendeeLimit = ((Long) eventData.get("attendeeLimit")).intValue();
+            attendeeLimit = ((Number) eventData.get("attendeeLimit")).intValue();
         }
         if (nonNull(eventData.get("hasGeolocation"))) {
             hasGeolocation = (boolean) eventData.get("hasGeolocation");
@@ -235,8 +235,8 @@ public class Event extends Observable implements Serializable {
 //        hasGeolocation = eventData.get("hasGeolocation") != null ? (Boolean) eventData.get("hasGeolocation") : null;
 //        date = eventData.get("date") != null ? (String) eventData.get("date") : null;
 
-        int hours = eventData.get("hours") != null ? ((Long) eventData.get("hours")).intValue() : null;
-        int minutes = eventData.get("minutes") != null ? ((Long) eventData.get("minutes")).intValue() : null;
+        int hours = eventData.get("hours") != null ? ((Number) eventData.get("hours")).intValue() : null;
+        int minutes = eventData.get("minutes") != null ? ((Number) eventData.get("minutes")).intValue() : null;
         time = new Time(hours, minutes);
 
 
