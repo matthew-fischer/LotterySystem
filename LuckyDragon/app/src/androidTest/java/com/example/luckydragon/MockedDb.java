@@ -103,25 +103,19 @@ public abstract class MockedDb {
         when(mockEventDocumentSnapshot.exists()).thenReturn(true);
 
         // Get a bunch of events stuff
-        Task<QuerySnapshot> mockQueryTask = mock(Task.class);
-        when(mockEventsCollection.get()).thenReturn(mockQueryTask);
-        when(mockQueryTask.addOnCompleteListener(any(OnCompleteListener.class)))
+        when(mockEventsCollection.get()).thenReturn(mockEventQueryTask);
+        when(mockEventsCollection.whereEqualTo(anyString(), any())).thenReturn(mockEventQuery);  // note: not sure where is called
+        when(mockEventQueryTask.addOnCompleteListener(any(OnCompleteListener.class)))
                 .thenAnswer(invocation -> {
                     OnCompleteListener<QuerySnapshot> listener = invocation.getArgument(0);
-                    listener.onComplete(mockQueryTask);
-                    return mockQueryTask;
+                    listener.onComplete(mockEventQueryTask);
+                    return mockEventQueryTask;
                 });
 //        Query mockQuerySnapshot = new mock(QuerySnapshot);
-//        when(mockQueryTask.getResult()).thenReturn(mockQuerySnapshot);
+//        when(mockEventQueryTask.getResult()).thenReturn(mockQuerySnapshot);
         // in Organizer.fetchData(), we don't want to pull events from db
-        when(mockEventsCollection
-                .whereEqualTo(anyString(), any()))
-                .thenReturn(mockEventQuery);
+        when(mockEventQueryTask.isSuccessful()).thenReturn(true);
         when(mockEventQuery.get()).thenReturn(mockEventQueryTask);
-        when(mockEventQueryTask.addOnCompleteListener(any()))
-                .thenAnswer((invocation -> {
-                    return null; // do nothing
-                }));
     }
 
     @After
@@ -129,7 +123,8 @@ public abstract class MockedDb {
         // Reset global app state
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
-        globalApp.resetState();
+        globalApp.setDb(null);
+        globalApp.setUser(null);
 
         Intents.release();
     }
