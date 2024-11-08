@@ -525,4 +525,16 @@ public class Event extends Observable implements Serializable {
     public String getOrganizerDeviceId() {
         return organizerDeviceId;
     }
+
+    public List<String> getInviteeList() {
+        return inviteeList;
+    }
+
+    public List<String> getAttendeeList() {
+        return attendeeList;
+    }
+
+    public List<String> getCancelledList() {
+        return cancelledList;
+    }
 }
