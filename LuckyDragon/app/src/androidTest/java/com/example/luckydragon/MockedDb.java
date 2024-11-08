@@ -58,7 +58,9 @@ public abstract class MockedDb {
     @Mock
     private Task<QuerySnapshot> mockEventQueryTask;
 
+    protected String eventId = "fakeEventId";
     protected abstract Map<String, Object> getMockData();
+    protected abstract Map<String, Object> getMockEventData();
 
     @Before
     public void setup() {
@@ -82,9 +84,25 @@ public abstract class MockedDb {
         // We don't want to save anything to the database, so we mock the methods that save an event to the db to do nothing
         // We also mock getId() to return "mockEventID" instead of going to the database for an id
         when(mockFirestore.collection("events")).thenReturn(mockEventsCollection);
+        // Get a specific event stuff
         when(mockEventsCollection.document()).thenReturn(mockEventDocument);
-        when(mockEventDocument.getId()).thenReturn("mockEventID");
+        when(mockEventsCollection.document(anyString())).thenReturn(mockEventDocument);
+        when(mockEventDocument.getId()).thenReturn(eventId);
+        when(mockEventDocument.get()).thenReturn(mockEventTask);
+        // when set is called, we want to do nothing TODO: might have to extend set if we check mock db in tests
+        when(mockEventDocument.set(anyMap())).thenReturn(mockVoidTask);
+        DocumentSnapshot mockEventDocumentSnapshot = mock(DocumentSnapshot.class);
+        when(mockEventTask.addOnCompleteListener(any(OnCompleteListener.class))).thenAnswer((invocation) -> {
+            OnCompleteListener<DocumentSnapshot> listener = invocation.getArgument(0);
+            listener.onComplete(mockEventTask);
+            return mockEventTask;
+        });
+        when(mockEventTask.isSuccessful()).thenReturn(true);
+        when(mockEventTask.getResult()).thenReturn(mockEventDocumentSnapshot);
+        when(mockEventDocumentSnapshot.getData()).thenReturn(getMockEventData());
+        when(mockEventDocumentSnapshot.exists()).thenReturn(true);
 
+        // Get a bunch of events stuff
         Task<QuerySnapshot> mockQueryTask = mock(Task.class);
         when(mockEventsCollection.get()).thenReturn(mockQueryTask);
         when(mockQueryTask.addOnCompleteListener(any(OnCompleteListener.class)))
@@ -95,15 +113,6 @@ public abstract class MockedDb {
                 });
 //        Query mockQuerySnapshot = new mock(QuerySnapshot);
 //        when(mockQueryTask.getResult()).thenReturn(mockQuerySnapshot);
-
-        when(mockEventsCollection.document(anyString())).thenReturn(mockEventDocument);
-        when(mockEventDocument.get()).thenReturn(mockEventTask);
-        // when set is called, we want to do nothing
-        when(mockEventDocument.set(anyMap())).thenReturn(mockVoidTask);
-        // in the on complete listener, we want to do nothing
-        when(mockEventTask.addOnCompleteListener(any())).thenAnswer((invocation) -> {
-            return null; // do nothing
-        });
         // in Organizer.fetchData(), we don't want to pull events from db
         when(mockEventsCollection
                 .whereEqualTo(anyString(), any()))

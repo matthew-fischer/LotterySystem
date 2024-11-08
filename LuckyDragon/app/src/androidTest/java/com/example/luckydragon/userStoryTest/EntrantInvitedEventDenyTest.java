@@ -3,7 +3,6 @@ package com.example.luckydragon.userStoryTest;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
@@ -25,7 +24,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class EntrantInvitedEventTest extends MockedDb {
+public class EntrantInvitedEventDenyTest extends MockedDb {
     private String deviceId = "fakeDeviceId";
     @Override
     protected HashMap<String, Object> getMockData() {
@@ -67,21 +66,20 @@ public class EntrantInvitedEventTest extends MockedDb {
 
         return eventData;
     }
-
     /**
      * USER STORY TEST
      * >
-     * US 01.05.02 Entrant - be able to accept the invitation to
-     *      register/sign up when chosen to participate in an event
+     * US 01.05.03 Entrant - be able to decline an invitation when
+     *      chosen to participate in an event
      * Launch activity directly on event activity
-     * User clicks accept
-     * User is now part of the attendee list
+     * User clicks decline
+     * User is now part of the cancelled list
      * TODO: Below
-     * User can see that they are part of the attendee list
-     * User can see on their profile they are on the attendee list
+     * User can see that they are part of the cancelled list
+     * User can see on their profile they are on the cancelled list
      */
     @Test
-    public void testAcceptInvite() {
+    public void testDeclineInvite() {
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
         globalApp.setDb(mockFirestore);
@@ -93,16 +91,22 @@ public class EntrantInvitedEventTest extends MockedDb {
         try (final ActivityScenario<EventActivity> scenario = ActivityScenario.launch(intent)) {
             // Ensure we are on invitee list
             Event event = globalApp.getEvent(eventId);
+            Log.d("TONY", event.getInviteeList().toString());
+            Log.d("TONY", event.getAttendeeList().toString());
+            Log.d("TONY", event.getCancelledList().toString());
+            Log.d("TONY", event.getWaitList().toString());
+
             assertTrue(event.getInviteeList().contains(deviceId));
-            assertTrue(event.getAttendeeList().isEmpty());
+            assertTrue(event.getCancelledList().isEmpty());
             // Click accept
-            onView(withId(R.id.eventAccept)).perform(click());
-            // Check we are on attendee list
-            assertTrue(event.getAttendeeList().contains(deviceId));
+            onView(withId(R.id.eventDecline)).perform(click());
+            // Check we are on cancelled list
+            assertTrue(event.getCancelledList().contains(deviceId));
             // And not on invitee
             assertTrue(event.getInviteeList().isEmpty());
+            // And not attendee
+            assertTrue(event.getAttendeeList().isEmpty());
+
         }
     }
-
-
 }

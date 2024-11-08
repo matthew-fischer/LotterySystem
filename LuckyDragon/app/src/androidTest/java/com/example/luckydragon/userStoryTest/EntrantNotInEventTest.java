@@ -7,7 +7,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static java.util.Objects.nonNull;
 
 import android.content.Context;
 import android.content.Intent;
@@ -26,10 +25,8 @@ import org.junit.Test;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-public class EntrantJoinEventTest extends MockedDb {
+public class EntrantNotInEventTest extends MockedDb {
     @Override
     protected HashMap<String, Object> getMockData() {
         // Define test user
@@ -75,6 +72,7 @@ public class EntrantJoinEventTest extends MockedDb {
      * Launch activity directly on event activity
      * User clicks sign up
      * User is now part of the waitlist
+     * TODO: Below
      * User can see that they are part of the waitlist
      * User can see on their profile they are on the waitlist
      */

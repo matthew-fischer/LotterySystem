@@ -16,6 +16,8 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
+import static java.util.Objects.nonNull;
+
 import android.content.Context;
 import android.content.Intent;
 
@@ -25,6 +27,7 @@ import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.example.luckydragon.Event;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.MockedDb;
 import com.example.luckydragon.R;
@@ -45,12 +48,17 @@ import org.junit.Test;
 import org.mockito.Mock;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SignupTest extends MockedDb {
     @Override
     protected HashMap<String, Object> getMockData() {
         return null;  // User does not exist yet
+    }
+    @Override
+    protected HashMap<String, Object> getMockEventData() {
+       return null;  // all events do not exist
     }
 
     /**

@@ -41,6 +41,10 @@ public class EditProfileTest extends MockedDb {
 
         return testUserData;
     }
+    @Override
+    protected HashMap<String, Object> getMockEventData() {
+        return null;  // all events do not exist
+    }
 
     /**
      * USER STORY TEST
