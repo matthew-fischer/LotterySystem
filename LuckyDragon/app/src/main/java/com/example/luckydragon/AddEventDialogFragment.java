@@ -37,6 +37,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * This fragment alls an organizer the ability to fill in information for an event they want to create.
+ * Updates the database based on the organizers input.
+ */
 public class AddEventDialogFragment extends DialogFragment {
     @Nullable private Integer timeHours = null;
     @Nullable private Integer timeMinutes = null;
