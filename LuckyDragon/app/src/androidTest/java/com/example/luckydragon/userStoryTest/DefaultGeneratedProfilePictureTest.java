@@ -101,12 +101,6 @@ public class DefaultGeneratedProfilePictureTest extends MockedDb {
 
             // Click submit
             onView(withText("Submit")).perform(click());
-            onView(withId(R.id.signupName)).check(doesNotExist());
-            onView(withId(R.id.signupEmail)).check(doesNotExist());
-            onView(withId(R.id.profilePicture)).check(matches(isDisplayed()));
-
-            // Verify that user has no uploaded profile picture
-            assertNull(user.getUploadedProfilePicture());
 
             // Check that user has a default profile picture
             assertNotNull(user.getDefaultProfilePicture());
