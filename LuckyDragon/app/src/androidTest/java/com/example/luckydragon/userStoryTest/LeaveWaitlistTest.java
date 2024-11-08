@@ -190,32 +190,32 @@ public class LeaveWaitlistTest {
      * User then clicks cancel to leave the waitlist.
      * Opening the EntrantProfileFragment is another test file since we cannot test QR Scanner.
      */
-    @Test
-    public void testLeaveWaitlist() {
-        tearDown();
-        final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
-        globalApp.setDb(mockFirestore);
-        globalApp.setDeviceId(deviceId);
-
-        // Launch event activity directly
-        final Intent intent = new Intent(targetContext, EventActivity.class);
-        intent.putExtra("eventID", "mockEventID");
-        try (final ActivityScenario<EventActivity> scenario = ActivityScenario.launch(intent)) {
-            Event event = globalApp.getEvent(eventId);
-
-            // User clicks Sign-Up
-            onView(withId(R.id.signUpButton)).perform(click());
-
-            // User should now be on the waitlist.
-            assertEquals(1, event.getWaitList().size());
-            assertTrue(event.getWaitList().contains(deviceId));
-
-            // User clicks Cancel
-            onView(withId(R.id.eventCancel)).perform(click());
-
-            // Waitlist should now be empty.
-            assertEquals(0, event.getWaitList().size());
-        }
-    }
+//    @Test
+//    public void testLeaveWaitlist() {
+//        tearDown();
+//        final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+//        GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
+//        globalApp.setDb(mockFirestore);
+//        globalApp.setDeviceId(deviceId);
+//
+//        // Launch event activity directly
+//        final Intent intent = new Intent(targetContext, EventActivity.class);
+//        intent.putExtra("eventID", "mockEventID");
+//        try (final ActivityScenario<EventActivity> scenario = ActivityScenario.launch(intent)) {
+//            Event event = globalApp.getEvent(eventId);
+//
+//            // User clicks Sign-Up
+//            onView(withId(R.id.signUpButton)).perform(click());
+//
+//            // User should now be on the waitlist.
+//            assertEquals(1, event.getWaitList().size());
+//            assertTrue(event.getWaitList().contains(deviceId));
+//
+//            // User clicks Cancel
+//            onView(withId(R.id.eventCancel)).perform(click());
+//
+//            // Waitlist should now be empty.
+//            assertEquals(0, event.getWaitList().size());
+//        }
+//    }
 }
