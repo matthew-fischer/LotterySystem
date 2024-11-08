@@ -3,27 +3,73 @@ package com.example.luckydragon.userStoryTest;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+<<<<<<< HEAD
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+=======
+import static androidx.test.espresso.matcher.RootMatchers.isDialog;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
+>>>>>>> origin/main
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.mockito.ArgumentMatchers.any;
+<<<<<<< HEAD
+=======
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.openMocks;
+
+import static java.util.Objects.nonNull;
+>>>>>>> origin/main
 
 import android.content.Context;
 import android.content.Intent;
 
 import androidx.test.core.app.ActivityScenario;
+<<<<<<< HEAD
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+=======
+import androidx.test.espresso.NoMatchingViewException;
+import androidx.test.espresso.action.ViewActions;
+import androidx.test.espresso.intent.Intents;
+import androidx.test.platform.app.InstrumentationRegistry;
+
+import com.example.luckydragon.Event;
+>>>>>>> origin/main
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.MockedDb;
 import com.example.luckydragon.R;
 import com.example.luckydragon.SelectRoleActivity;
+<<<<<<< HEAD
 
 import org.junit.Test;
 
 import java.util.HashMap;
+=======
+import com.example.luckydragon.TestHelpers;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+>>>>>>> origin/main
 
 public class SignupTest extends MockedDb {
     @Override
