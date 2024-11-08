@@ -35,7 +35,6 @@ import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.MockedDb;
 import com.example.luckydragon.R;
 import com.example.luckydragon.SelectRoleActivity;
-import com.example.luckydragon.TestHelpers;
 import com.example.luckydragon.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
