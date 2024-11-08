@@ -18,12 +18,12 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.example.luckydragon.Activities.ProfileActivity;
-import com.example.luckydragon.Views.AddEventView;
 import com.example.luckydragon.Controllers.AddEventController;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.Models.User;
 import com.example.luckydragon.R;
+import com.example.luckydragon.Views.AddEventView;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;

@@ -16,6 +16,11 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+
 import com.example.luckydragon.Controllers.SignupController;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.User;
@@ -23,11 +28,6 @@ import com.example.luckydragon.R;
 import com.example.luckydragon.Views.SignupView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
-
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 
 /**
  * The activity used for signing up or editing user profile information.

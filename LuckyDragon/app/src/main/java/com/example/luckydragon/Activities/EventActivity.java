@@ -6,10 +6,10 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.luckydragon.Controllers.EventController;
-import com.example.luckydragon.Views.EventView;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.R;
+import com.example.luckydragon.Views.EventView;
 
 /**
  * EventActivity is the activity for viewing an event. Has a View and

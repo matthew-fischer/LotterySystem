@@ -3,8 +3,8 @@ package com.example.luckydragon.Controllers;
 import android.util.Log;
 import android.widget.EditText;
 
-import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.Activities.ProfileActivity;
+import com.example.luckydragon.Models.Event;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.timepicker.MaterialTimePicker;
 

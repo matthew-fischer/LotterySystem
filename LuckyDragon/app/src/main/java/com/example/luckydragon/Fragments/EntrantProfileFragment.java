@@ -13,12 +13,12 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.luckydragon.Activities.EventActivity;
-import com.example.luckydragon.Views.EntrantEventsView;
 import com.example.luckydragon.Controllers.EventArrayAdapter;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.Models.EventList;
 import com.example.luckydragon.R;
+import com.example.luckydragon.Views.EntrantEventsView;
 
 import java.util.ArrayList;
 

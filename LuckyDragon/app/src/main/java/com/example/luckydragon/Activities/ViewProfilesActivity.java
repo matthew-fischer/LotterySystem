@@ -3,10 +3,10 @@ package com.example.luckydragon.Activities;
 import android.os.Bundle;
 import android.widget.ListView;
 
+import com.example.luckydragon.Controllers.UserArrayAdapter;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.UserList;
 import com.example.luckydragon.R;
-import com.example.luckydragon.Controllers.UserArrayAdapter;
 import com.example.luckydragon.Views.ViewProfilesView;
 
 /**

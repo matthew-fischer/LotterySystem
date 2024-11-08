@@ -20,11 +20,11 @@ import android.widget.Toast;
 
 import com.example.luckydragon.Fragments.AdminProfileFragment;
 import com.example.luckydragon.Fragments.EntrantProfileFragment;
+import com.example.luckydragon.Fragments.OrganizerProfileFragment;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.User;
-import com.example.luckydragon.Fragments.OrganizerProfileFragment;
-import com.example.luckydragon.Views.ProfileView;
 import com.example.luckydragon.R;
+import com.example.luckydragon.Views.ProfileView;
 
 /**
  * This is the activity for the profile page.
