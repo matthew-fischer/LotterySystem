@@ -51,6 +51,10 @@ import org.mockito.Mock;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Contains tests for US 02.01.03
+ * Organizer - create and manage my facility profile
+ */
 public class EditFacilityTest {
     @Mock
     private FirebaseFirestore mockFirestore;
@@ -152,6 +156,7 @@ public class EditFacilityTest {
 
     /**
      * USER STORY TEST
+     * US 02.01.03 Organizer - create and manage my facility profile
      * User opens app and selects "Organizer".
      * User already has a facility.
      * The user's existing facility is displayed.

@@ -50,6 +50,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Contains tests for US 02.01.01.
+ * Organizer - create a new event and generate a unique promotional QR code that links to the event description and event poster in the app
+ */
 public class CreateEventTest {
     @Mock
     protected FirebaseFirestore mockFirestore;
@@ -153,6 +157,7 @@ public class CreateEventTest {
 
     /**
      * USER STORY TEST
+     * US 02.01.01 Organizer - create a new event and generate a unique promotional QR code that links to the event description and event poster in the app
      * User opens app and selects 'Organizer'.
      * User has an existing facility.
      * The user's facility is displayed correctly.

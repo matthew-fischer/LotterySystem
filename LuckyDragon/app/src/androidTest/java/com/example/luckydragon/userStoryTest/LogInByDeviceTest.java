@@ -44,6 +44,10 @@ import org.mockito.Mock;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Contains tests for US 01.07.01
+ * Entrant - be identified by my device, so that I don't have to use a username and password
+ */
 public class LogInByDeviceTest {
     @Mock
     private FirebaseFirestore mockFirestore;
@@ -146,6 +150,7 @@ public class LogInByDeviceTest {
 
     /**
      * USER STORY TEST
+     * US 01.07.01 Entrant - be identified by my device, so that I don't have to use a username and password
      * User opens app and selects 'entrant'.
      * They are brought straight to their profile.
      * There is no login page.

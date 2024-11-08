@@ -50,6 +50,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Contains tests for US 02.03.01
+ * Organizer - OPTIONALLY limit the number of entrants who can join my waiting list
+ */
 public class CreateEventWithWaitlistLimitTest {
     @Mock
     private FirebaseFirestore mockFirestore;
@@ -151,6 +155,7 @@ public class CreateEventWithWaitlistLimitTest {
 
     /**
      * USER STORY TEST
+     * US 02.03.01 Organizer - OPTIONALLY limit the number of entrants who can join my waiting list
      * User opens app and selects 'Organizer'.
      * User has an existing facility.
      * The user's facility is displayed correctly.
