@@ -60,7 +60,7 @@ public class ProfileActivity extends AppBarActivity {
                     .replace(R.id.fragment_container_view, EntrantProfileFragment.class, null)
                     .commit();
         } else if (role == GlobalApp.ROLE.ORGANIZER) {
-            // Check if organizer profile fragment exsits
+            // Check if organizer profile fragment exists
             // Create organizer profile fragment
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
