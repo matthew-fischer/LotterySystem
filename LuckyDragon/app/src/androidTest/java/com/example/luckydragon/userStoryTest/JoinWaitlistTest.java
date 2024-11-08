@@ -28,11 +28,10 @@ import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.example.luckydragon.Event;
-import com.example.luckydragon.EventActivity;
+import com.example.luckydragon.Activities.EventActivity;
 import com.example.luckydragon.GlobalApp;
+import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.R;
-import com.example.luckydragon.SelectRoleActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
