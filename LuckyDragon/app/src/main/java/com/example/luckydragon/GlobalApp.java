@@ -1,20 +1,15 @@
 package com.example.luckydragon;
 
-import static java.util.Objects.nonNull;
-
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.provider.Settings;
-import android.util.Log;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentSnapshot;
+import com.example.luckydragon.Models.Event;
+import com.example.luckydragon.Models.EventList;
+import com.example.luckydragon.Models.User;
+import com.example.luckydragon.Models.UserList;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -38,7 +33,7 @@ public class GlobalApp extends Application {
     private EventList eventList;
     private String deviceId = null;
 
-    final Bitmap profilePictureSize = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
+    public final Bitmap profilePictureSize = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
 
     /**
      * Gets the current user of the app, fetching the DB if needed.
@@ -153,5 +148,13 @@ public class GlobalApp extends Application {
         users = null;
         eventList = null;
         deviceId = null;
+    }
+
+    public void setEventList(EventList newEventList) {
+        this.eventList = newEventList;
+    }
+
+    public EventList getEventList() {
+        return eventList;
     }
 }

@@ -13,8 +13,7 @@ import android.content.Intent;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.example.luckydragon.Event;
-import com.example.luckydragon.EventActivity;
+import com.example.luckydragon.Activities.EventActivity;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.MockedDb;
 import com.example.luckydragon.R;

@@ -12,6 +12,8 @@ import static org.mockito.MockitoAnnotations.openMocks;
 
 import android.util.Log;
 
+import com.example.luckydragon.Models.Event;
+import com.example.luckydragon.Models.Organizer;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.junit.jupiter.api.Assertions;

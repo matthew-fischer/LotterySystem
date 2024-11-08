@@ -1,6 +1,6 @@
 package com.example.luckydragon.userStoryTest;
 
-import com.example.luckydragon.Event;
+import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.MockedDb;
 
 import static androidx.test.espresso.Espresso.onData;
@@ -21,14 +21,12 @@ import android.content.Context;
 import android.content.Intent;
 
 import androidx.test.core.app.ActivityScenario;
-import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.example.luckydragon.GlobalApp;
-import com.example.luckydragon.MockedDb;
 import com.example.luckydragon.R;
-import com.example.luckydragon.SelectRoleActivity;
+import com.example.luckydragon.Activities.SelectRoleActivity;
 
 import org.junit.Test;
 

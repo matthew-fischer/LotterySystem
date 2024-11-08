@@ -25,7 +25,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.R;
-import com.example.luckydragon.SelectRoleActivity;
+import com.example.luckydragon.Activities.SelectRoleActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
