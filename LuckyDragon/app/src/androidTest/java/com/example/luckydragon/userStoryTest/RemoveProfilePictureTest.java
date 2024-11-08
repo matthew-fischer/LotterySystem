@@ -157,6 +157,7 @@ public class RemoveProfilePictureTest {
 
     /**
      * USER STORY TEST
+     * > US 01.03.02 Entrant - remove profile picture if need be
      * User opens app and selects 'Entrant'.
      * User has an existing uploaded and default profile picture.
      * User clicks to edit profile
