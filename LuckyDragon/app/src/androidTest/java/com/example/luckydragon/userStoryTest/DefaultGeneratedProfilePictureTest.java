@@ -2,6 +2,7 @@ package com.example.luckydragon.userStoryTest;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
@@ -85,7 +86,7 @@ public class DefaultGeneratedProfilePictureTest extends MockedDb {
         // Sign up information
         String name = "John Draco";
         String email = "draco@gmail.com";
-
+        String phone = "1231231234";
         final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
         try (final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
             // Click entrant button
@@ -98,8 +99,9 @@ public class DefaultGeneratedProfilePictureTest extends MockedDb {
             // Enter in info
             onView(withId(R.id.signupName)).perform(ViewActions.typeText(name));
             onView(withId(R.id.signupEmail)).perform(ViewActions.typeText(email));
-
+            onView(withId(R.id.signupPhone)).perform(typeText(phone));
             // Click submit
+            onView(withId(R.id.signupSubmit)).check(matches(isDisplayed()));
             onView(withText("Submit")).check(matches(isEnabled()));
             onView(withText("Submit")).perform(click());
 
