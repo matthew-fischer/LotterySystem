@@ -283,7 +283,7 @@ public class User extends Observable {
      * @param s the string to generate the profile picture using
      * @return the profile picture as a Bitmap
      */
-    public Bitmap generateProfilePicture(String s) {
+    public static Bitmap generateProfilePicture(String s) {
         if (s == null || s.isEmpty()) return null;
 
         Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
