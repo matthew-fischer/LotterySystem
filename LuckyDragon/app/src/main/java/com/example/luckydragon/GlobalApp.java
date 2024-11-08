@@ -33,13 +33,11 @@ public class GlobalApp extends Application {
 
     final Bitmap profilePictureSize = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
     public User getUser() {
-        Log.d("GLOBALAPP", String.valueOf(db == null));
         if (db == null) {
             setDb(FirebaseFirestore.getInstance());
         }
         if (user == null) {
             if(deviceId == null) deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-            Log.e("DEVICE ID", deviceId);
             user = new User(deviceId, db);
             user.fetchData();
         }

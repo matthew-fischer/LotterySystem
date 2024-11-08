@@ -1,3 +1,9 @@
+/*
+ * Defines the view associated with OrganizerProfileFragment.
+ * ISSUES:
+ *   NONE
+ */
+
 package com.example.luckydragon;
 
 import android.util.Log;
@@ -5,13 +11,23 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.luckydragon.OrganizerProfileFragment;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.util.Objects;
 
+/**
+ * This is the view associated with OrganizerProfileFragment.
+ * Updates OrganizerProfileFragment when triggered by a change in an Observable (model) object.
+ */
 public class OrganizerProfileView extends Observer {
     private final OrganizerProfileFragment organizerProfileFragment;
 
+    /**
+     * Creates an OrganizerProfileView.
+     * @param user the application user
+     * @param organizerProfileFragment the fragment to update
+     */
     public OrganizerProfileView(User user, OrganizerProfileFragment organizerProfileFragment) {
         this.organizerProfileFragment = organizerProfileFragment;
         startObserving(user);
@@ -22,6 +38,11 @@ public class OrganizerProfileView extends Observer {
         return (User) super.getObservable();
     }
 
+    /**
+     * Updates OrganizerProfileFragment.
+     * Sets facility name and updates event list.
+     * @param whoUpdatedMe the observable who triggered the update
+     */
     @Override
     public void update(Observable whoUpdatedMe) {
         // Set facility name

@@ -1,22 +1,38 @@
+/*
+ * Defines ProfileView which manages ProfileActivity.
+ * Updates the information shown by ProfileActivity when triggered by a change in User.
+ * ISSUES:
+ *   NONE
+ */
+
 package com.example.luckydragon;
 
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+/**
+ * This is the view that updates ProfileActivity.
+ * When the User is modified, ProfileView's `update` method is triggered.
+ * This updates the name, email, phone number, and profile picture shown by ProfileActivity.
+ */
 public class ProfileView extends Observer {
     private final ProfileActivity profileActivity;
 
+    /**
+     * Creates a ProfileView.
+     * @param user the application user
+     * @param profileActivity the ProfileActivity to be updated by this view
+     */
     public ProfileView(User user, ProfileActivity profileActivity) {
         this.profileActivity = profileActivity;
         startObserving(user);
     }
 
-    @Override
-    public User getObservable() {
-        return (User) super.getObservable();
-    }
-
+    /**
+     * Updaets ProfileActivity when triggered by a change in the User.
+     * @param whoUpdatedMe the observable who triggered the change (will be a User)
+     */
     @Override
     public void update(Observable whoUpdatedMe) {
         if(getObservable().isLoaded()) {
@@ -27,17 +43,15 @@ public class ProfileView extends Observer {
         }
     }
 
-    /**
-     * Sets the name textview to the user's name.
-     */
+    @Override
+    public User getObservable() {
+        return (User) super.getObservable();
+    }
+
     public void setName(TextView nameTextView) {
         nameTextView.setText(getObservable().getName());
     }
 
-    /**
-     * Sets the email textview to the user's email (if they have one).
-     * If they don't have an email, hide the email textview.
-     */
     public void setEmail(TextView emailTextView) {
         if(getObservable().getEmail() != null) {
             emailTextView.setText(getObservable().getEmail());
@@ -46,10 +60,6 @@ public class ProfileView extends Observer {
         }
     }
 
-    /**
-     * Sets the phone number textview to the user's phone number (if they have one).
-     * If they don't have a phone number, hide the phone number textview.
-     */
     public void setPhoneNumber(TextView phoneNumber) {
         if(getObservable().getPhoneNumber() != null) {
             phoneNumber.setText(getObservable().getPhoneNumber());
@@ -58,9 +68,6 @@ public class ProfileView extends Observer {
         }
     }
 
-    /**
-     * Set the profile picture to the user's profile picture.
-     */
     public void setProfilePicture(ImageView profilePictureView) {
         profilePictureView.setImageBitmap(getObservable().getProfilePicture());
     }

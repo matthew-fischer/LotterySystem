@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
@@ -44,7 +45,6 @@ public class AddEventDialogFragment extends DialogFragment {
     AddEventController controller;
     AddEventView eventView;
     User user;
-
 
     @NonNull
     @Override
@@ -108,8 +108,16 @@ public class AddEventDialogFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         // cancel
+                        event.deleteEventFromDb();
                     }
-                }).create();
+                })
+                .create();
+    }
+
+    // if dialog is cancelled, make sure the event does not remain in the db
+    @Override
+    public void onCancel(final DialogInterface dialog) {
+        event.deleteEventFromDb();
     }
 
     @Override

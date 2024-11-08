@@ -1,3 +1,9 @@
+/*
+ * DialogFragment allowing an organizer to edit their facility.
+ * Outstanding Issues:
+ *   - NONE
+ */
+
 /**
  * Defines EditFacilityDialogFragment which allows an organizer to edit their facility.
  */
@@ -18,13 +24,24 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * Defines EditFacilityDialogFragment.
+ * Interacts with EditFacilityDialogController.
+ */
 public class EditFacilityDialogFragment extends DialogFragment {
     private User user;
     private EditFacilityDialogController editFacilityDialogController;
     private String dialogTitle = null;
 
+    /**
+     * Creates an EditFacilityDialogFragment.
+     */
     public EditFacilityDialogFragment() {}
 
+    /**
+     * Creates n EditFacilityDialogFragment with a title.
+     * @param title the title of the dialog
+     */
     public EditFacilityDialogFragment(String title) {
         this.dialogTitle = title;
     }

@@ -1,5 +1,9 @@
-/**
- * Defines the OrganizerProfileFragment which contains the organizer-specific profile content and logic.
+/*
+ * Fragment embedded in ProfileActivity containing organizer-specific info.
+ * Shows the organizer's facility and events.
+ * Has a view (OrganizerProfileView).
+ * Issues:
+ *   NONE
  */
 
 package com.example.luckydragon;
@@ -17,13 +21,26 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
+import com.example.luckydragon.AddEventDialogFragment;
+import com.example.luckydragon.EditFacilityDialogFragment;
+import com.example.luckydragon.EventArrayAdapter;
+import com.example.luckydragon.GlobalApp;
+import com.example.luckydragon.OrganizerProfileView;
 import com.google.android.material.textview.MaterialTextView;
 
+/**
+ * This is the fragment containing the organizer-specific profile info.
+ * Displays the organizer's facility and events.
+ * Updated by OrganizerProfileView.
+ */
 public class OrganizerProfileFragment extends Fragment {
     private OrganizerProfileView organizerProfileView;
     private User user;
     private EventArrayAdapter eventListAdapter;
 
+    /**
+     * Creates an OrganizerProfileFragment.
+     */
     public OrganizerProfileFragment() {
         super(R.layout.fragment_organizer_profile);
     }
@@ -63,7 +80,11 @@ public class OrganizerProfileFragment extends Fragment {
         });
     }
 
-    // EditFacilityDialogFragment uses this function to update the facility textview after a change is made.
+    /**
+     * Sets the facility text view to a new value.
+     * EditFacilityDialogFragment uses this function to update the facility textview after a change is made.
+     * @param newFacility the new facility
+     */
     public void setFacilityTextView(String newFacility) {
         // Set facility text view to a new value
         Activity activity = requireActivity();
@@ -71,17 +92,29 @@ public class OrganizerProfileFragment extends Fragment {
         facilityTextView.setText(newFacility);
     }
 
-    // EditFacilityDialogFragment uses this function to update the facility button icon after a change.
+    /**
+     * Sets the facility button icon to a new drawable.
+     * EditFacilityDialogFragment uses this function to update the facility button icon after a change.
+     * @param newResId the id of the new drawable
+     */
     public void setFacilityButtonIcon(int newResId) {
         Activity activity = requireActivity();
         ImageButton facilityButton = activity.findViewById(R.id.facilityEditButton);
         facilityButton.setImageResource(newResId);
     }
 
+    /**
+     * Updates the events listview to reflect new data.
+     * Called by OrganizerProfileView.
+     */
     public void updateEventsList() {
         eventListAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Sets the visibility of "No events" textview.
+     * @param visibility the visibility (VISIBLE or GONE)
+     */
     public void setNoEventsVisibility(int visibility) {
         // Show "No events" textview if no events and hide otherwise
         TextView noEventsTextView = getView().findViewById(R.id.noEventsTextView);
