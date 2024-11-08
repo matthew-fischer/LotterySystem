@@ -15,6 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class GlobalApp extends Application {
     public enum ROLE {
@@ -24,7 +25,7 @@ public class GlobalApp extends Application {
     }
     private User user;
     private ROLE role;
-    private Map<String, Event> events;
+    private Event event;
     private FirebaseFirestore db;
 
     private UserList users;
@@ -66,13 +67,8 @@ public class GlobalApp extends Application {
         if (db == null) {
             setDb(FirebaseFirestore.getInstance());
         }
-        if (events == null) {
-            events = new HashMap<>();
-        }
-        Event event = events.get(eventId);
-        if (event == null || event.getId() != eventId) {
+        if (event == null || !Objects.equals(event.getId(), eventId)) {
             event = new Event(eventId, db);
-            events.put(eventId, event);
             event.fetchData();
         }
         return event;

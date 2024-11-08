@@ -136,14 +136,16 @@ public class Event extends Observable implements Serializable {
      * Save to firestore
      */
     public void save() {
-        if(!nonNull(organizerDeviceId)) {
-            Log.e("Event", "Tried to save an event without organizerDeviceId");
-            return;
-        }
-        if(!nonNull(facility)) {
-            Log.e("Event", "Tried to save an event without a facility");
-            return;
-        }
+//        if(!nonNull(organizerDeviceId)) {
+//            Log.e("Event", "Tried to save an event without organizerDeviceId");
+//            return;
+//        }
+//        if(!nonNull(facility)) {
+//            Log.e("Event", "Tried to save an event without a facility");
+//            return;
+//        }
+//                Log.d("EXTRACTING3", name);
+//        Log.d("EXTRACTING4", organizerDeviceId);
 
         Map<String, Object> eventData = new HashMap<>();
         if(nonNull(name)) eventData.put("name", name);
@@ -204,13 +206,34 @@ public class Event extends Observable implements Serializable {
      * @param eventData the raw event data from Firestore
      */
     public void parseEventDocument(Map<String, Object> eventData) {
-        name = eventData.get("name") != null ? (String) eventData.get("name") : null;
-        organizerDeviceId = eventData.get("organizerDeviceId") != null ? (String) eventData.get("OrganizerDeviceId") : null;
-        facility = eventData.get("facility") != null ? (String) eventData.get("facility") : null;
-        waitListLimit = eventData.get("waitListLimit") != null ? ((Long) eventData.get("waitListLimit")).intValue() : null;
-        attendeeLimit = eventData.get("attendeeLimit") != null ? ((Long) eventData.get("attendeeLimit")).intValue() : null;
-        hasGeolocation = eventData.get("hasGeolocation") != null ? (Boolean) eventData.get("hasGeolocation") : null;
-        date = eventData.get("date") != null ? (String) eventData.get("date") : null;
+        if (nonNull(eventData.get("name"))) {
+            name = (String) eventData.get("name");
+        }
+        if (nonNull(eventData.get("organizerDeviceId"))) {
+            organizerDeviceId = (String) eventData.get("organizerDeviceId");
+        }
+        if (nonNull(eventData.get("facility"))) {
+            facility = (String) eventData.get("facility");
+        }
+        if (nonNull(eventData.get("waitListLimit"))) {
+            waitListLimit = ((Long) eventData.get("waitListLimit")).intValue();
+        }
+        if (nonNull(eventData.get("attendeeLimit"))) {
+            attendeeLimit = ((Long) eventData.get("attendeeLimit")).intValue();
+        }
+        if (nonNull(eventData.get("hasGeolocation"))) {
+            hasGeolocation = (boolean) eventData.get("hasGeolocation");
+        }
+        if (nonNull(eventData.get("data"))) {
+            date = (String) eventData.get("date");
+        }
+//        name = eventData.get("name") != null ? (String) eventData.get("name") : null;
+//        organizerDeviceId = eventData.get("organizerDeviceId") != null ? (String) eventData.get("OrganizerDeviceId") : null;
+//        facility = eventData.get("facility") != null ? (String) eventData.get("facility") : null;
+//        waitListLimit = eventData.get("waitListLimit") != null ? ((Long) eventData.get("waitListLimit")).intValue() : null;
+//        attendeeLimit = eventData.get("attendeeLimit") != null ? ((Long) eventData.get("attendeeLimit")).intValue() : null;
+//        hasGeolocation = eventData.get("hasGeolocation") != null ? (Boolean) eventData.get("hasGeolocation") : null;
+//        date = eventData.get("date") != null ? (String) eventData.get("date") : null;
 
         int hours = eventData.get("hours") != null ? ((Long) eventData.get("hours")).intValue() : null;
         int minutes = eventData.get("minutes") != null ? ((Long) eventData.get("minutes")).intValue() : null;
@@ -453,6 +476,7 @@ public class Event extends Observable implements Serializable {
     }
 
     public void setName(String name) {
+        Log.d("EXTRACTING2", name);
         // TODO: Catch empty?
         this.name = name;
         notifyObservers();
@@ -496,5 +520,9 @@ public class Event extends Observable implements Serializable {
     public void setHasGeolocation(Boolean hasGeolocation) {
         this.hasGeolocation = hasGeolocation;
         notifyObservers();
+    }
+
+    public String getOrganizerDeviceId() {
+        return organizerDeviceId;
     }
 }

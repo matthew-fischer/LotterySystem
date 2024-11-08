@@ -69,8 +69,8 @@ public class AddEventDialogFragment extends DialogFragment {
         // TODO: restore an in progress event creation OR, save to db if all data is valid.
         event = ((GlobalApp) requireActivity().getApplication()).makeEvent();
         // Set event attr we know (and before it is observed)
-        event.setOrganizerName(organizerName);
         event.setOrganizerDeviceId(organizerDeviceID);
+        event.setOrganizerName(organizerName);
         event.setFacility(facilityName);
 
         controller = new AddEventController(event, activity);
@@ -82,13 +82,15 @@ public class AddEventDialogFragment extends DialogFragment {
         TextInputEditText facilityEditText = dialogView.findViewById(R.id.facilityEditText);
         String facility = user.getOrganizer().getFacility();
         facilityEditText.setText(facility);
+        Log.d("TONY", event.getOrganizerDeviceId());
+
 
         return builder.setView(dialogView)
                 .setPositiveButton("Create", (dialogInterface, i) -> {
-                    Dialog dialog = getDialog();
-
                     // TODO: make sure we only want to extract event on submit
                     // get fields
+                    Log.d("TONY", "onCreateDialog: ");
+                    Log.d("TONY", event.getOrganizerDeviceId());
                     TextInputEditText eventNameEditText = dialogView.findViewById(R.id.eventNameEditText);
                     TextInputEditText waitlistLimitEditText = dialogView.findViewById(R.id.waitlistLimitEditText);
                     TextInputEditText attendeeLimitEditText = dialogView.findViewById(R.id.attendeeLimitEditText);
@@ -159,5 +161,6 @@ public class AddEventDialogFragment extends DialogFragment {
             });
             picker.show(getParentFragmentManager(), "Event date picker");
         });
+        Log.d("TONY", event.getOrganizerDeviceId());
     }
 }
