@@ -1,5 +1,6 @@
 package com.example.luckydragon;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -25,6 +26,7 @@ public class AddEventController extends Controller {
 
     public void extractName(EditText et) {
         String eventName = et.getText().toString();
+        Log.d("EXTRACTING", eventName);
 
         // Validate input
         if (eventName.isEmpty()) {
