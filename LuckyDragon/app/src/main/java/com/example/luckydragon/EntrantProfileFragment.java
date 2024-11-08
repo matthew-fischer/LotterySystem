@@ -60,7 +60,7 @@ public class EntrantProfileFragment extends Fragment {
 
             // This is for testing without scanning QR Code:
             Intent intent = new Intent(getActivity(), EventActivity.class);
-            String eventId = "NR6CbgJwPFBmzmNWLYn1";
+            String eventId = "rDvs0vS2WeRRwtN9N9L9";
             intent.putExtra("eventID", eventId);
             String deviceID = ((GlobalApp) getActivity().getApplication()).getUser().getDeviceId();
             intent.putExtra("deviceID", deviceID);
@@ -100,31 +100,6 @@ public class EntrantProfileFragment extends Fragment {
         // view that will observe the eventList
         entrantEventsView = new EntrantEventsView(eventList, this);
     }
-
-    /**
-     * Sets the string returned from the qr scanning intent to eventID. Then starts corresponding EventActivity.
-     * @param requestCode
-     * @param resultCode
-     * @param data
-     */
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data){
-//        super.onActivityResult(requestCode, resultCode, data);
-//        IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-//        if (intentResult != null) {
-//            if (intentResult.getContents() == null) {
-//                Toast.makeText(getActivity(), "Cancelled", Toast.LENGTH_SHORT).show();
-//            } else {
-//                Intent intent = new Intent(getActivity(), EventActivity.class);
-//                // Pass in event eventId (from QR CODE SCANNER)
-//                String eventID = intentResult.getContents();
-//                intent.putExtra("eventID", eventID);
-//
-//                // start EventActivity
-//                startActivity(intent);
-//            }
-//        }
-//    }
 
     /**
      * Calls to update the adapters for each of the four listViews.
