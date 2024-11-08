@@ -22,6 +22,9 @@
       <SelectionState runConfigName="testEntrantSignupNoPhone()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+      <SelectionState runConfigName="testEntrantEdit()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>
