@@ -144,4 +144,14 @@ public class GlobalApp extends Application {
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
     }
+
+    public void resetState() {
+        db = null;
+        user = null;
+        role = null;
+        event = null;
+        users = null;
+        eventList = null;
+        deviceId = null;
+    }
 }

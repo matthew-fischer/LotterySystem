@@ -37,7 +37,7 @@ import java.util.Map;
 /**
  * This is a collection of unit tests for the User class.
  * These tests should not use the database. The database is mocked using Mockito.
- * The User class is closely linked to the database and uses the Android framework so it is not well-suited for unit testing.
+ * The User class is closely linked to the database and uses the Android framework so not all methods are practical for unit testing.
  * We test what we can here. Database and android methods must be mocked out. See the comment just below for more details.
  */
 @RunWith(MockitoJUnitRunner.class)
