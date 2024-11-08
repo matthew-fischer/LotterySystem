@@ -4,13 +4,24 @@ import android.widget.Toast;
 
 import java.io.Serializable;
 
+/**
+ * This is the Controller class. Part of the MVC implementation.
+ */
 public class Controller {
     private Observable observable;
 
+    /**
+     * Constructor for the Controller class. Assigns a observable is its own.
+     * @param observable
+     */
     public Controller(Observable observable) {
         this.observable = observable;
     }
 
+    /**
+     * Gets the Observable this controller owns.
+     * @return Observable.
+     */
     public Observable getObservable() {
         return observable;
     }

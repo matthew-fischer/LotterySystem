@@ -16,6 +16,9 @@ import androidx.fragment.app.DialogFragment;
 
 import com.google.zxing.common.BitMatrix;
 
+/**
+ * This fragment is used to display a QR Code Image which the organizer can distribution for entrants to use to sign up for an event.
+ */
 public class DisplayQRCodeFragment extends DialogFragment {
     @NonNull
     @Override
