@@ -179,6 +179,7 @@ public class LeaveWaitlistTest {
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
         globalApp.setDb(null);
         globalApp.setUser(null);
+        globalApp.resetState();
 
         Intents.release();
     }
@@ -191,6 +192,7 @@ public class LeaveWaitlistTest {
      */
     @Test
     public void testLeaveWaitlist() {
+        tearDown();
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
         globalApp.setDb(mockFirestore);
