@@ -100,6 +100,7 @@ public class DefaultGeneratedProfilePictureTest extends MockedDb {
             onView(withId(R.id.signupEmail)).perform(ViewActions.typeText(email));
 
             // Click submit
+            onView(withText("Submit")).check(matches(isEnabled()));
             onView(withText("Submit")).perform(click());
 
             // Check that user has a default profile picture
