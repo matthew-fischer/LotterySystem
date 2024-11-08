@@ -1,5 +1,8 @@
 /**
  * Defines the Organizer model class.
+ * Organizer is always part of a User.
+ * ISSUES:
+ *   - Should sort the events by most recently added. The current order is sufficient for now.
  */
 
 package com.example.luckydragon;
@@ -18,36 +21,42 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Represents an Organizer. Subclass of User.
- * Adds a facility field.
- * <p>
- * Issues:
- *   This is only a basic implementation. Additional functionality should be added as needed.
- *   Since email and phone number are optional, additional constructors should be added.
+ * Represents an Organizer. Will be an attribute of a User.
+ * Adds a facility field and an event list.
  */
 public class Organizer {
-    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseFirestore db;
     private String deviceId;
     private String facility;
     private final ArrayList<Event> events;
     private final Runnable notifyObservers;
 
-    public Organizer(String deviceId, Runnable notifyObservers) {
+    /**
+     * Creates an organizer without a facility.
+     * @param deviceId the organizer's device id
+     * @param notifyObservers the parent user's notifyObservers method
+     * @param db the database to use
+     */
+    public Organizer(String deviceId, Runnable notifyObservers, FirebaseFirestore db) {
         this.deviceId = deviceId;
         this.notifyObservers = notifyObservers;
         this.events = new ArrayList<>();
+        this.db = db;
     }
 
     /**
-     * Creates an Organizer from a facility name.
-     *
-     * @param facility: the organizer's facility name
+     * Creates an organizer with a facility.
+     * @param deviceId the organizer's device id
+     * @param facility the organizer's facility
+     * @param notifyObservers the parent user's notifyObservers method
+     * @param db the database to use
      */
-    public Organizer(String deviceId, String facility, Runnable notifyObservers) {
+    public Organizer(String deviceId, String facility, Runnable notifyObservers, FirebaseFirestore db) {
         this.deviceId = deviceId;
         this.facility = facility;
         this.notifyObservers = notifyObservers;
         this.events = new ArrayList<>();
+        this.db = db;
     }
 
     /**
@@ -74,6 +83,7 @@ public class Organizer {
                                     eventData.get("hours") == null ? null : Integer.valueOf(String.format("%s", eventData.get("hours"))),
                                     eventData.get("minutes") == null ? null : Integer.valueOf(String.format("%s", eventData.get("minutes")))
                             );
+
                             // Check for duplicate events (could switch this to a set for performance, but event counts should be low)
                             for(int i = 0; i < events.size(); i++) {
                                 if(Objects.equals(event.getId(), events.get(i).getId())) return;
@@ -88,7 +98,6 @@ public class Organizer {
 
     /**
      * Gets the facility name for the organizer.
-     *
      * @return the organizer's facility name
      */
     public String getFacility() {
@@ -97,17 +106,22 @@ public class Organizer {
 
     /**
      * Sets the facility name for the organizer.
-     *
      * @param facility: the new facility name
      */
     public void setFacility(String facility) {
         this.facility = facility;
+
+        // Set all of the organizers events to use this facility
+        for(Event e : events) {
+            e.setFacility(facility);
+        }
+
         notifyObservers.run();
     }
 
     /**
-     * <<<<<<< HEAD
      * Gets the organizer's events list.
+     * @return list of the organizer's events
      */
     public ArrayList<Event> getEvents() {
         return events;
@@ -115,7 +129,6 @@ public class Organizer {
 
     /**
      * Adds an event to the organizer's list.
-     *
      * @param event the event to be added
      */
     public void addEvent(Event event) {
@@ -129,7 +142,6 @@ public class Organizer {
 
     /**
      * Remove an event from the organizer's list.
-     *
      * @param event the event to be removed
      */
     public void removeEvent(Event event) {

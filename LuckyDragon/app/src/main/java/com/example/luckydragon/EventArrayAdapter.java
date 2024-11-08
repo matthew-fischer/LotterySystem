@@ -26,7 +26,7 @@ import java.util.Objects;
  * </p>
  */
 public class EventArrayAdapter extends ArrayAdapter<Event> {
-    ArrayList<Event> eventData;
+    private ArrayList<Event> eventData;
     private Fragment fragment;
     private String role;
     public EventArrayAdapter(ArrayList<Event> eventData, Context context, Fragment fragment, String role) {
@@ -80,5 +80,9 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
         });
 
         return rowView;
+    }
+
+    public void setEventData(ArrayList<Event> eventData) {
+        this.eventData = eventData;
     }
 }

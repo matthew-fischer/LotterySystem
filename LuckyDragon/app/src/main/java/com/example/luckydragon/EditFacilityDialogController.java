@@ -1,22 +1,30 @@
-package com.example.luckydragon;
+/*
+ * Controller for EditFacilityDialogFragment.
+ * Outstanding Issues:
+ *   NONE
+ */
 
-import android.util.Log;
+package com.example.luckydragon;
 
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
 
+/**
+ * Defines EditFacilityDialogController.
+ * Interacts with EditFacilityDialogFragment.
+ */
 public class EditFacilityDialogController extends Controller {
     EditFacilityDialogFragment editFacilityDialogFragment;
 
+    /**
+     * Creates an EditFacilityDialogController instance.
+     * @param user the user of the application
+     * @param editFacilityDialogFragment the editFacilityDialogFragment being controlled
+     */
     public EditFacilityDialogController(User user, EditFacilityDialogFragment editFacilityDialogFragment) {
         super(user);
         this.editFacilityDialogFragment = editFacilityDialogFragment;
-    }
-
-    @Override
-    public User getObservable () {
-        return (User) super.getObservable();
     }
 
     /**
@@ -33,5 +41,10 @@ public class EditFacilityDialogController extends Controller {
 
         assert getObservable().getOrganizer() != null;
         getObservable().getOrganizer().setFacility(facilityName);
+    }
+
+    @Override
+    public User getObservable () {
+        return (User) super.getObservable();
     }
 }

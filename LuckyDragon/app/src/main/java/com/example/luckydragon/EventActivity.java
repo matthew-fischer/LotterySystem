@@ -24,6 +24,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * EventActivity is the activity for viewing an event. Has a View and
+ * Controller, and allows a Entrant to join/leave/accept an invitation to an
+ * Event. It also displays a button to allow Admins to remove the QR code
+ * or delete the event entirely.
+ */
 public class EventActivity extends AppBarActivity {
     private Event event;
     private EventView eventView;

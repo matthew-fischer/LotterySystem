@@ -136,14 +136,16 @@ public class Event extends Observable implements Serializable {
      * Save to firestore
      */
     public void save() {
-        if(!nonNull(organizerDeviceId)) {
-            Log.e("Event", "Tried to save an event without organizerDeviceId");
-            return;
-        }
-        if(!nonNull(facility)) {
-            Log.e("Event", "Tried to save an event without a facility");
-            return;
-        }
+//        if(!nonNull(organizerDeviceId)) {
+//            Log.e("Event", "Tried to save an event without organizerDeviceId");
+//            return;
+//        }
+//        if(!nonNull(facility)) {
+//            Log.e("Event", "Tried to save an event without a facility");
+//            return;
+//        }
+//                Log.d("EXTRACTING3", name);
+//        Log.d("EXTRACTING4", organizerDeviceId);
 
         Map<String, Object> eventData = new HashMap<>();
         if(nonNull(name)) eventData.put("name", name);
@@ -187,36 +189,69 @@ public class Event extends Observable implements Serializable {
                 if (eventData == null) {
                     throw new RuntimeException("Event has no data.");
                 }
-                name = (String) eventData.get("name");
-                organizerDeviceId = (String) eventData.get("organizerDeviceId");
-                facility = (String) eventData.get("facility");
-                waitListLimit = (int) (long) eventData.get("waitListLimit");
-                attendeeLimit = (int) (long) eventData.get("attendeeLimit");
-                hasGeolocation = (Boolean) eventData.get("hasGeolocation");
-                date = (String) eventData.get("date");
-                time = new Time((int) (long) eventData.get("hours"), (int) (long) eventData.get("minutes"));
+
+                parseEventDocument(eventData);
 //                TODO: Decode qrHash
 //                qrHash
-                List<String> incWaitList = (List<String>) eventData.get("waitList");
-                List<String> incInviteeList = (List<String>) eventData.get("inviteeList");
-                List<String> incAttendeeList = (List<String>) eventData.get("attendeeList");
-                List<String> incCancelledList = (List<String>) eventData.get("cancelledList");
-                if (incWaitList != null) {
-                    waitList = incWaitList;
-                }
-                if (incInviteeList != null) {
-                    inviteeList = incInviteeList;
-                }
-                if (incAttendeeList != null) {
-                    attendeeList = incAttendeeList;
-                }
-                if (incCancelledList != null) {
-                    cancelledList = incCancelledList;
-                }
 
                 notifyObservers();
             }
         });
+    }
+
+    /**
+     * Given the map data of an event returned from a Firestore call,
+     * parses the raw data into the event object. Any fields set to null will also
+     * be set to null in the event object.
+     * @param eventData the raw event data from Firestore
+     */
+    public void parseEventDocument(Map<String, Object> eventData) {
+        if (nonNull(eventData.get("name"))) {
+            name = (String) eventData.get("name");
+        }
+        if (nonNull(eventData.get("organizerDeviceId"))) {
+            organizerDeviceId = (String) eventData.get("organizerDeviceId");
+        }
+        if (nonNull(eventData.get("facility"))) {
+            facility = (String) eventData.get("facility");
+        }
+        if (nonNull(eventData.get("waitListLimit"))) {
+            waitListLimit = ((Long) eventData.get("waitListLimit")).intValue();
+        }
+        if (nonNull(eventData.get("attendeeLimit"))) {
+            attendeeLimit = ((Long) eventData.get("attendeeLimit")).intValue();
+        }
+        if (nonNull(eventData.get("hasGeolocation"))) {
+            hasGeolocation = (boolean) eventData.get("hasGeolocation");
+        }
+        if (nonNull(eventData.get("data"))) {
+            date = (String) eventData.get("date");
+        }
+//        name = eventData.get("name") != null ? (String) eventData.get("name") : null;
+//        organizerDeviceId = eventData.get("organizerDeviceId") != null ? (String) eventData.get("OrganizerDeviceId") : null;
+//        facility = eventData.get("facility") != null ? (String) eventData.get("facility") : null;
+//        waitListLimit = eventData.get("waitListLimit") != null ? ((Long) eventData.get("waitListLimit")).intValue() : null;
+//        attendeeLimit = eventData.get("attendeeLimit") != null ? ((Long) eventData.get("attendeeLimit")).intValue() : null;
+//        hasGeolocation = eventData.get("hasGeolocation") != null ? (Boolean) eventData.get("hasGeolocation") : null;
+//        date = eventData.get("date") != null ? (String) eventData.get("date") : null;
+
+        int hours = eventData.get("hours") != null ? ((Long) eventData.get("hours")).intValue() : null;
+        int minutes = eventData.get("minutes") != null ? ((Long) eventData.get("minutes")).intValue() : null;
+        time = new Time(hours, minutes);
+
+
+        if (eventData.get("waitList") != null) {
+            waitList = (List<String>) eventData.get("waitList");
+        }
+        if (eventData.get("attendeeList") != null) {
+            attendeeList = (List<String>) eventData.get("attendeeList");
+        }
+        if (eventData.get("inviteeList") != null) {
+            inviteeList = (List<String>) eventData.get("inviteeList");
+        }
+        if (eventData.get("cancelledList") != null) {
+            cancelledList = (List<String>) eventData.get("cancelledList");
+        }
     }
 
     /**
@@ -366,6 +401,12 @@ public class Event extends Observable implements Serializable {
                 .delete();
     }
 
+    public void deleteEventFromDb() {
+        db.collection("events")
+                .document(id)
+                .delete();
+    }
+
     public void removeQR(String eventId) {
         db.collection("events")
                 .document(eventId)
@@ -435,6 +476,7 @@ public class Event extends Observable implements Serializable {
     }
 
     public void setName(String name) {
+        Log.d("EXTRACTING2", name);
         // TODO: Catch empty?
         this.name = name;
         notifyObservers();
@@ -478,5 +520,21 @@ public class Event extends Observable implements Serializable {
     public void setHasGeolocation(Boolean hasGeolocation) {
         this.hasGeolocation = hasGeolocation;
         notifyObservers();
+    }
+
+    public String getOrganizerDeviceId() {
+        return organizerDeviceId;
+    }
+
+    public List<String> getInviteeList() {
+        return inviteeList;
+    }
+
+    public List<String> getAttendeeList() {
+        return attendeeList;
+    }
+
+    public List<String> getCancelledList() {
+        return cancelledList;
     }
 }

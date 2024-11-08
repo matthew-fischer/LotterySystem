@@ -15,7 +15,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+/**
+ * The GlobalApp class stores global information of the app including the
+ * current user, current event, and global utility functions like obtaining
+ * the current user, current event, or setting the global database instance
+ * to be used. It also allows getting a list of all users and all events.
+ */
 public class GlobalApp extends Application {
     public enum ROLE {
         ENTRANT,
@@ -24,7 +31,7 @@ public class GlobalApp extends Application {
     }
     private User user;
     private ROLE role;
-    private Map<String, Event> events;
+    private Event event;
     private FirebaseFirestore db;
 
     private UserList users;
@@ -32,14 +39,18 @@ public class GlobalApp extends Application {
     private String deviceId = null;
 
     final Bitmap profilePictureSize = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
+
+    /**
+     * Gets the current user of the app, fetching the DB if needed.
+     * if it has not been locally set yet.
+     * @return the current user of the app
+     */
     public User getUser() {
-        Log.d("GLOBALAPP", String.valueOf(db == null));
         if (db == null) {
             setDb(FirebaseFirestore.getInstance());
         }
         if (user == null) {
             if(deviceId == null) deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-            Log.e("DEVICE ID", deviceId);
             user = new User(deviceId, db);
             user.fetchData();
         }
@@ -50,6 +61,11 @@ public class GlobalApp extends Application {
         return role;
     }
 
+    /**
+     * Returns a list of all users who have registered with the app
+     * according to the db.
+     * @return the list of all users registered
+     */
     public UserList getUsers() {
         if (db == null) {
             setDb(FirebaseFirestore.getInstance());
@@ -64,36 +80,58 @@ public class GlobalApp extends Application {
         this.role = role;
     }
 
+    /**
+     * Gets the event with eventId, and fetches
+     * the db if it has not been set yet.
+     * @param eventId the eventId of the event
+     * @return the event object
+     */
     public Event getEvent(String eventId) {
         if (db == null) {
             setDb(FirebaseFirestore.getInstance());
         }
-        if (events == null) {
-            events = new HashMap<>();
-        }
-        Event event = events.get(eventId);
-        if (event == null || event.getId() != eventId) {
+        if (event == null || !Objects.equals(event.getId(), eventId)) {
             event = new Event(eventId, db);
-            events.put(eventId, event);
             event.fetchData();
         }
         return event;
     }
 
+    /**
+     * Creates an Event in the db. If the event already existed,
+     * returns the event stored in the db.
+     * @return the event after it has been created
+     */
     public Event makeEvent() {
         // create an eventId
+        if (db == null) {
+            setDb(FirebaseFirestore.getInstance());
+        }
         Event event = new Event(db);
 
         return getEvent(event.getId());
     }
 
-    // functions for tests
+    /**
+     * Sets the current db. Used in tests for mocking.
+     * @param db the db to be set
+     */
     public void setDb(FirebaseFirestore db) {
         this.db = db;
     }
+
+    /**
+     * Sets the current User.
+     * @param newUser the user to be set
+     */
     public void setUser(User newUser) {
         user = newUser;
     }
+
+    /**
+     * Gets a list of all events in the db.
+     * @return an EventList of all events
+     */
     public EventList getEvents() {
         if (db == null) {
             setDb(FirebaseFirestore.getInstance());
