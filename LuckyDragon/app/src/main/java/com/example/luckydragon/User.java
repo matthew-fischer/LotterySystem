@@ -171,10 +171,19 @@ public class User extends Observable {
 
     /**
      * Gets the user's profile picture.
-     * @return the user's profile picture if it exists, otherwise the default profile picture.
+     * @return the user's uploaded profile picture if is not null,
+     * otherwise the default profile picture.
      */
     public Bitmap getProfilePicture() {
         if (uploadedProfilePicture != null) return uploadedProfilePicture;
+        return defaultProfilePicture;
+    }
+
+    /**
+     * Gets the user's default profile picture.
+     * @return the user's default profile picture.
+     */
+    public Bitmap getDefaultProfilePicture() {
         return defaultProfilePicture;
     }
 
@@ -274,7 +283,7 @@ public class User extends Observable {
      * @param s the string to generate the profile picture using
      * @return the profile picture as a Bitmap
      */
-    public Bitmap generateProfilePicture(String s) {
+    public static Bitmap generateProfilePicture(String s) {
         if (s == null || s.isEmpty()) return null;
 
         Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
@@ -374,7 +383,7 @@ public class User extends Observable {
      * @param image: the bitmap to convert to base 64 string
      * @return image encoded as string
      */
-    private String bitmapToString(Bitmap image) {
+    private static String bitmapToString(Bitmap image) {
         // reference: https://stackoverflow.com/questions/13562429/how-many-ways-to-convert-bitmap-to-string-and-vice-versa
         if (image == null) return "";
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
