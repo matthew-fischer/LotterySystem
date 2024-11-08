@@ -97,6 +97,6 @@ public class AddEventController extends Controller {
      * @param toggle the SwitchMaterial of the geolocation switch
      */
     public void extractHasGeolocation(SwitchMaterial toggle) {
-        getObservable().setHasGeolocation(toggle.isEnabled());
+        getObservable().setHasGeolocation(toggle.isChecked());
     }
 }

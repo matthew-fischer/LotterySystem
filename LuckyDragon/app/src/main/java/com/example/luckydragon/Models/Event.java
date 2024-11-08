@@ -45,21 +45,34 @@ public class Event extends Observable implements Serializable {
         public Integer hours;
         public Integer minutes;
 
+        /**
+         * Creates a time instance.
+         * @param hours the hours (24 hour time)
+         * @param minutes the minutes
+         */
         public Time(Integer hours, Integer minutes) {
             this.hours = hours;
             this.minutes = minutes;
         }
 
+        /**
+         * Generates a 24-hour string representation of time.
+         * @return 24-hr time as string
+         */
         @NonNull
         @Override
         public String toString() {
             return String.format("%02d%02d", hours, minutes);
         }
 
+        /**
+         * Generates a 12-hour string representation of time.
+         * @return 12-hr time as string
+         * @return
+         */
         public String toString12h() {
-            String AMorPM = hours <= 12 ? "AM" : "PM";
-            if(hours > 12) hours -= 12;
-            return String.format("%02d:%02d %s", hours, minutes, AMorPM);
+            String AMorPM = hours < 12 ? "AM" : "PM";
+            return String.format("%02d:%02d %s", hours > 12 ? hours - 12 : hours, minutes, AMorPM);
         }
     }
     // TODO: REMOVE DEFAULT
@@ -74,7 +87,7 @@ public class Event extends Observable implements Serializable {
     private Integer attendeeLimit = -1;
     private Boolean hasGeolocation = false;
     private String date = LocalDate.now().toString();
-    private Time time = new Time(0, 0);
+    private Time time = new Time(19, 0);
     private BitMatrix qrHash;
     private Bitmap qrCode;
 
@@ -83,12 +96,21 @@ public class Event extends Observable implements Serializable {
     private List<String> attendeeList = new ArrayList<>();
     private List<String> cancelledList = new ArrayList<>();
 
+    /**
+     * Creates an event instance without a given id.
+     * @param db the database to use
+     */
     public Event(FirebaseFirestore db) {
         this.db = db;
         id = db.collection("events").document().getId();
         qrHash = generateQRCode();
     }
 
+    /**
+     * Creates an event instance with a given id.
+     * @param id the event id
+     * @param db the database to use
+     */
     public Event(String id, FirebaseFirestore db) {
         super();
         this.db = db;
@@ -122,7 +144,9 @@ public class Event extends Observable implements Serializable {
         this.qrCode = createBitMap(this.qrHash);
     }
 
-
+    /**
+     * Notify observers and save event state to database.
+     */
     @Override
     public void notifyObservers() {
         super.notifyObservers();
@@ -130,20 +154,9 @@ public class Event extends Observable implements Serializable {
     }
 
     /**
-     * Save to firestore
+     * Saves event data to database.
      */
     public void save() {
-//        if(!nonNull(organizerDeviceId)) {
-//            Log.e("Event", "Tried to save an event without organizerDeviceId");
-//            return;
-//        }
-//        if(!nonNull(facility)) {
-//            Log.e("Event", "Tried to save an event without a facility");
-//            return;
-//        }
-//                Log.d("EXTRACTING3", name);
-//        Log.d("EXTRACTING4", organizerDeviceId);
-
         Map<String, Object> eventData = new HashMap<>();
         if(nonNull(name)) eventData.put("name", name);
         if(nonNull(organizerDeviceId) && !organizerDeviceId.isEmpty()) eventData.put("organizerDeviceId", organizerDeviceId);
@@ -169,6 +182,9 @@ public class Event extends Observable implements Serializable {
                 });
     }
 
+    /**
+     * Fetches event data from database.
+     */
     public void fetchData() {
         // TODO: Ensure null attr are ok to read
         DocumentReference docRef = db.collection("events").document(id);
@@ -224,18 +240,10 @@ public class Event extends Observable implements Serializable {
         if (nonNull(eventData.get("data"))) {
             date = (String) eventData.get("date");
         }
-//        name = eventData.get("name") != null ? (String) eventData.get("name") : null;
-//        organizerDeviceId = eventData.get("organizerDeviceId") != null ? (String) eventData.get("OrganizerDeviceId") : null;
-//        facility = eventData.get("facility") != null ? (String) eventData.get("facility") : null;
-//        waitListLimit = eventData.get("waitListLimit") != null ? ((Long) eventData.get("waitListLimit")).intValue() : null;
-//        attendeeLimit = eventData.get("attendeeLimit") != null ? ((Long) eventData.get("attendeeLimit")).intValue() : null;
-//        hasGeolocation = eventData.get("hasGeolocation") != null ? (Boolean) eventData.get("hasGeolocation") : null;
-//        date = eventData.get("date") != null ? (String) eventData.get("date") : null;
 
         int hours = eventData.get("hours") != null ? ((Long) eventData.get("hours")).intValue() : null;
         int minutes = eventData.get("minutes") != null ? ((Long) eventData.get("minutes")).intValue() : null;
         time = new Time(hours, minutes);
-
 
         if (eventData.get("waitList") != null) {
             waitList = (List<String>) eventData.get("waitList");
@@ -348,13 +356,17 @@ public class Event extends Observable implements Serializable {
         return bitMap;
     }
 
+    /**
+     * Adds device id to waitlist.
+     * @param deviceId user's unique device id
+     */
     public void joinWaitList(String deviceId) {
         if (!waitList.contains(deviceId)) {
             waitList.add(deviceId);
             notifyObservers();
         }
     }
-    /** Remove deviceId from joinWaitList when cancel button is clicked
+    /** Removes deviceId from joinWaitList when cancel button is clicked
      * @param deviceId users unique deviceID
      */
     public void leaveWaitList(String deviceId) {
@@ -364,6 +376,10 @@ public class Event extends Observable implements Serializable {
         }
     }
 
+    /**
+     * Removes deviceId from invitee list.
+     * @param deviceId users unique device ID
+     */
     public void leaveInviteeList(String deviceId) {
         if (inviteeList.contains(deviceId)) {
             inviteeList.remove(deviceId);
@@ -371,6 +387,10 @@ public class Event extends Observable implements Serializable {
         }
     }
 
+    /**
+     * Add deviceId to attendee list.
+     * @param deviceId
+     */
     public void joinAttendeeList(String deviceId) {
         if (!attendeeList.contains(deviceId)) {
             attendeeList.add(deviceId);
@@ -378,6 +398,10 @@ public class Event extends Observable implements Serializable {
         }
     }
 
+    /**
+     * Removes deviceId from attendee list.
+     * @param deviceId user's unique device id
+     */
     public void leaveAttendeeList(String deviceId) {
         if (attendeeList.contains(deviceId)) {
             attendeeList.remove(deviceId);
@@ -385,6 +409,10 @@ public class Event extends Observable implements Serializable {
         }
     }
 
+    /**
+     * Adds device id to cancelled list.
+     * @param deviceId user's unique device id
+     */
     public void joinCancelledList(String deviceId) {
         if (!cancelledList.contains(deviceId)) {
             cancelledList.add(deviceId);
@@ -392,24 +420,38 @@ public class Event extends Observable implements Serializable {
         }
     }
 
+    /**
+     * Deletes an event from the database.
+     * @param eventId the id of the event
+     * - Could this be replaced by deleteEventFromDb()?
+     */
     public void deleteEvent(String eventId) {
         db.collection("events")
                 .document(eventId)
                 .delete();
     }
 
+    /**
+     * Deletes this event from the database.
+     * This does not take a device id.
+     */
     public void deleteEventFromDb() {
         db.collection("events")
                 .document(id)
                 .delete();
     }
 
+    /**
+     * Removes the event's QR data from the database.
+     * @param eventId the event id
+     */
     public void removeQR(String eventId) {
         db.collection("events")
                 .document(eventId)
                 .update("hashedQR", "null");
     }
 
+    // Getters and setters:
     public String getTime12h() {
         return time.toString12h();
     }
@@ -448,18 +490,38 @@ public class Event extends Observable implements Serializable {
 
     public boolean hasGeolocation() { return hasGeolocation; }
 
+    /**
+     * Checks if deviceId is present on the waitlist.
+     * @param deviceId the device id
+     * @return true if it is present, else false
+     */
     public boolean onWaitList(String deviceId) {
         return waitList.contains(deviceId);
     }
 
+    /**
+     * Checks if deviceId is present on the invitee list.
+     * @param deviceId the device id
+     * @return true if it is present, else false
+     */
     public boolean onInviteeList(String deviceId) {
         return inviteeList.contains(deviceId);
     }
 
+    /**
+     * Checks if deviceId is present on the attendee list.
+     * @param deviceId the device id
+     * @return true if it is present, else false
+     */
     public boolean onAttendeeList(String deviceId) {
         return attendeeList.contains(deviceId);
     }
 
+    /**
+     * Checks if deviceId is present on the cancelled list.
+     * @param deviceId the device id
+     * @return true if it is present, else false
+     */
     public boolean onCancelledList(String deviceId) {
         return cancelledList.contains(deviceId);
     }

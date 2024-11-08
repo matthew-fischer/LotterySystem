@@ -79,6 +79,14 @@ public class OrganizerProfileFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        // the view associated with theis fragment must stop observing when the fragment is destroyed
+        organizerProfileView.stopObserving();
+    }
+
     /**
      * Sets the facility text view to a new value.
      * EditFacilityDialogFragment uses this function to update the facility textview after a change is made.

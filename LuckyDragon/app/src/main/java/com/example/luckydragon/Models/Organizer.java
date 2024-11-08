@@ -132,6 +132,7 @@ public class Organizer {
     public void addEvent(Event event) {
         if(event.getName().isEmpty() || event.getFacility().isEmpty() || event.getAttendeeSpots() == -1) {
             Log.e("EVENT", "Did not add event because some mandatory fields were empty!");
+            event.deleteEventFromDb(); // make sure event is not in db
             return;
         }
         events.add(event);
