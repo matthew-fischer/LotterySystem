@@ -60,7 +60,7 @@ public class EntrantProfileFragment extends Fragment {
 
             // This is for testing without scanning QR Code:
             Intent intent = new Intent(getActivity(), EventActivity.class);
-            String eventId = "NR6CbgJwPFBmzmNWLYn1";
+            String eventId = "rDvs0vS2WeRRwtN9N9L9";
             intent.putExtra("eventID", eventId);
             String deviceID = ((GlobalApp) getActivity().getApplication()).getUser().getDeviceId();
             intent.putExtra("deviceID", deviceID);
