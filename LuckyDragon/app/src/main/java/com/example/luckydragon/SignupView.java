@@ -6,6 +6,10 @@ import android.view.View;
 
 import java.util.Objects;
 
+/**
+ * The SignupView class is the View managed by the SignupActivity. Handles displaying
+ * the user profile information and updating it if the User model changes.
+ */
 public class SignupView extends Observer {
     private final SignupActivity signupActivity;
     private final SignupController signupController;
@@ -21,6 +25,10 @@ public class SignupView extends Observer {
         return (User) super.getObservable();
     }
 
+    /**
+     * Updates the View when the User model has changed.
+     * @param whoUpdatedMe the Observable that updated this View
+     */
     @Override
     public void update(Observable whoUpdatedMe) {
         // check if user has valid fields

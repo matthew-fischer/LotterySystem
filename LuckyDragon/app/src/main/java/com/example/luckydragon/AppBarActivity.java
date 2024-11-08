@@ -14,6 +14,11 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * The Activity for the top level AppBar that is displayed on each page
+ * within the app. Allows navigating back to the home page or the users
+ * profile page.
+ */
 public abstract class AppBarActivity extends AppCompatActivity {
     private MenuItem navProfile;
     private boolean navProfileVisible = true;
@@ -53,6 +58,10 @@ public abstract class AppBarActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Sets the profile navigation button to visible/invisible.
+     * @param visible true if want to make visible, false otherwise
+     */
     public void setNavProfileVisible(boolean visible) {
         if (navProfile == null) {
             Log.d("Custom", "setNavProfileVisible: Nav profile does not exist yet");
