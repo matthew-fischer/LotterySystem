@@ -70,6 +70,11 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.0.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.0.1")
 
+    testImplementation("org.mockito:mockito-core:5.14.2")
+    testImplementation("org.mockito:mockito-core:5.14.2")
+    testImplementation("androidx.test.ext:junit:1.2.1")
+    testImplementation(libs.junit.jupiter);
+
     androidTestImplementation("org.mockito:mockito-core:5.14.2")
     androidTestImplementation("org.mockito:mockito-android:5.14.2")
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
