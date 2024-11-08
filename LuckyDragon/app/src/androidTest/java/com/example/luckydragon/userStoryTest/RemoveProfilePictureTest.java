@@ -80,7 +80,7 @@ public class RemoveProfilePictureTest {
 
     Map<String, Object> testUserData;
 
-    // Mock organizer with an existing facility
+    // Mock user with uploaded profile picture and default profile picture (auto generated on sign up)
     private HashMap<String, Object> getMockData() {
         // Define test user
         HashMap<String, Object> testUserData = new HashMap<>();
