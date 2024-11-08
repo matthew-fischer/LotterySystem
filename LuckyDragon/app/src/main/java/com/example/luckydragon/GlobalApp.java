@@ -149,12 +149,4 @@ public class GlobalApp extends Application {
         eventList = null;
         deviceId = null;
     }
-
-    public void setEventList(EventList newEventList) {
-        this.eventList = newEventList;
-    }
-
-    public EventList getEventList() {
-        return eventList;
-    }
 }
