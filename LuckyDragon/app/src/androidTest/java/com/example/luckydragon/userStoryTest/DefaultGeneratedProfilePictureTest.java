@@ -142,9 +142,9 @@ public class DefaultGeneratedProfilePictureTest {
 
     /**
      * USER STORY TEST
-     * User opens app and selects 'entrant'.
-     * They are brought straight to their profile.
-     * There is no login page.
+     * New user opens app and selects 'entrant'.
+     * User signs up with name and email and does not upload profile picture.
+     * User is assigned a randomly generated default profile picture based on their name.
      */
     @Test
     public void defaultProfilePictureTest() {
