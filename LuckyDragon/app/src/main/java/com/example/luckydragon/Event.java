@@ -535,7 +535,6 @@ public class Event extends Observable implements Serializable {
     }
 
     public void setName(String name) {
-        Log.d("EXTRACTING2", name);
         // TODO: Catch empty?
         this.name = name;
         notifyObservers();
