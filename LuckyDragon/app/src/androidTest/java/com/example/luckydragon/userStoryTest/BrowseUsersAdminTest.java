@@ -31,6 +31,7 @@ import com.example.luckydragon.MockedDb;
 import com.example.luckydragon.R;
 import com.example.luckydragon.SelectRoleActivity;
 import com.example.luckydragon.ViewEventsActivity;
+import com.example.luckydragon.ViewProfilesActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -53,7 +54,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BrowseEventsAdminTest extends MockedDb{
+public class BrowseUsersAdminTest extends MockedDb{
 
     @Override
     protected HashMap<String, Object> getMockData() {
@@ -97,22 +98,22 @@ public class BrowseEventsAdminTest extends MockedDb{
     /**
      * ADMIN STORY TEST
      * >
-     * US 03.04.01 As an administrator, I want to be able to browse events.
-     * Launch activity directly on ViewEvents activity
-     * Checks if listview with user profiles is being displayed
+     * US 03.05.01 As an administrator, I want to be able to browse profiles.
+     * Launch activity directly on ViewProfiles activity
+     * Checks if listview with events is being displayed
      */
     @Test
-    public void testBrowseEvents() {
+    public void testBrowseUsers() {
 
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        final Intent intent = new Intent(targetContext, ViewEventsActivity.class);
+        final Intent intent = new Intent(targetContext, ViewProfilesActivity.class);
 
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
 
         // Launch event activity directly
-        try (final ActivityScenario<ViewEventsActivity> scenario = ActivityScenario.launch(intent)) {
+        try (final ActivityScenario<ViewProfilesActivity> scenario = ActivityScenario.launch(intent)) {
             SystemClock.sleep(5000);
-            onView(withId(R.id.adminProfileEventsListview)).check(matches(isDisplayed()));
+            onView(withId(R.id.adminProfileUsersListview)).check(matches(isDisplayed()));
         }
     }
 
