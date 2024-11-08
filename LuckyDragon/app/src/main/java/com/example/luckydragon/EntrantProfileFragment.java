@@ -3,6 +3,7 @@ package com.example.luckydragon;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -21,6 +22,10 @@ import com.google.zxing.integration.android.IntentResult;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
+/**
+ * Fragment uses to display Entrant Profile that shows all their information.
+ * This is where entrants have the ability to scan a qr code to view/sign-up for an event.
+ */
 public class EntrantProfileFragment extends Fragment {
     public EntrantProfileFragment() {
         super(R.layout.fragment_entrant_profile);
@@ -39,6 +44,12 @@ public class EntrantProfileFragment extends Fragment {
     private ListView invitedEventsListView;
     private ListView cancelledEventsListView;
 
+    /**
+     * Creates an onClickListener for QR Scanning. Fetches all event data and connects to all event listviews.
+     * @param view The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
@@ -90,6 +101,12 @@ public class EntrantProfileFragment extends Fragment {
         entrantEventsView = new EntrantEventsView(eventList, this);
     }
 
+    /**
+     * Sets the string returned from the qr scanning intent to eventID. Then starts corresponding EventActivity.
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
 //    @Override
 //    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data){
 //        super.onActivityResult(requestCode, resultCode, data);
