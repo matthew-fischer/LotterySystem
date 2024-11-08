@@ -60,9 +60,8 @@ public class Event extends Observable implements Serializable {
         }
 
         public String toString12h() {
-            String AMorPM = hours <= 12 ? "AM" : "PM";
-            if(hours > 12) hours -= 12;
-            return String.format("%02d:%02d %s", hours, minutes, AMorPM);
+            String AMorPM = hours < 12 ? "AM" : "PM";
+            return String.format("%02d:%02d %s", hours > 12 ? hours - 12 : hours, minutes, AMorPM);
         }
     }
     // TODO: REMOVE DEFAULT
@@ -77,7 +76,7 @@ public class Event extends Observable implements Serializable {
     private Integer attendeeLimit = -1;
     private Boolean hasGeolocation = false;
     private String date = LocalDate.now().toString();
-    private Time time = new Time(0, 0);
+    private Time time = new Time(19, 0);
     private BitMatrix qrHash;
     private Bitmap qrCode;
 

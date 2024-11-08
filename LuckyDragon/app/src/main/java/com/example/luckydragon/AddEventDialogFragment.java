@@ -82,15 +82,11 @@ public class AddEventDialogFragment extends DialogFragment {
         TextInputEditText facilityEditText = dialogView.findViewById(R.id.facilityEditText);
         String facility = user.getOrganizer().getFacility();
         facilityEditText.setText(facility);
-        Log.d("TONY", event.getOrganizerDeviceId());
-
 
         return builder.setView(dialogView)
                 .setPositiveButton("Create", (dialogInterface, i) -> {
                     // TODO: make sure we only want to extract event on submit
                     // get fields
-                    Log.d("TONY", "onCreateDialog: ");
-                    Log.d("TONY", event.getOrganizerDeviceId());
                     TextInputEditText eventNameEditText = dialogView.findViewById(R.id.eventNameEditText);
                     TextInputEditText waitlistLimitEditText = dialogView.findViewById(R.id.waitlistLimitEditText);
                     TextInputEditText attendeeLimitEditText = dialogView.findViewById(R.id.attendeeLimitEditText);
@@ -103,6 +99,8 @@ public class AddEventDialogFragment extends DialogFragment {
                     controller.extractHasGeolocation(hasGeolocationSwitch);
 
                     // TODO: Make view reply if event with same info has been created upon save attempt
+
+                    Log.e("TIME", event.getTime12h());
 
                     user.getOrganizer().addEvent(event);
                 })
@@ -137,8 +135,8 @@ public class AddEventDialogFragment extends DialogFragment {
             MaterialTimePicker picker =
                     new MaterialTimePicker.Builder()
                             .setTimeFormat(TimeFormat.CLOCK_12H)
-                            .setHour(12)
-                            .setMinute(10)
+                            .setHour(19)
+                            .setMinute(00)
                             .setTitleText("Select Event Time")
                             .setInputMode(MaterialTimePicker.INPUT_MODE_KEYBOARD)
                             .build();
