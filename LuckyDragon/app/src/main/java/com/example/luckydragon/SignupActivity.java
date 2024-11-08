@@ -24,6 +24,10 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
+/**
+ * The activity used for signing up or editing user profile information.
+ * Uses a View and Controller to manage the User model.
+ */
 public class SignupActivity extends AppBarActivity {
     private User user;
     private SignupController signupController;
@@ -209,7 +213,10 @@ public class SignupActivity extends AppBarActivity {
         });
     }
 
-
+    /**
+     * Sets the profilePictureButton to display the profilePicture.
+     * @param profilePicture the given profilePicture to be displayed
+     */
     public void updateProfilePictureIcon(Bitmap profilePicture) {
         profilePictureButton.setImageBitmap(profilePicture);
 
