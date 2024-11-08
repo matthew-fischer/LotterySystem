@@ -112,6 +112,7 @@ public class LogInByDeviceTest {
         when(mockEventsCollection.document()).thenReturn(mockEventDocument);
         when(mockEventDocument.getId()).thenReturn("mockEventID");
 
+        when(mockEventsCollection.get()).thenReturn(mockEventQueryTask);
         when(mockEventsCollection.document(anyString())).thenReturn(mockEventDocument);
         when(mockEventDocument.get()).thenReturn(mockEventTask);
         // when set is called, we want to do nothing
@@ -129,6 +130,7 @@ public class LogInByDeviceTest {
                 .thenAnswer((invocation -> {
                     return null; // do nothing
                 }));
+        // In EventList.fetchData(), we don't want to pull events from db
     }
 
     @After
