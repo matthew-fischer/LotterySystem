@@ -4,6 +4,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+/**
+ * The EventView class is the View managed by the EventActivity. Handles displaying
+ * the event information and updating it if the Event model changes.
+ */
 public class EventView extends Observer {
     private TextView eventNameView;
     private TextView facilityNameView;
@@ -56,6 +60,10 @@ public class EventView extends Observer {
         return (Event) super.getObservable();
     }
 
+    /**
+     * Handles updating the View after the Event model has changed.
+     * @param whoUpdatedMe the Observable that updated this View
+     */
     @Override
     public void update(Observable whoUpdatedMe) {
         eventNameView.setText(getObservable().getName());

@@ -2,10 +2,9 @@ package com.example.luckydragon.userStoryTest;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
-
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
@@ -26,7 +25,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class EntrantNotInEventTest extends MockedDb {
+public class EventGeolocationWarning extends MockedDb {
     @Override
     protected HashMap<String, Object> getMockData() {
         // Define test user
@@ -51,12 +50,12 @@ public class EntrantNotInEventTest extends MockedDb {
         eventData.put("name", "C301 Standup");
         eventData.put("organizerDeviceId", "mockOrgId");
         eventData.put("facility", "UofA");
-        eventData.put("waitListLimit", 10L);
-        eventData.put("attendeeLimit", 10L);
-        eventData.put("hasGeolocation", false);
+        eventData.put("waitListLimit", new Long(10));
+        eventData.put("attendeeLimit", new Long(10));
+        eventData.put("hasGeolocation", true);
         eventData.put("date", LocalDate.now().toString());
-        eventData.put("hours", 10L);
-        eventData.put("minutes", 30L);
+        eventData.put("hours", new Long(10));
+        eventData.put("minutes", new Long(30));
         eventData.put("hashedQR", "Fake QR");
         eventData.put("waitList", new ArrayList<>());
         eventData.put("inviteeList", new ArrayList<>());
@@ -68,16 +67,13 @@ public class EntrantNotInEventTest extends MockedDb {
 
     /**
      * USER STORY TEST
-     * > US 01.01.01 Entrant - join the waiting list for a specific event
+     * > US 01.08.01 Entrant - be warned before joining a waitlist that requires geolocation
      * Launch activity directly on event activity
-     * User clicks sign up
-     * User is now part of the waitlist
-     * TODO: Below
-     * User can see that they are part of the waitlist
-     * User can see on their profile they are on the waitlist
+     * Event has geolocation enabled
+     * Text is displayed warning the user that this event has geolocation enabled
      */
     @Test
-    public void testJoinWaitlist() {
+    public void testEventGeolocationWarning() {
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
         globalApp.setDb(mockFirestore);
@@ -88,14 +84,8 @@ public class EntrantNotInEventTest extends MockedDb {
         final Intent intent = new Intent(targetContext, EventActivity.class);
         intent.putExtra("eventID", "fakeEventId");
         try (final ActivityScenario<EventActivity> scenario = ActivityScenario.launch(intent)) {
-            // Ensure we are not on waitlist
-            Event event = globalApp.getEvent("fakeEventId");
-            assertTrue(event.getWaitList().isEmpty());
-            // Click signup
-            onView(withId(R.id.signUpButton)).perform(click());
-
-            // Check we are on waitlist
-            assertTrue(event.getWaitList().contains("fakeDeviceId"));
+            // check if geolocation warning is shown
+            onView(withId(R.id.geolcationWarning)).check(matches(isDisplayed()));
         }
     }
 }
