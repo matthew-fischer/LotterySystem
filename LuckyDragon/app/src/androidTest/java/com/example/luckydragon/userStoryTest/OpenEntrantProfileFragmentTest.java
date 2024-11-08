@@ -158,6 +158,10 @@ public class OpenEntrantProfileFragmentTest {
     }
 
     /**
+     * US 01.01.01 As an entrant, I want to join the waiting list for a specific event
+     * This is the first part of this user story. We go to entrants profile fragment.
+     * Since we cannot test QR scanner, the second have of this user story is in JoinWaitlistTest.
+     *
      * Open Entrant Profile Fragment
      * User opens app and selects 'Entrant'.
      */
