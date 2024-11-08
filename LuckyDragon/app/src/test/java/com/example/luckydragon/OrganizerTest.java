@@ -6,14 +6,19 @@
 
 package com.example.luckydragon;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
 import android.util.Log;
 
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.Models.Organizer;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.junit.jupiter.api.Assertions;
@@ -22,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.w3c.dom.Document;
 
 /**
  * This is a collection of unit tests for the User class.
@@ -31,10 +37,19 @@ import org.mockito.Mockito;
 public class OrganizerTest {
     @Mock
     private FirebaseFirestore mockFirestore;
+    @Mock
+    private CollectionReference mockCollection;
+    @Mock
+    private DocumentReference mockDocument;
 
     @BeforeEach
     public void setup() {
         openMocks(this);
+        when(mockFirestore.collection("events")).thenReturn(mockCollection);
+        when(mockCollection.document(any())).thenReturn(mockDocument);
+        when(mockDocument.delete()).thenAnswer((invocation -> {
+            return null; // do nothing
+        }));
     }
 
     /**
