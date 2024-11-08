@@ -103,4 +103,14 @@ public class GlobalApp extends Application {
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
     }
+
+    public void resetState() {
+        db = null;
+        user = null;
+        event = null;
+        role = null;
+        users = null;
+        eventList = null;
+        deviceId = null;
+    }
 }
