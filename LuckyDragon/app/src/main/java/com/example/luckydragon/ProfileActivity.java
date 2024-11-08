@@ -1,11 +1,14 @@
-/**
+/*
  * Defines ProfileActivity which is the profile page.
  * Both users and organizers have profiles.
  * The shared logic is implemented in this activity.
- * The User-specific or organizer-specific part of the page goes in its own fragment.
- * If the user is in entrant mode, UserProfileFragment is embedded. (TODO: Implement UserProfileFragment)
+ * The user-specific or organizer-specific or admin-specific part of the page goes in its own fragment.
+ * If the user is in entrant mode, UserProfileFragment is embedded.
  * If the user is in organizer mode, OrganizerProfileFragment is embedded.
- * Not sure if we will have an Admin profile. If so, admin details should go in AdminProfileFragment.
+ * If the user is in admin mode, AdminProfileFragment is embedded.
+ * Associated with ProfileView.
+ * Issues:
+ *   NONE
  */
 
 package com.example.luckydragon;
@@ -21,13 +24,14 @@ import android.widget.Toast;
 
 import java.util.Objects;
 
+/**
+ * This is the activity for the profile page.
+ * It shows general user information like name, email, and phone number.
+ * It supports editing of this information.
+ * Role-specific information is embedded in this activity as a fragment (i.e. if user is in organizer mode, OrganizerProfileFragment is embedded.
+ * Updated by ProfileView.
+ */
 public class ProfileActivity extends AppBarActivity {
-    // Mode may be ENTRANT or ORGANIZER. If there is an admin profile, then ADMIN should be added as well.
-    enum Mode {
-        ENTRANT,
-        ORGANIZER,
-        ADMIN,
-    }
     private User user;
     private GlobalApp.ROLE role;
     private ProfileView profileView;
@@ -74,12 +78,15 @@ public class ProfileActivity extends AppBarActivity {
         // Initialize edit profile button on click
         ImageButton edit_profile_button = findViewById(R.id.edit_profile_button);
         edit_profile_button.setOnClickListener(view -> {
-            Log.e("CLICK", "edit profile button clicked");
             Intent goToSignup = new Intent(this, SignupActivity.class);
             startActivity(goToSignup);
         });
     }
 
+    /**
+     * Displays a short toast method with a given message.
+     * @param message the message to show
+     */
     public void sendToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }

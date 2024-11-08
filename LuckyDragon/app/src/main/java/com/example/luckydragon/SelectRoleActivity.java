@@ -1,6 +1,12 @@
-/**
- * Defines the SelectRoleActivity class.
+/*
+ * Defines SelectRoleActivity which is the opening page of the app.
+ * Has three buttons: entrant, organizer, administrator.
+ * When a user selects "entrant", they will be using the app in entrant mode.
+ * If they then want to use organizer functionality, they can return to this page and select a new mode.
+ * The admin button will only be shown to users with admin privileges.
  * Associated with SelectRoleView.
+ * ISSUES:
+ *   NONE
  */
 
 package com.example.luckydragon;
@@ -18,9 +24,10 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * NOTES
- * If user is an admin, "Entrant"/"Organizer"/"Administrator" buttons should show.
- * If user is not an admin, only "Entrant"/"Organizer" buttons should show.
+ * This is the activity for the select role page.
+ * Shows "entrant", "organizer", and "administrator" buttons.
+ * Allows user to choose the mode in which they wish to use the app.
+ * All buttons are hidden until the user is loaded.
  */
 public class SelectRoleActivity extends AppCompatActivity {
     private User user;
@@ -98,7 +105,7 @@ public class SelectRoleActivity extends AppCompatActivity {
     }
 
     /**
-     * Sets admin button visibility to VISIBLE..
+     * Sets admin button visibility to VISIBLE.
      */
     public void showAdminButton() {
         Button adminButton = findViewById(R.id.adminButton);
