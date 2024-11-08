@@ -21,6 +21,11 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+/**
+ * This is a collection of unit tests for the User class.
+ * fetchEvents() is not tested here since it requires the database.
+ * fetchEvents() should be well-tested by our UI tests (since it is essential to the organizer profile), so this should not be an issue.
+ */
 public class OrganizerTest {
     @Mock
     private FirebaseFirestore mockFirestore;
@@ -69,7 +74,7 @@ public class OrganizerTest {
      */
     @Test
     public void testAddEventInValid() {
-        // notifyObservers() runnable does nothing. db is null since this test will not use it
+        // notifyObservers() runnable is just an empty function
         Organizer testOrganizer = new Organizer("abcd1234", () -> {}, mockFirestore);
 
         Assertions.assertEquals(testOrganizer.getEvents().size(), 0);
