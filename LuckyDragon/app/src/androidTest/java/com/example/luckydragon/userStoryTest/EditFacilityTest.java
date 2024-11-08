@@ -29,9 +29,9 @@ import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.example.luckydragon.Activities.SelectRoleActivity;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.R;
-import com.example.luckydragon.SelectRoleActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -51,6 +51,10 @@ import org.mockito.Mock;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Contains tests for US 02.01.03
+ * Organizer - create and manage my facility profile
+ */
 public class EditFacilityTest {
     @Mock
     private FirebaseFirestore mockFirestore;
@@ -152,6 +156,7 @@ public class EditFacilityTest {
 
     /**
      * USER STORY TEST
+     * US 02.01.03 Organizer - create and manage my facility profile
      * User opens app and selects "Organizer".
      * User already has a facility.
      * The user's existing facility is displayed.

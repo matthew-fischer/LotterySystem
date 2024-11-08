@@ -27,10 +27,10 @@ import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.example.luckydragon.Event;
+import com.example.luckydragon.Activities.SelectRoleActivity;
 import com.example.luckydragon.GlobalApp;
+import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.R;
-import com.example.luckydragon.SelectRoleActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -50,6 +50,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Contains tests for US 01.07.01 Entrant - be identified by my device, so that I don't have to use a username and password
+ * Entrant - be identified by my device, so that I don't have to use a username and password
+ */
 public class StoreQrCodeTest {
     @Mock
     private FirebaseFirestore mockFirestore;
@@ -150,6 +154,7 @@ public class StoreQrCodeTest {
 
     /**
      * USER STORY TEST
+     * US 01.07.01 Entrant - be identified by my device, so that I don't have to use a username and password
      * User opens app and selects 'Organizer'.
      * User has an existing facility.
      * The user's facility is displayed correctly.

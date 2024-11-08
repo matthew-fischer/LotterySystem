@@ -19,9 +19,9 @@
 //import androidx.test.platform.app.InstrumentationRegistry;
 //
 //import com.example.luckydragon.GlobalApp;
-//import com.example.luckydragon.ProfileActivity;
+//import com.example.luckydragon.Activities.ProfileActivity;
 //import com.example.luckydragon.R;
-//import com.example.luckydragon.User;
+//import com.example.luckydragon.Models.User;
 //
 //import org.junit.Test;
 //import org.junit.runner.RunWith;
