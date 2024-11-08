@@ -12,10 +12,10 @@ import android.util.Log;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.Activities.EventActivity;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.MockedDb;
+import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.R;
 
 import org.junit.Test;
