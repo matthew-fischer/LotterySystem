@@ -266,12 +266,12 @@ public class User extends Observable {
     }
 
     /**
-     * Deterministically generates a profile picture from a given string
-     * @param s the string to generate the profile picture from
+     * Deterministically generates a profile picture using a string
+     * @param s the string to generate the profile picture using
      * @return the profile picture as a Bitmap
      */
     public Bitmap generateProfilePicture(String s) {
-        assert !s.isEmpty();
+        if (s == null || s.isEmpty()) return null;
 
         Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
@@ -286,7 +286,7 @@ public class User extends Observable {
         background.setColor(Color.HSVToColor(new float[]{hue, saturation, luminance}));
         canvas.drawRect(0, 0, 100, 100, background);
 
-        // Draw first letter of s on bitmap
+        // Draw first letter of string on bitmap
         String text = s.substring(0, 1);
         Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setColor(Color.WHITE);
@@ -371,6 +371,7 @@ public class User extends Observable {
      * @return image encoded as string
      */
     private String bitmapToString(Bitmap image) {
+        // reference: https://stackoverflow.com/questions/13562429/how-many-ways-to-convert-bitmap-to-string-and-vice-versa
         if (image == null) return "";
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
@@ -384,6 +385,7 @@ public class User extends Observable {
      * @return base64Str decoded to bitmap
      */
     public static Bitmap stringToBitmap(String base64Str) {
+        // reference: https://stackoverflow.com/questions/13562429/how-many-ways-to-convert-bitmap-to-string-and-vice-versa
         if (base64Str == null || base64Str.isEmpty()) return null;
         byte[] decodedBytes = Base64.decode(
                 base64Str.substring(base64Str.indexOf(",")  + 1),

@@ -10,17 +10,12 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 
-import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -28,9 +23,6 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.content.res.AppCompatResources;
-
-import java.util.Objects;
 
 public class SignupActivity extends AppBarActivity {
     private User user;
@@ -45,9 +37,7 @@ public class SignupActivity extends AppBarActivity {
     private SwitchMaterial switchNotifications;
     private Button submitButton;
     private ActivityResultLauncher<Intent> uploadImageResultLauncher;
-
-//    private LinearLayout uploadProfilePictureButton;
-    private ImageButton profilePictureButtton;
+    private ImageButton profilePictureButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,9 +53,7 @@ public class SignupActivity extends AppBarActivity {
         editPhone = findViewById(R.id.signupPhone);
         switchNotifications = findViewById(R.id.signupNotifications);
         submitButton = findViewById(R.id.signupSubmit);
-
-        // Profile picture
-        profilePictureButtton = findViewById(R.id.profilePictureIcon);
+        profilePictureButton = findViewById(R.id.profilePictureIcon);
 
         user = ((GlobalApp) getApplication()).getUser();
         signupController = new SignupController(user);
@@ -77,15 +65,12 @@ public class SignupActivity extends AppBarActivity {
                     @Override
                     public void onActivityResult(ActivityResult result) {
                         if (result.getResultCode() == Activity.RESULT_OK) {
-                            // There are no request codes
                             Intent data = result.getData();
-                            assert data != null;
+                            if (data == null || data.getData() == null) return;
                             Uri image = data.getData();
-                            assert image != null;
-
                             try {
                                 Bitmap profilePicture = MediaStore.Images.Media.getBitmap(getContentResolver(), image);
-                                // TODO: Add intent to crop image and move it around when selecting if that exists
+
                                 // Crop image to square
                                 int n = Math.min(profilePicture.getWidth(), profilePicture.getHeight());
                                 profilePicture = Bitmap.createBitmap(profilePicture, 0, 0, n, n);
@@ -98,7 +83,6 @@ public class SignupActivity extends AppBarActivity {
                             } catch (Exception e) {
                                 Log.e("signup", "error uploading pfp");
                             }
-
                         }
                     }
                 });
@@ -148,8 +132,8 @@ public class SignupActivity extends AppBarActivity {
         });
 
         // Set profile picture click to open popup menu with option to remove/upload picture
-        profilePictureButtton.setOnClickListener(view -> {
-            PopupMenu profilePicturePopup = new PopupMenu(this, profilePictureButtton);
+        profilePictureButton.setOnClickListener(view -> {
+            PopupMenu profilePicturePopup = new PopupMenu(this, profilePictureButton);
             profilePicturePopup.getMenuInflater().inflate(R.menu.profile_picture_popup_menu,
                     profilePicturePopup.getMenu());
             profilePicturePopup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -157,11 +141,13 @@ public class SignupActivity extends AppBarActivity {
                 public boolean onMenuItemClick(MenuItem menuItem) {
                     int id = menuItem.getItemId();
                     if (id == R.id.uploadPicture) {
+                        // Launch intent to choose picture from phone
                         Intent intent = new Intent();
                         intent.setType("image/*");
                         intent.setAction(Intent.ACTION_GET_CONTENT);
                         uploadImageResultLauncher.launch(intent);
                     } else {
+                        // Remove picture
                         signupController.setProfilePicture(null);
                     }
                     return true;
@@ -223,10 +209,13 @@ public class SignupActivity extends AppBarActivity {
         });
     }
 
+
     public void updateProfilePictureIcon(Bitmap profilePicture) {
-        profilePictureButtton.setImageBitmap(profilePicture);
+        profilePictureButton.setImageBitmap(profilePicture);
+
+        // Picture was removed, so set to edit profile picture icon
         if (profilePicture == null) {
-            profilePictureButtton.setImageResource(R.drawable.profile_edit);
+            profilePictureButton.setImageResource(R.drawable.profile_edit);
         }
     }
     public GlobalApp.ROLE getRole() {
