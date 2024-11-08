@@ -92,7 +92,11 @@ public class User extends Observable {
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     Map<String, Object> userData = documentSnapshot.getData();
-                    buildUserFromMap(userData);
+                    if (userData == null) {
+                        save();
+                    } else {
+                        buildUserFromMap(userData);
+                    }
                     isLoaded = true;
                     notifyObservers();
                 });
