@@ -96,6 +96,8 @@ public class Event extends Observable implements Serializable {
     private List<String> attendeeList = new ArrayList<>();
     private List<String> cancelledList = new ArrayList<>();
 
+    private ArrayList<User> waitlistUsers = new ArrayList<>();
+
     /**
      * Creates an event instance without a given id.
      * @param db the database to use
@@ -247,6 +249,14 @@ public class Event extends Observable implements Serializable {
 
         if (eventData.get("waitList") != null) {
             waitList = (List<String>) eventData.get("waitList");
+
+            // populate waitlist users
+            waitlistUsers = new ArrayList<>();
+            for(String userId : waitList) {
+                User user = new User(userId, db);
+                user.fetchData();
+                waitlistUsers.add(user);
+            }
         }
         if (eventData.get("attendeeList") != null) {
             attendeeList = (List<String>) eventData.get("attendeeList");
@@ -594,5 +604,9 @@ public class Event extends Observable implements Serializable {
 
     public List<String> getCancelledList() {
         return cancelledList;
+    }
+
+    public ArrayList<User> getWaitlistUsers() {
+        return waitlistUsers;
     }
 }

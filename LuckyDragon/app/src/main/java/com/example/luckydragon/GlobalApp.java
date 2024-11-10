@@ -35,6 +35,9 @@ public class GlobalApp extends Application {
 
     public final Bitmap profilePictureSize = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
 
+    private Event eventToView = null; // temporary storage for eventToView to be passed into ViewEventActivity (avoids passing event through intent or having to re-fetch it unneccessarily)
+
+
     /**
      * Gets the current user of the app, fetching the DB if needed.
      * if it has not been locally set yet.
@@ -148,5 +151,13 @@ public class GlobalApp extends Application {
         users = null;
         eventList = null;
         deviceId = null;
+    }
+
+    public void setEventToView(Event eventToView) {
+        this.eventToView = eventToView;
+    }
+
+    public Event getEventToView() {
+        return eventToView;
     }
 }
