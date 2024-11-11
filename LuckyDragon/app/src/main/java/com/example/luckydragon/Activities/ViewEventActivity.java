@@ -5,12 +5,21 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.example.luckydragon.Fragments.OrganizerEventFragment;
-import com.example.luckydragon.Fragments.OrganizerProfileFragment;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.R;
 import com.example.luckydragon.Views.ViewEventView;
 
+/**
+ * This is the activity for the view event page.
+ * It shows general event information like name, facility, date, and time.
+ * Role-specific information is embedded as a fragment (OrganizerEventFragment).
+ * Updated by ViewEventView.
+ * Issues:
+ *   - Need to add edit capability for organizers
+ *   - Move entrant event view into a fragment and embed
+ *   - Should a controller be added?
+ */
 public class ViewEventActivity extends AppBarActivity {
     private Event event;
     private ViewEventView viewEventView; // need to define view
@@ -47,16 +56,25 @@ public class ViewEventActivity extends AppBarActivity {
                 .commit();
     }
 
+    /**
+     * Updates the displayed event name.
+     */
     public void updateEventName() {
         TextView nameTextView = findViewById(R.id.eventNameTextView);
         nameTextView.setText(event.getName());
     }
 
+    /**
+     * Updates the displayed event facility.
+     */
     public void updateEventFacility() {
         TextView facilityTextView = findViewById(R.id.eventFacilityTextView);
         facilityTextView.setText(event.getFacility());
     }
 
+    /**
+     * Updates the displayed date and time.
+     */
     public void updateEventDateAndTime() {
         TextView dateAndTimeTextView = findViewById(R.id.eventDateAndTimeTextView);
         dateAndTimeTextView.setText(event.getDateAndTime());
