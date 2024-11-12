@@ -40,11 +40,10 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,17 +83,11 @@ public class OrganizerViewWaitingListTest {
     @Mock
     private DocumentSnapshot mockWaitlistEntrant2DocumentSnapshot;
 
-
-
     // Event mocks
     @Mock
     private CollectionReference mockEventsCollection;
     @Mock
     private DocumentReference mockEventDocument;
-    @Mock
-    private DocumentSnapshot mockEventDocumentSnapshot;
-    @Mock
-    private Task<DocumentSnapshot> mockEventTask;
     @Mock
     private Query mockEventQuery;
     @Mock
@@ -181,11 +174,11 @@ public class OrganizerViewWaitingListTest {
         eventData1.put("name", "Piano Lesson");
         eventData1.put("organizerDeviceId", "abcd1234");
         eventData1.put("facility", "Piano Place");
-        eventData1.put("waitlistLimit", 10);
-        eventData1.put("attendeeLimit", 1);
+        eventData1.put("waitlistLimit", new Long(10));
+        eventData1.put("attendeeLimit", new Long(1));
         eventData1.put("date", "2025-01-15");
-        eventData1.put("hours", 18);
-        eventData1.put("minutes", 15);
+        eventData1.put("hours", new Long(18));
+        eventData1.put("minutes", new Long(15));
         eventData1.put("waitList", List.of("ts123", "mf456"));
 
         eventData.add(eventData1);
@@ -194,13 +187,12 @@ public class OrganizerViewWaitingListTest {
         eventData2.put("name", "Group Piano Lesson");
         eventData2.put("organizerDeviceId", "abcd1234");
         eventData2.put("facility", "Piano Place");
-        eventData2.put("waitlistLimit", 20);
-        eventData2.put("attendeeLimit", 5);
+        eventData2.put("waitlistLimit", new Long(20));
+        eventData2.put("attendeeLimit", new Long(5));
         eventData2.put("date", "2025-01-16");
-        eventData2.put("hours", 18);
-        eventData2.put("minutes", 15);
+        eventData2.put("hours", new Long(18));
+        eventData2.put("minutes", new Long(15));
         eventData.add(eventData2);
-
 
         // Set up user mocking for main user
         when(mockFirestore.collection("users")).thenReturn(mockUsersCollection);
@@ -238,7 +230,6 @@ public class OrganizerViewWaitingListTest {
             return mockWaitlistEntrant2Task;
         }).when(mockWaitlistEntrant2Task).addOnSuccessListener(any(OnSuccessListener.class));
         when(mockWaitlistEntrant2DocumentSnapshot.getData()).thenReturn(getMockWaitlistUser2());
-
 
         // Set up event mocking
         when(mockFirestore.collection("events")).thenReturn(mockEventsCollection);
@@ -295,23 +286,16 @@ public class OrganizerViewWaitingListTest {
         when(mockEventTask2.getResult()).thenReturn(mockEventDocumentSnapshot2);
         when(mockEventDocumentSnapshot2.exists()).thenReturn(true);
         when(mockEventDocumentSnapshot2.getData()).thenReturn(eventData.get(1));
+    }
 
-        /*
-        when(mockEventsCollection.document(anyString())).thenReturn(mockEventDocument);
-        when(mockEventDocument.get()).thenReturn(mockEventTask);
-        // when set is called, we want to do nothing
-        when(mockEventDocument.set(anyMap())).thenReturn(mockVoidTask);
-        // in the on complete listener, we want to do nothing
-        when(mockEventTask.addOnCompleteListener(any())).thenAnswer((invocation) -> {
-            OnCompleteListener<DocumentSnapshot> listener = invocation.getArgument(0);
-            listener.onComplete(mockEventTask);
-            return null; // do nothing
-        });
-        when(mockEventTask.isSuccessful()).thenReturn(true);
-        when(mockEventTask.getResult()).thenReturn(mockEventDocumentSnapshot);
-        when(mockEventDocumentSnapshot.exists()).thenReturn(true);
-        when(mockEventDocumentSnapshot.getData()).thenReturn(eventData.get(0));
-         */
+    @After
+    public void tearDown() {
+        // Reset global app state
+        final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
+        globalApp.resetState();
+
+        Intents.release();
     }
 
     /**
