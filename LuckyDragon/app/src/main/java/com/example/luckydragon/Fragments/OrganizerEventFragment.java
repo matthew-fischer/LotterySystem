@@ -1,6 +1,7 @@
 package com.example.luckydragon.Fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -57,6 +58,7 @@ public class OrganizerEventFragment extends Fragment {
      * Updates the displayed waitlist capacity.
      */
     public void updateWaitlistCapacity() {
+        Log.e("EVENT", "update capacity");
         TextView waitlistCapacityTextView = getView().findViewById(R.id.waitlistCapacityTextView);
         String waitlistLimit = "No Limit";
         if(event.getWaitListSpots() != -1) {

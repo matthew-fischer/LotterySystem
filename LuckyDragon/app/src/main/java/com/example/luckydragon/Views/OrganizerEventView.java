@@ -19,6 +19,7 @@ public class OrganizerEventView extends Observer {
      */
     public OrganizerEventView(Event event, OrganizerEventFragment organizerEventFragment) {
         this.organizerEventFragment = organizerEventFragment;
+        startObserving(event);
     }
 
     /**

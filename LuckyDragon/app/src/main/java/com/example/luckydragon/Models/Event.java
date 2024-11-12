@@ -72,7 +72,7 @@ public class Event extends Observable implements Serializable {
          */
         public String toString12h() {
             String AMorPM = hours < 12 ? "AM" : "PM";
-            return String.format("%02d:%02d %s", hours > 12 ? hours - 12 : hours, minutes, AMorPM);
+            return String.format("%d:%02d %s", hours > 12 ? hours - 12 : hours, minutes, AMorPM);
         }
     }
     // TODO: REMOVE DEFAULT
@@ -133,7 +133,7 @@ public class Event extends Observable implements Serializable {
      * @param timeHours: the hour time e.g. "8" for 8:30
      * @param timeMinutes: the minute time e.g. "30" for 8:30
      */
-    public Event(String id, String name, String organizerDeviceId, String facility, Integer waitListLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes)  {
+    public Event(String id, String name, String organizerDeviceId, String facility, Integer waitListLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes, FirebaseFirestore db)  {
         this.id = id;
         this.name = name;
         this.organizerDeviceId = organizerDeviceId;
@@ -144,6 +144,7 @@ public class Event extends Observable implements Serializable {
         this.time = new Time(timeHours, timeMinutes);
         this.qrHash = generateQRCode();
         this.qrCode = createBitMap(this.qrHash);
+        this.db = db;
     }
 
     /**
@@ -193,6 +194,7 @@ public class Event extends Observable implements Serializable {
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                Log.e("ID", id);
                 if (!task.isSuccessful()) {
                     throw new RuntimeException("Database read failed.");
                 }
@@ -231,10 +233,10 @@ public class Event extends Observable implements Serializable {
             facility = (String) eventData.get("facility");
         }
         if (nonNull(eventData.get("waitListLimit"))) {
-            waitListLimit = ((Long) eventData.get("waitListLimit")).intValue();
+            waitListLimit = (Integer) eventData.get("waitListLimit");
         }
         if (nonNull(eventData.get("attendeeLimit"))) {
-            attendeeLimit = ((Long) eventData.get("attendeeLimit")).intValue();
+            attendeeLimit = (Integer) eventData.get("attendeeLimit");
         }
         if (nonNull(eventData.get("hasGeolocation"))) {
             hasGeolocation = (boolean) eventData.get("hasGeolocation");
@@ -243,11 +245,12 @@ public class Event extends Observable implements Serializable {
             date = (String) eventData.get("date");
         }
 
-        int hours = eventData.get("hours") != null ? ((Long) eventData.get("hours")).intValue() : null;
-        int minutes = eventData.get("minutes") != null ? ((Long) eventData.get("minutes")).intValue() : null;
+        int hours = eventData.get("hours") != null ? ((Integer) eventData.get("hours")) : null;
+        int minutes = eventData.get("minutes") != null ? ((Integer) eventData.get("minutes")) : null;
         time = new Time(hours, minutes);
 
         if (eventData.get("waitList") != null) {
+            Log.e("WAITLIST", "NOT EMPTY");
             waitList = (List<String>) eventData.get("waitList");
 
             // populate waitlist users

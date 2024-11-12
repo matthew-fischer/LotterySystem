@@ -13,6 +13,7 @@ import android.util.Log;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -68,7 +69,9 @@ public class Organizer {
                 .addOnCompleteListener((task) -> {
                     if (task.isSuccessful()) {
                         Map<String, Object> eventData;
-                        for (QueryDocumentSnapshot document : task.getResult()) {
+                        QuerySnapshot querySnapshot = task.getResult();
+                        for(int i = 0; i < querySnapshot.size(); i++) {
+                            QueryDocumentSnapshot document = (QueryDocumentSnapshot) querySnapshot.getDocuments().get(i);
                             eventData = document.getData();
                             Event event = new Event(
                                     document.getId(),
@@ -79,12 +82,12 @@ public class Organizer {
                                     eventData.get("attendeeLimit") == null ? null : Integer.valueOf(String.format("%s", eventData.get("attendeeLimit"))),
                                     eventData.get("date") == null ? null : String.format("%s", eventData.get("date")),
                                     eventData.get("hours") == null ? null : Integer.valueOf(String.format("%s", eventData.get("hours"))),
-                                    eventData.get("minutes") == null ? null : Integer.valueOf(String.format("%s", eventData.get("minutes")))
+                                    eventData.get("minutes") == null ? null : Integer.valueOf(String.format("%s", eventData.get("minutes"))),
+                                    db
                             );
-
                             // Check for duplicate events (could switch this to a set for performance, but event counts should be low)
-                            for(int i = 0; i < events.size(); i++) {
-                                if(Objects.equals(event.getId(), events.get(i).getId())) return;
+                            for(int j = 0; j < events.size(); j++) {
+                                if(Objects.equals(event.getId(), events.get(j).getId())) return;
                             }
                             addEvent(event); // calls notifyObservers
                             event.fetchData(); // now fetch the rest of event data (waitlist, etc)
