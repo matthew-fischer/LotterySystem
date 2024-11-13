@@ -12,11 +12,8 @@ import androidx.fragment.app.Fragment;
 import com.example.luckydragon.Controllers.EntrantArrayAdapter;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
-import com.example.luckydragon.Models.User;
 import com.example.luckydragon.R;
 import com.example.luckydragon.Views.OrganizerEventView;
-
-import java.util.ArrayList;
 
 /**
  * This is the fragment containing the organizer-specific event info.
@@ -58,7 +55,6 @@ public class OrganizerEventFragment extends Fragment {
      * Updates the displayed waitlist capacity.
      */
     public void updateWaitlistCapacity() {
-        Log.e("EVENT", "update capacity");
         TextView waitlistCapacityTextView = getView().findViewById(R.id.waitlistCapacityTextView);
         String waitlistLimit = "No Limit";
         if(event.getWaitListSpots() != -1) {

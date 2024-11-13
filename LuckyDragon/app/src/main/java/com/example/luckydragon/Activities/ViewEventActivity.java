@@ -1,9 +1,14 @@
 package com.example.luckydragon.Activities;
 
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.fragment.app.DialogFragment;
+
+import com.example.luckydragon.Fragments.DisplayQRCodeFragment;
+import com.example.luckydragon.Fragments.EntrantEventWaitlistFragment;
 import com.example.luckydragon.Fragments.OrganizerEventFragment;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
@@ -48,12 +53,35 @@ public class ViewEventActivity extends AppBarActivity {
         //event.fetchData(); // get all event data
         viewEventView = new ViewEventView(event, this);
 
+        // Hide buttons for entrant
+        if(globalApp.getRole() == GlobalApp.ROLE.ENTRANT) {
+            hideEditButton();
+            hideQrCodeButton();
+        }
+
         // Start organizer event fragment
-        // TODO when this page is used for both user and organizer event views, then we would have to start an EntrantEventFragment instead for entrants
-        getSupportFragmentManager().beginTransaction()
-                .setReorderingAllowed(true)
-                .replace(R.id.eventFragmentContainer, OrganizerEventFragment.class, null)
-                .commit();
+        if(globalApp.getRole() == GlobalApp.ROLE.ENTRANT) {
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.eventFragmentContainer, EntrantEventWaitlistFragment.class, null)
+                    .commit();
+        } else if(globalApp.getRole() == GlobalApp.ROLE.ORGANIZER) {
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.eventFragmentContainer, OrganizerEventFragment.class, null)
+                    .commit();
+        }
+
+        // Initialize on click listener for qr button
+        ImageButton viewQrCodeButton = findViewById(R.id.viewQrCodeButton);
+        viewQrCodeButton.setOnClickListener((view) -> {
+            // create a displayQRCode Dialog Fragment.
+            Bundle args = new Bundle();
+            args.putSerializable("event", event);
+            DialogFragment displayQRFragment = new DisplayQRCodeFragment();
+            displayQRFragment.setArguments(args);
+            displayQRFragment.show(getSupportFragmentManager(), "DisplayQRCodeFragment");
+        });
     }
 
     /**
@@ -78,5 +106,21 @@ public class ViewEventActivity extends AppBarActivity {
     public void updateEventDateAndTime() {
         TextView dateAndTimeTextView = findViewById(R.id.eventDateAndTimeTextView);
         dateAndTimeTextView.setText(event.getDateAndTime());
+    }
+
+    /**
+     * Hides the QR code button.
+     */
+    private void hideQrCodeButton() {
+        ImageButton viewQrCodeButton = findViewById(R.id.viewQrCodeButton);
+        viewQrCodeButton.setVisibility(View.GONE);
+    }
+
+    /**
+     * Hides the edit button.
+     */
+    private void hideEditButton() {
+        ImageButton editButton = findViewById(R.id.editEventButton);
+        editButton.setVisibility(View.GONE);
     }
 }

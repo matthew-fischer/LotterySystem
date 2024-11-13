@@ -64,7 +64,6 @@ public class OrganizerProfileFragment extends Fragment {
         // Set up onClick listener for event in organizer events listview
         eventsListView.setOnItemClickListener((parent, elementView, position, id) -> {
             Event clickedEvent = (Event) parent.getItemAtPosition(position);
-            System.out.println(clickedEvent.getName());
             // Start ViewEventActivity
             globalApp.setEventToView(clickedEvent);
             startActivity(new Intent(getContext(), ViewEventActivity.class));

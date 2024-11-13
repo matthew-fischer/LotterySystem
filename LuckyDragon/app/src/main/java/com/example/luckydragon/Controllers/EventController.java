@@ -19,6 +19,18 @@ public class EventController extends Controller {
     }
 
     /**
+     * Adds or removes entrant from waiting list, depending on whether entrant is already on waiting list or not.
+     * @param deviceId the deviceId of the entrant
+     */
+    public void toggleWaitlist(String deviceId) {
+        if(getObservable().onWaitList(deviceId)) {
+            getObservable().leaveWaitList(deviceId);
+        } else {
+            getObservable().joinWaitList(deviceId);
+        }
+    }
+
+    /**
      * Update the Event model after an Entrant joins the waiting list.
      * @param deviceId the deviceId of the entrant who is joining the waitlist
      */

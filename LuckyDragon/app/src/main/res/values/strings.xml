@@ -24,6 +24,7 @@
     <string name="qr_code_for_event_description">QR Code for Event.</string>
     <string name="remove_qr">REMOVE QR</string>
     <string name="delete_event">DELETE EVENT</string>
+    <string name="geolocation_on_warning">The organizer has enabled geolocation for this event. If you join the waitlist, the organizer will be able to view the location you joined from.</string>
     <string-array name="entrant_statuses">
         <item>Attendees</item>
         <item>Waitlistees</item>

@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.luckydragon.Activities.EventActivity;
+import com.example.luckydragon.Activities.ViewEventActivity;
 import com.example.luckydragon.Controllers.EventArrayAdapter;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
@@ -52,12 +53,18 @@ public class EntrantProfileFragment extends Fragment {
      */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        GlobalApp globalApp = ((GlobalApp) requireActivity().getApplication());
 
 
         Button scanQRButton = view.findViewById(R.id.scanQRButton);
         // Reference: https://www.geeksforgeeks.org/how-to-read-qr-code-using-zxing-library-in-android/
         scanQRButton.setOnClickListener((View v) -> {
+            // This is for starting up a test event
+            Event event = globalApp.getEvent("B1pObrb3JqUhLtSoPKHA");
+            globalApp.setEventToView(event);
+            startActivity(new Intent(getContext(), ViewEventActivity.class));
 
+            /*
             // This is for testing without scanning QR Code:
             Intent intent = new Intent(getActivity(), EventActivity.class);
             String eventId = "rDvs0vS2WeRRwtN9N9L9";
@@ -65,6 +72,8 @@ public class EntrantProfileFragment extends Fragment {
             String deviceID = ((GlobalApp) getActivity().getApplication()).getUser().getDeviceId();
             intent.putExtra("deviceID", deviceID);
             startActivity(intent);
+
+             */
 
             // This is for actually scanning the QR Code.
 //            IntentIntegrator intentIntegrator = IntentIntegrator.forSupportFragment(EntrantProfileFragment.this);
