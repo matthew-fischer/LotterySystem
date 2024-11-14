@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp">
+    <TextView
+        android:id="@+id/eventAttendingMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="You are attending this event."
+        android:textStyle="bold"
+        android:textSize="25sp"/>
+    <TextView
+        android:id="@+id/currentAttendeesMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Current Attendees: %d"
+        android:textSize="20sp"/>
+    <TextView
+        android:id="@+id/attendeeSpotsMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Attendee Spots: %d"
+        android:textSize="20sp"/>
+    <Button
+        android:layout_marginTop="10dp"
+        android:id="@+id/viewEventPosterButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="View Poster"
+        android:gravity="center"/>
+</LinearLayout>

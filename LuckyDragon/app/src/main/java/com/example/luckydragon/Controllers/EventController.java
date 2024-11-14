@@ -1,5 +1,7 @@
 package com.example.luckydragon.Controllers;
 
+import android.util.Log;
+
 import com.example.luckydragon.Models.Event;
 
 /**
@@ -28,6 +30,7 @@ public class EventController extends Controller {
         } else {
             getObservable().joinWaitList(deviceId);
         }
+        getObservable().notifyObservers();
     }
 
     /**
@@ -37,6 +40,7 @@ public class EventController extends Controller {
     public void waitList(String deviceId) {
         // Add deviceID to Waitlist:
         getObservable().joinWaitList(deviceId);
+        getObservable().notifyObservers();
     }
 
     /**
@@ -47,6 +51,7 @@ public class EventController extends Controller {
     public void cancel(String deviceId) {
         getObservable().leaveWaitList(deviceId);
         getObservable().leaveAttendeeList(deviceId);
+        getObservable().notifyObservers();
     }
 
     /**
@@ -54,8 +59,10 @@ public class EventController extends Controller {
      * @param deviceId the deviceId of the entrant
      */
     public void acceptInvitation(String deviceId) {
+        Log.e("RUN", "accept");
         getObservable().leaveInviteeList(deviceId);
         getObservable().joinAttendeeList(deviceId);
+        getObservable().notifyObservers();
     }
 
     /**
@@ -63,8 +70,10 @@ public class EventController extends Controller {
      * @param deviceId the deviceId of the entrant
      */
     public void declineInvitation(String deviceId) {
+        Log.e("RUN", "decline");
         getObservable().leaveInviteeList(deviceId);
         getObservable().joinCancelledList(deviceId);
+        getObservable().notifyObservers();
     }
 
     /**

@@ -98,6 +98,8 @@ public class Event extends Observable implements Serializable {
 
     private ArrayList<User> waitlistUsers = new ArrayList<>();
 
+    private boolean isLoaded = false;
+
     /**
      * Creates an event instance without a given id.
      * @param db the database to use
@@ -160,6 +162,7 @@ public class Event extends Observable implements Serializable {
      * Saves event data to database.
      */
     public void save() {
+        Log.e("SAVE", "save");
         Map<String, Object> eventData = new HashMap<>();
         if(nonNull(name)) eventData.put("name", name);
         if(nonNull(organizerDeviceId) && !organizerDeviceId.isEmpty()) eventData.put("organizerDeviceId", organizerDeviceId);
@@ -189,6 +192,7 @@ public class Event extends Observable implements Serializable {
      * Fetches event data from database.
      */
     public void fetchData() {
+        Log.e("FETCH", "event");
         // TODO: Ensure null attr are ok to read
         DocumentReference docRef = db.collection("events").document(id);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -250,7 +254,6 @@ public class Event extends Observable implements Serializable {
         time = new Time(hours, minutes);
 
         if (eventData.get("waitList") != null) {
-            Log.e("WAITLIST", "NOT EMPTY");
             waitList = (List<String>) eventData.get("waitList");
 
             // populate waitlist users
@@ -270,6 +273,8 @@ public class Event extends Observable implements Serializable {
         if (eventData.get("cancelledList") != null) {
             cancelledList = (List<String>) eventData.get("cancelledList");
         }
+
+        setIsLoaded(true);
     }
 
     /**
@@ -376,7 +381,6 @@ public class Event extends Observable implements Serializable {
     public void joinWaitList(String deviceId) {
         if (!waitList.contains(deviceId)) {
             waitList.add(deviceId);
-            notifyObservers();
         }
     }
     /** Removes deviceId from joinWaitList when cancel button is clicked
@@ -396,7 +400,6 @@ public class Event extends Observable implements Serializable {
     public void leaveInviteeList(String deviceId) {
         if (inviteeList.contains(deviceId)) {
             inviteeList.remove(deviceId);
-            notifyObservers();
         }
     }
 
@@ -407,7 +410,6 @@ public class Event extends Observable implements Serializable {
     public void joinAttendeeList(String deviceId) {
         if (!attendeeList.contains(deviceId)) {
             attendeeList.add(deviceId);
-            notifyObservers();
         }
     }
 
@@ -418,7 +420,6 @@ public class Event extends Observable implements Serializable {
     public void leaveAttendeeList(String deviceId) {
         if (attendeeList.contains(deviceId)) {
             attendeeList.remove(deviceId);
-            notifyObservers();
         }
     }
 
@@ -429,7 +430,6 @@ public class Event extends Observable implements Serializable {
     public void joinCancelledList(String deviceId) {
         if (!cancelledList.contains(deviceId)) {
             cancelledList.add(deviceId);
-            notifyObservers();
         }
     }
 
@@ -611,5 +611,14 @@ public class Event extends Observable implements Serializable {
 
     public ArrayList<User> getWaitlistUsers() {
         return waitlistUsers;
+    }
+
+    public void setIsLoaded(boolean newIsLoaded) {
+        this.isLoaded = newIsLoaded;
+        notifyObservers();
+    }
+
+    public boolean isLoaded() {
+        return isLoaded;
     }
 }

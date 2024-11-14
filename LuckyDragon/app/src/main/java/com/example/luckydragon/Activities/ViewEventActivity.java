@@ -1,13 +1,17 @@
 package com.example.luckydragon.Activities;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 
 import com.example.luckydragon.Fragments.DisplayQRCodeFragment;
+import com.example.luckydragon.Fragments.EntrantEventAttendingFragment;
+import com.example.luckydragon.Fragments.EntrantEventInvitedFragment;
 import com.example.luckydragon.Fragments.EntrantEventWaitlistFragment;
 import com.example.luckydragon.Fragments.OrganizerEventFragment;
 import com.example.luckydragon.GlobalApp;
@@ -50,7 +54,9 @@ public class ViewEventActivity extends AppBarActivity {
         // Create view
         GlobalApp globalApp = (GlobalApp) getApplication();
         event = globalApp.getEventToView();
-        //event.fetchData(); // get all event data
+        Log.e("VIEWING EVENT", event.getId());
+        System.out.println(event.getInviteeList());
+        event.fetchData(); // get all event data
         viewEventView = new ViewEventView(event, this);
 
         // Hide buttons for entrant
@@ -59,18 +65,8 @@ public class ViewEventActivity extends AppBarActivity {
             hideQrCodeButton();
         }
 
-        // Start organizer event fragment
-        if(globalApp.getRole() == GlobalApp.ROLE.ENTRANT) {
-            getSupportFragmentManager().beginTransaction()
-                    .setReorderingAllowed(true)
-                    .replace(R.id.eventFragmentContainer, EntrantEventWaitlistFragment.class, null)
-                    .commit();
-        } else if(globalApp.getRole() == GlobalApp.ROLE.ORGANIZER) {
-            getSupportFragmentManager().beginTransaction()
-                    .setReorderingAllowed(true)
-                    .replace(R.id.eventFragmentContainer, OrganizerEventFragment.class, null)
-                    .commit();
-        }
+        // Start child fragment
+        loadChildFragment();
 
         // Initialize on click listener for qr button
         ImageButton viewQrCodeButton = findViewById(R.id.viewQrCodeButton);
@@ -82,6 +78,12 @@ public class ViewEventActivity extends AppBarActivity {
             displayQRFragment.setArguments(args);
             displayQRFragment.show(getSupportFragmentManager(), "DisplayQRCodeFragment");
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        viewEventView.stopObserving();
+        super.onDestroy();
     }
 
     /**
@@ -122,5 +124,44 @@ public class ViewEventActivity extends AppBarActivity {
     private void hideEditButton() {
         ImageButton editButton = findViewById(R.id.editEventButton);
         editButton.setVisibility(View.GONE);
+    }
+
+    public void loadChildFragment() {
+        if(event.isLoaded()) {
+            GlobalApp globalApp = (GlobalApp) getApplication();
+            String deviceId = globalApp.getUser().getDeviceId();
+            if(globalApp.getRole() == GlobalApp.ROLE.ENTRANT) {
+                if(event.onInviteeList(deviceId)) {
+                    // Start EntrantEventInvitedFragment
+                    getSupportFragmentManager().beginTransaction()
+                            .setReorderingAllowed(true)
+                            .replace(R.id.eventFragmentContainer, EntrantEventInvitedFragment.class, null)
+                            .commit();
+                } else if(event.onAttendeeList(deviceId)) {
+                    // Start EntrantEventAttendingFragment
+                    getSupportFragmentManager().beginTransaction()
+                            .setReorderingAllowed(true)
+                            .replace(R.id.eventFragmentContainer, EntrantEventAttendingFragment.class, null)
+                            .commit();
+                } else if(event.onCancelledList(deviceId)) {
+                    // Start fragment showing that event is closed
+                    getSupportFragmentManager().beginTransaction()
+                            .setReorderingAllowed(true)
+                            .replace(R.id.eventFragmentContainer, new Fragment(R.layout.fragment_entrant_closed_event), null)
+                            .commit();
+                } else {
+                    // Start EntrantEventWaitlistFragment
+                    getSupportFragmentManager().beginTransaction()
+                            .setReorderingAllowed(true)
+                            .replace(R.id.eventFragmentContainer, EntrantEventWaitlistFragment.class, null)
+                            .commit();
+                }
+            } else if(globalApp.getRole() == GlobalApp.ROLE.ORGANIZER) {
+                getSupportFragmentManager().beginTransaction()
+                        .setReorderingAllowed(true)
+                        .replace(R.id.eventFragmentContainer, OrganizerEventFragment.class, null)
+                        .commit();
+            }
+        }
     }
 }

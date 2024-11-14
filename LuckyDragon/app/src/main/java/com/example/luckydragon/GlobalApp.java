@@ -3,6 +3,7 @@ package com.example.luckydragon;
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.provider.Settings;
+import android.util.Log;
 
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.Models.EventList;
@@ -85,6 +86,7 @@ public class GlobalApp extends Application {
      * @return the event object
      */
     public Event getEvent(String eventId) {
+        Log.e("FETCH", "get event");
         if (db == null) {
             setDb(FirebaseFirestore.getInstance());
         }

@@ -35,7 +35,7 @@ public class EntrantEventWaitlistFragment extends Fragment {
      * Creates an EntrantEventFragment.
      */
     public EntrantEventWaitlistFragment() {
-        super(R.layout.fragment_entrant_event); // TODO
+        super(R.layout.fragment_entrant_waitlist_event); // TODO
     }
 
     @Override
@@ -43,7 +43,6 @@ public class EntrantEventWaitlistFragment extends Fragment {
         // Get event
         GlobalApp globalApp = (GlobalApp) requireActivity().getApplication();
         event = globalApp.getEventToView();
-        globalApp.setEventToView(null); // no longer need to store event in globalApp
 
         // Get device id
         deviceId = globalApp.getUser().getDeviceId();
@@ -63,6 +62,14 @@ public class EntrantEventWaitlistFragment extends Fragment {
         viewPosterButton.setOnClickListener(v -> {
             // TODO show poster
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        // the view associated with theis fragment must stop observing when the fragment is destroyed
+        entrantEventWaitlistView.stopObserving();
     }
 
     /**
