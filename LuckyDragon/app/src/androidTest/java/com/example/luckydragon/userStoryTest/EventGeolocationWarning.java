@@ -1,9 +1,13 @@
 package com.example.luckydragon.userStoryTest;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+
+import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,8 +16,10 @@ import androidx.test.core.app.ActivityScenario;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.example.luckydragon.Activities.EventActivity;
+import com.example.luckydragon.Activities.ViewEventActivity;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.MockedDb;
+import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.R;
 
 import org.junit.Test;
@@ -23,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class EventGeolocationWarning extends MockedDb {
+    private String deviceId = "fakeDeviceId";
     @Override
     protected HashMap<String, Object> getMockData() {
         // Define test user
@@ -71,18 +78,22 @@ public class EventGeolocationWarning extends MockedDb {
      */
     @Test
     public void testEventGeolocationWarning() {
+        // Launch event activity directly
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
         globalApp.setDb(mockFirestore);
-        globalApp.setDeviceId("fakeDeviceId");
-
-
-        // Launch event activity directly
-        final Intent intent = new Intent(targetContext, EventActivity.class);
-        intent.putExtra("eventID", "fakeEventId");
-        try (final ActivityScenario<EventActivity> scenario = ActivityScenario.launch(intent)) {
-            // check if geolocation warning is shown
-            onView(withId(R.id.geolcationWarning)).check(matches(isDisplayed()));
+        globalApp.setDeviceId(deviceId);
+        globalApp.setRole(GlobalApp.ROLE.ENTRANT);
+        // Set event to view
+        Event testEvent = new Event(eventId, mockFirestore);
+        testEvent.parseEventDocument(getMockEventData());
+        testEvent.setHasGeolocation(true); // event has geolocation
+        testEvent.setIsLoaded(true);
+        globalApp.setEventToView(testEvent);
+        // Launch event activity
+        final Intent intent = new Intent(targetContext, ViewEventActivity.class);
+        try(final ActivityScenario<ViewEventActivity> scenario = ActivityScenario.launch(intent)) {
+            onView(withId(R.id.geolocationMessage)).check(matches(isDisplayed()));
         }
     }
 }

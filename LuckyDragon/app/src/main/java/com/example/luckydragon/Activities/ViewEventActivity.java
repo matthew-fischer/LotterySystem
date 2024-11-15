@@ -54,8 +54,6 @@ public class ViewEventActivity extends AppBarActivity {
         // Create view
         GlobalApp globalApp = (GlobalApp) getApplication();
         event = globalApp.getEventToView();
-        Log.e("VIEWING EVENT", event.getId());
-        System.out.println(event.getInviteeList());
         event.fetchData(); // get all event data
         viewEventView = new ViewEventView(event, this);
 

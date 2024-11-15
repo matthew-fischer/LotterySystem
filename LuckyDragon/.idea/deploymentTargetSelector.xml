@@ -16,10 +16,16 @@
       <SelectionState runConfigName="Tests in 'com.example.luckydragon.userStoryTest'">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="OrganizerViewWaitingListTest">
+      <SelectionState runConfigName="EntrantInvitedEventDenyTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="OrganizerViewWaitingListTest1">
+      <SelectionState runConfigName="EntrantNotInEventTest">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="testAcceptInvite()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="testEventGeolocationWarningNew()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
