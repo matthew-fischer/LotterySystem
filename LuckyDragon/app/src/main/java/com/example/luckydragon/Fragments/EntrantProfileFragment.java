@@ -133,10 +133,9 @@ public class EntrantProfileFragment extends Fragment {
         // set the on click listener
         AdapterView.OnItemClickListener listener = (adapterView, v, position, l) -> {
             Event event = (Event) adapterView.getItemAtPosition(position);
-            Intent intent = new Intent(getActivity(), EventActivity.class);
-            intent.putExtra("eventID", event.getId());
-            intent.putExtra("role", "ENTRANT");
-            startActivity(intent);
+            GlobalApp globalApp = ((GlobalApp) requireActivity().getApplication());
+            globalApp.setEventToView(event);
+            startActivity(new Intent(getContext(), ViewEventActivity.class));
         };
         listView.setOnItemClickListener(listener);
     }
