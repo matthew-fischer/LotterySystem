@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
+import com.example.luckydragon.Fragments.AdminEventFragment;
 import com.example.luckydragon.Fragments.DisplayQRCodeFragment;
 import com.example.luckydragon.Fragments.EntrantEventAttendingFragment;
 import com.example.luckydragon.Fragments.EntrantEventInvitedFragment;
@@ -155,9 +156,16 @@ public class ViewEventActivity extends AppBarActivity {
                             .commit();
                 }
             } else if(globalApp.getRole() == GlobalApp.ROLE.ORGANIZER) {
+                // start organizer event fragment
                 getSupportFragmentManager().beginTransaction()
                         .setReorderingAllowed(true)
                         .replace(R.id.eventFragmentContainer, OrganizerEventFragment.class, null)
+                        .commit();
+            } else if(globalApp.getRole() == GlobalApp.ROLE.ADMINISTRATOR) {
+                // start admin event fragment
+                getSupportFragmentManager().beginTransaction()
+                        .setReorderingAllowed(true)
+                        .replace(R.id.eventFragmentContainer, AdminEventFragment.class, null)
                         .commit();
             }
         }

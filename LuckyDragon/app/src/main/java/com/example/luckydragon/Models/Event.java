@@ -334,7 +334,7 @@ public class Event extends Observable implements Serializable {
      * @return the string representation of the QR hash
      */
     public String getQrHash() {
-        return qrHash.toString("1", "0");
+        return qrHash != null ? qrHash.toString("1", "0") : null;
     }
 
     /**
@@ -459,6 +459,7 @@ public class Event extends Observable implements Serializable {
      * @param eventId the event id
      */
     public void removeQR(String eventId) {
+        qrHash = null;
         db.collection("events")
                 .document(eventId)
                 .update("hashedQR", "null");
