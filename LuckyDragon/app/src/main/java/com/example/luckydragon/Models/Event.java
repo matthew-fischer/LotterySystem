@@ -162,7 +162,6 @@ public class Event extends Observable implements Serializable {
      * Saves event data to database.
      */
     public void save() {
-        Log.e("SAVE", "save");
         Map<String, Object> eventData = new HashMap<>();
         if(nonNull(name)) eventData.put("name", name);
         if(nonNull(organizerDeviceId) && !organizerDeviceId.isEmpty()) eventData.put("organizerDeviceId", organizerDeviceId);
@@ -192,13 +191,11 @@ public class Event extends Observable implements Serializable {
      * Fetches event data from database.
      */
     public void fetchData() {
-        Log.e("FETCH", "event");
         // TODO: Ensure null attr are ok to read
         DocumentReference docRef = db.collection("events").document(id);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                Log.e("ID", id);
                 if (!task.isSuccessful()) {
                     throw new RuntimeException("Database read failed.");
                 }
