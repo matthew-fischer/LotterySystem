@@ -39,7 +39,6 @@ public class OrganizerEventFragment extends Fragment {
         // Get event
         GlobalApp globalApp = (GlobalApp) requireActivity().getApplication();
         event = globalApp.getEventToView();
-        globalApp.setEventToView(null); // no longer need to store event in globalApp
 
         // Initialize view
         organizerEventView = new OrganizerEventView(event, this);
