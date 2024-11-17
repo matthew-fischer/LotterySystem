@@ -96,6 +96,8 @@ public class Event extends Observable implements Serializable {
     private List<String> attendeeList = new ArrayList<>();
     private List<String> cancelledList = new ArrayList<>();
 
+    private List<Double[]> waitlistLocations = new ArrayList<>();
+
     private ArrayList<User> waitlistUsers = new ArrayList<>();
 
     private boolean isLoaded = false;
@@ -177,6 +179,7 @@ public class Event extends Observable implements Serializable {
         eventData.put("inviteeList", inviteeList);
         eventData.put("attendeeList", attendeeList);
         eventData.put("cancelledList", cancelledList);
+        eventData.put("waitListLocations", waitlistLocations);
 
         if (id == null || id.isEmpty()) {
             throw new RuntimeException("Event id should not be empty!");
@@ -260,6 +263,9 @@ public class Event extends Observable implements Serializable {
                 user.fetchData();
                 waitlistUsers.add(user);
             }
+        }
+        if(eventData.get("waitListLocations") != null) {
+            waitlistLocations = (List<Double[]>) eventData.get("waitlistLocations");
         }
         if (eventData.get("attendeeList") != null) {
             attendeeList = (List<String>) eventData.get("attendeeList");

@@ -3,6 +3,7 @@ package com.example.luckydragon.Fragments;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -39,7 +40,6 @@ public class OrganizerEventFragment extends Fragment {
         // Get event
         GlobalApp globalApp = (GlobalApp) requireActivity().getApplication();
         event = globalApp.getEventToView();
-        globalApp.setEventToView(null); // no longer need to store event in globalApp
 
         // Initialize view
         organizerEventView = new OrganizerEventView(event, this);
@@ -49,6 +49,21 @@ public class OrganizerEventFragment extends Fragment {
         // Need a user array adapter
         entrantArrayAdapter = new EntrantArrayAdapter(event.getWaitlistUsers(), requireActivity().getApplicationContext(), this);
         waitlistListView.setAdapter(entrantArrayAdapter);
+
+        if(event.hasGeolocation()) {
+            Button seeMapButton = view.findViewById(R.id.seeMapButton);
+            // Make "See Map" button visible
+            seeMapButton.setVisibility(View.VISIBLE);
+            // Initialize "See Map" on click listener
+            seeMapButton.setOnClickListener(v -> {
+                // Open fragment
+                OrganizerMapFragment organizerMapFragment = new OrganizerMapFragment();
+                organizerMapFragment.show(getActivity().getSupportFragmentManager(), "OrganizerMapFragment");
+            });
+        }
+
+
+
     }
 
     /**

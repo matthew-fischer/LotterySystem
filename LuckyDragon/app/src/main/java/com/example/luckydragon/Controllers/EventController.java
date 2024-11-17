@@ -44,6 +44,17 @@ public class EventController extends Controller {
     }
 
     /**
+     * Update the Event model after an Entrant joins the waiting list.
+     * Updates the waitlist locations too.
+     */
+    public void waitlistWithLocation(String deviceId) {
+        // Add deviceID to Waitlist:
+        getObservable().joinWaitList(deviceId);
+        // TODO Add location to Waitlist
+        getObservable().notifyObservers();
+    }
+
+    /**
      * Updates the Event model after an Entrant leaves the waitlist or attendee
      * list.
      * @param deviceId the deviceId of the entrant
