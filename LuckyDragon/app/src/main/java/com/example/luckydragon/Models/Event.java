@@ -75,6 +75,25 @@ public class Event extends Observable implements Serializable {
             return String.format("%d:%02d %s", hours > 12 ? hours - 12 : hours, minutes, AMorPM);
         }
     }
+
+    /**
+     * Represents a location as a <latitude, longitude> pair.
+     */
+    private class Location {
+        public double latitude;
+        public double longitude;
+
+        /**
+         * Create a Location object.
+         * @param latitude location latitude
+         * @param longitude location longitude
+         */
+        public Location(double latitude, double longitude) {
+            this.latitude = latitude;
+            this.longitude = longitude;
+        }
+    }
+
     // TODO: REMOVE DEFAULT
     private transient FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -96,7 +115,7 @@ public class Event extends Observable implements Serializable {
     private List<String> attendeeList = new ArrayList<>();
     private List<String> cancelledList = new ArrayList<>();
 
-    private List<Double[]> waitlistLocations = new ArrayList<>();
+    private List<Location> waitlistLocations = new ArrayList<>();
 
     private ArrayList<User> waitlistUsers = new ArrayList<>();
 
@@ -156,6 +175,7 @@ public class Event extends Observable implements Serializable {
      */
     @Override
     public void notifyObservers() {
+        Log.e("NOTIFY", id);
         super.notifyObservers();
         save();
     }
@@ -164,6 +184,8 @@ public class Event extends Observable implements Serializable {
      * Saves event data to database.
      */
     public void save() {
+        Log.e("SAVE", "save event");
+        System.out.println(waitlistLocations);
         Map<String, Object> eventData = new HashMap<>();
         if(nonNull(name)) eventData.put("name", name);
         if(nonNull(organizerDeviceId) && !organizerDeviceId.isEmpty()) eventData.put("organizerDeviceId", organizerDeviceId);
@@ -179,7 +201,11 @@ public class Event extends Observable implements Serializable {
         eventData.put("inviteeList", inviteeList);
         eventData.put("attendeeList", attendeeList);
         eventData.put("cancelledList", cancelledList);
-        eventData.put("waitListLocations", waitlistLocations);
+        ArrayList<Integer> testArr = new ArrayList<>();
+        testArr.add(1);
+        eventData.put("test", "test");
+
+        Log.e("SAVE EVENT", waitlistLocations != null ? waitlistLocations.toString(): "null");
 
         if (id == null || id.isEmpty()) {
             throw new RuntimeException("Event id should not be empty!");
@@ -188,12 +214,14 @@ public class Event extends Observable implements Serializable {
                 .set(eventData).addOnFailureListener(e -> {
                     Log.e("SAVE DB", "event save fail");
                 });
+        Log.e("SAVE EVENT", "successful save");
     }
 
     /**
      * Fetches event data from database.
      */
     public void fetchData() {
+        Log.e("FETCH", "fetch event");
         // TODO: Ensure null attr are ok to read
         DocumentReference docRef = db.collection("events").document(id);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -264,9 +292,13 @@ public class Event extends Observable implements Serializable {
                 waitlistUsers.add(user);
             }
         }
+        /*
+        Log.e("WAITLIST LOCATIONS", id);
+        Log.e("WAITLIST LOCATIONS", eventData.get("waitListLocations") == null ? "null" : eventData.get("waitListLocations").toString());
         if(eventData.get("waitListLocations") != null) {
-            waitlistLocations = (List<Double[]>) eventData.get("waitlistLocations");
+            waitlistLocations = (List<Location>) eventData.get("waitlistLocations");
         }
+         */
         if (eventData.get("attendeeList") != null) {
             attendeeList = (List<String>) eventData.get("attendeeList");
         }
@@ -386,6 +418,17 @@ public class Event extends Observable implements Serializable {
             waitList.add(deviceId);
         }
     }
+
+    /**
+     * Adds location to waitlistLocations.
+     * @param latitude latitude of locaton to add
+     * @param longitude longitude of location to add
+     */
+    public void addWaitlistLocation(double latitude, double longitude) {
+        Location location = new Location(latitude, longitude);
+        waitlistLocations.add(location);
+    }
+
     /** Removes deviceId from joinWaitList when cancel button is clicked
      * @param deviceId users unique deviceID
      */
@@ -619,7 +662,6 @@ public class Event extends Observable implements Serializable {
 
     public void setIsLoaded(boolean newIsLoaded) {
         this.isLoaded = newIsLoaded;
-        notifyObservers();
     }
 
     public boolean isLoaded() {

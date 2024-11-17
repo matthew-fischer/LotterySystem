@@ -45,7 +45,7 @@ public class EntrantEventWaitlistFragment extends Fragment {
     private ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
-                    getLocation();
+                    getLocationAndJoinWaitlist();
                     // Permission is granted. Continue the action or workflow in your
                     // app.
                 } else {
@@ -66,16 +66,12 @@ public class EntrantEventWaitlistFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        // Instantiate location provider
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
-
-        Log.e("TEST", "created");
-
-        getLocation();
 
         // Get event
         GlobalApp globalApp = (GlobalApp) requireActivity().getApplication();
         event = globalApp.getEventToView();
+
+        // Instantiate location provider if geolocation is enabled
 
         // Get device id
         deviceId = globalApp.getUser().getDeviceId();
@@ -89,8 +85,15 @@ public class EntrantEventWaitlistFragment extends Fragment {
         // Set up waitlist action button on click listener
         Button waitlistActionButton = view.findViewById(R.id.waitlistActionButton);
         waitlistActionButton.setOnClickListener(v -> {
-
-            eventController.toggleWaitlist(deviceId);
+            if(!event.onWaitList(deviceId)) {
+                if(event.hasGeolocation()) {
+                    getLocationAndJoinWaitlist();
+                } else {
+                    eventController.waitList(deviceId);
+                }
+            } else {
+                eventController.cancel(deviceId);
+            }
         });
 
         // Set up view poster button on click listener
@@ -191,15 +194,17 @@ public class EntrantEventWaitlistFragment extends Fragment {
         }
     }
 
-    private void getLocation() {
+    private void getLocationAndJoinWaitlist() {
         if (ActivityCompat.checkSelfPermission(requireContext().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
             return;
         }
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
         fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
             if(location != null) {
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
+                eventController.waitlistWithLocation(deviceId, latitude, longitude);
                 Log.e("LOCATION", longitude.toString());
             } else {
                 Log.e("LOCATION", "Last location could not be accessed.");
