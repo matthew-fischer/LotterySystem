@@ -1,7 +1,6 @@
 package com.example.luckydragon.Fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -13,7 +12,6 @@ import androidx.fragment.app.Fragment;
 import com.example.luckydragon.Controllers.EntrantArrayAdapter;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
-import com.example.luckydragon.Models.User;
 import com.example.luckydragon.R;
 import com.example.luckydragon.Views.OrganizerEventView;
 
@@ -42,9 +40,6 @@ public class OrganizerEventFragment extends Fragment {
         GlobalApp globalApp = (GlobalApp) requireActivity().getApplication();
         event = globalApp.getEventToView();
 
-        // Initialize view
-        organizerEventView = new OrganizerEventView(event, this);
-
         // Set up waitlist list view
         ListView waitlistListView = view.findViewById(R.id.eventWaitlistListView);
         // Need a user array adapter
@@ -62,6 +57,9 @@ public class OrganizerEventFragment extends Fragment {
                 organizerMapFragment.show(getActivity().getSupportFragmentManager(), "OrganizerMapFragment");
             });
         }
+
+        // Initialize view
+        organizerEventView = new OrganizerEventView(event, this);
     }
 
     /**

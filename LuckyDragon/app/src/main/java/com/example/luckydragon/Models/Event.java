@@ -158,7 +158,6 @@ public class Event extends Observable implements Serializable {
      */
     @Override
     public void notifyObservers() {
-        Log.e("NOTIFY", id);
         super.notifyObservers();
         save();
     }
@@ -257,6 +256,7 @@ public class Event extends Observable implements Serializable {
         time = new Time(hours, minutes);
 
         if (eventData.get("waitList") != null) {
+            if(waitList.equals((List<String>) eventData.get("waitList"))) return;
             waitList = (List<String>) eventData.get("waitList");
 
             // populate waitlist users
@@ -662,5 +662,14 @@ public class Event extends Observable implements Serializable {
 
     public List<Location> getWaitlistLocations() {
         return waitlistLocations;
+    }
+
+    /**
+     * Fetches data for all users on the waitlist.
+     */
+    public void loadWaitlistUsers() {
+        for(User user : waitlistUsers) {
+            user.fetchData();
+        }
     }
 }
