@@ -22,6 +22,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import org.junit.After;
@@ -29,6 +30,7 @@ import org.junit.Before;
 import org.mockito.Mock;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -102,7 +104,7 @@ public abstract class MockedDb {
         when(mockEventDocumentSnapshot.getData()).thenReturn(getMockEventData());
         when(mockEventDocumentSnapshot.exists()).thenReturn(true);
 
-        // Get a bunch of events stuff
+        // Get a collection of events stuff
         when(mockEventsCollection.get()).thenReturn(mockEventQueryTask);
         when(mockEventsCollection.whereEqualTo(anyString(), any())).thenReturn(mockEventQuery);  // note: not sure where is called
         when(mockEventQueryTask.addOnCompleteListener(any(OnCompleteListener.class)))
@@ -111,8 +113,16 @@ public abstract class MockedDb {
                     listener.onComplete(mockEventQueryTask);
                     return mockEventQueryTask;
                 });
-//        Query mockQuerySnapshot = new mock(QuerySnapshot);
-//        when(mockEventQueryTask.getResult()).thenReturn(mockQuerySnapshot);
+
+        QuerySnapshot mockEventQuerySnapshot = mock(QuerySnapshot.class);  // list of QueryDocumentSnapshots
+        when(mockEventQueryTask.getResult()).thenReturn(mockEventQuerySnapshot);
+        Iterator<QueryDocumentSnapshot> mockEventQueryDocumentSnapshotIter = mock(Iterator.class);
+        when(mockEventQuerySnapshot.iterator()).thenReturn(mockEventQueryDocumentSnapshotIter);
+        when(mockEventQueryDocumentSnapshotIter.hasNext()).thenReturn(true, false);  // true for the first call, false next time
+        QueryDocumentSnapshot mockEventQueryDocumentSnapshot = mock(QueryDocumentSnapshot.class);
+        when(mockEventQueryDocumentSnapshotIter.next()).thenReturn(mockEventQueryDocumentSnapshot);
+        when(mockEventQueryDocumentSnapshot.getData()).thenReturn(getMockEventData());
+        when(mockEventQueryDocumentSnapshot.getId()).thenReturn("fakeEventId");
         // in Organizer.fetchData(), we don't want to pull events from db
         when(mockEventQueryTask.isSuccessful()).thenReturn(true);
         when(mockEventQuery.get()).thenReturn(mockEventQueryTask);
