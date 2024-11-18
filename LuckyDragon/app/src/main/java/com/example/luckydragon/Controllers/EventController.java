@@ -66,6 +66,12 @@ public class EventController extends Controller {
         getObservable().notifyObservers();
     }
 
+    public void cancelWithLocation(String deviceId) {
+        getObservable().leaveWaitlistWithLocation(deviceId);
+        getObservable().leaveAttendeeList(deviceId);
+        getObservable().notifyObservers();
+    }
+
     /**
      * Updates the Event model after an Entrant accepts an invitation to the waitlist
      * @param deviceId the deviceId of the entrant

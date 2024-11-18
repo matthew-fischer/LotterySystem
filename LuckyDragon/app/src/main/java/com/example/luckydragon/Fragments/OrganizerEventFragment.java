@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import com.example.luckydragon.Controllers.EntrantArrayAdapter;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
+import com.example.luckydragon.Models.User;
 import com.example.luckydragon.R;
 import com.example.luckydragon.Views.OrganizerEventView;
 
@@ -57,13 +58,10 @@ public class OrganizerEventFragment extends Fragment {
             // Initialize "See Map" on click listener
             seeMapButton.setOnClickListener(v -> {
                 // Open fragment
-                OrganizerMapFragment organizerMapFragment = new OrganizerMapFragment();
+                OrganizerMapFragment organizerMapFragment = new OrganizerMapFragment(event);
                 organizerMapFragment.show(getActivity().getSupportFragmentManager(), "OrganizerMapFragment");
             });
         }
-
-
-
     }
 
     /**

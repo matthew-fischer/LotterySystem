@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -15,6 +16,9 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
 import android.Manifest;
+
+import com.example.luckydragon.Models.Event;
+import com.example.luckydragon.Models.Location;
 import com.example.luckydragon.R;
 
 import org.osmdroid.config.Configuration;
@@ -25,11 +29,17 @@ import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.OverlayItem;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class OrganizerMapFragment extends DialogFragment {
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private MapView map = null;
+    private Event event;
+
+    public OrganizerMapFragment(Event event) {
+        this.event = event;
+    }
 
     @NonNull
     @Override
@@ -56,13 +66,22 @@ public class OrganizerMapFragment extends DialogFragment {
 
         // Place points on map
         ArrayList<OverlayItem> items = new ArrayList<>();
+
+        boolean first = true;
+        for(Location location : event.getWaitlistLocations()) {
+            GeoPoint locationPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+            OverlayItem locationOverlay = new OverlayItem("Waitlisted User", "", locationPoint);
+            items.add(locationOverlay);
+
+            // Centre map on first location point
+            if(first) {
+                map.setExpectedCenter(locationPoint);
+                first = true;
+            }
+        }
+
         ItemizedIconOverlay myOverlay = new ItemizedIconOverlay(items, null, requireContext());
         map.getOverlays().add(myOverlay);
-
-        // TODO add all points to items
-        GeoPoint edmontonPoint = new GeoPoint(53.546932, -113.498871); // Rogers Place
-        OverlayItem edmontonOverlay = new OverlayItem("Rogers Place", "Rogers", edmontonPoint);
-        items.add(edmontonOverlay);
 
         // Request permissions
         String[] permissions = {

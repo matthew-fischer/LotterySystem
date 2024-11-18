@@ -71,8 +71,6 @@ public class EntrantEventWaitlistFragment extends Fragment {
         GlobalApp globalApp = (GlobalApp) requireActivity().getApplication();
         event = globalApp.getEventToView();
 
-        // Instantiate location provider if geolocation is enabled
-
         // Get device id
         deviceId = globalApp.getUser().getDeviceId();
 
