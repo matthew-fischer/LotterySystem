@@ -30,6 +30,8 @@ public class GlobalApp extends Application {
     private Event event;
     private FirebaseFirestore db;
 
+    private Integer inviteeSelectionDelay = 7; // number of days between when an event is created and when invitees are drawn
+
     private UserList users;
     private EventList eventList;
     private String deviceId = null;
@@ -162,4 +164,6 @@ public class GlobalApp extends Application {
     public Event getEventToView() {
         return eventToView;
     }
+
+    public Integer getInviteeSelectionDelay() { return inviteeSelectionDelay; }
 }

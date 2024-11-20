@@ -25,10 +25,13 @@ import com.google.zxing.common.BitMatrix;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 
 /**
  * Represents an Event object.
@@ -92,6 +95,8 @@ public class Event extends Observable implements Serializable {
     private BitMatrix qrHash;
     private Bitmap qrCode;
 
+    private Long createdTimeMillis = null;
+
     private List<String> waitList = new ArrayList<>();
     private List<String> inviteeList = new ArrayList<>();
     private List<String> attendeeList = new ArrayList<>();
@@ -102,6 +107,8 @@ public class Event extends Observable implements Serializable {
     private ArrayList<User> waitlistUsers = new ArrayList<>();
 
     private boolean isLoaded = false;
+
+    private boolean inviteesHaveBeenSelected = false;
 
     /**
      * Creates an event instance without a given id.
@@ -182,6 +189,13 @@ public class Event extends Observable implements Serializable {
         eventData.put("cancelledList", cancelledList);
         eventData.put("waitListLocations", waitlistLocations);
 
+        if(nonNull(createdTimeMillis)) eventData.put("createdTimeMillis", createdTimeMillis);
+        // if event is loaded and createdTimeMillis is still null, then add the time stamp
+        if(createdTimeMillis == null && isLoaded) {
+            createdTimeMillis = System.currentTimeMillis();
+            eventData.put("createdTimeMillis", createdTimeMillis);
+        }
+
         if (id == null || id.isEmpty()) {
             throw new RuntimeException("Event id should not be empty!");
         }
@@ -249,6 +263,9 @@ public class Event extends Observable implements Serializable {
         if (nonNull(eventData.get("data"))) {
             date = (String) eventData.get("date");
         }
+        if(nonNull(eventData.get("createdTimeMillis"))) {
+            createdTimeMillis = (Long) eventData.get("createdTimeMillis");
+        }
 
         int hours = eventData.get("hours") != null ? Math.toIntExact((Long) eventData.get("hours")) : null;
         int minutes = eventData.get("minutes") != null ? Math.toIntExact((Long) eventData.get("minutes")) : null;
@@ -256,7 +273,7 @@ public class Event extends Observable implements Serializable {
 
         if (eventData.get("waitList") != null) {
             if(!waitList.equals((List<String>) eventData.get("waitList"))) {
-                waitList = (List<String>) eventData.get("waitList");
+                waitList = new ArrayList<>((List<String>) eventData.get("waitList"));
 
                 // populate waitlist users
                 waitlistUsers = new ArrayList<>();
@@ -274,13 +291,13 @@ public class Event extends Observable implements Serializable {
             }
         }
         if (eventData.get("attendeeList") != null) {
-            attendeeList = (List<String>) eventData.get("attendeeList");
+            attendeeList = (ArrayList<String>) eventData.get("attendeeList");
         }
         if (eventData.get("inviteeList") != null) {
-            inviteeList = (List<String>) eventData.get("inviteeList");
+            inviteeList = (ArrayList<String>) eventData.get("inviteeList");
         }
         if (eventData.get("cancelledList") != null) {
-            cancelledList = (List<String>) eventData.get("cancelledList");
+            cancelledList = (ArrayList<String>) eventData.get("cancelledList");
         }
 
         setIsLoaded(true);
@@ -669,5 +686,43 @@ public class Event extends Observable implements Serializable {
 
     public List<Location> getWaitlistLocations() {
         return waitlistLocations;
+    }
+
+    public boolean haveInviteesBeenSelected() {
+        return inviteesHaveBeenSelected;
+    }
+
+    public void setInviteesHaveBeenSelected(boolean inviteesHaveBeenSelected) {
+        this.inviteesHaveBeenSelected = inviteesHaveBeenSelected;
+    }
+
+    /**
+     * Selects invitees from the waiting list for the first time.
+     * This is different from fillInvitees(), which is intended to fill spots freed by cancelled entrants after the initial selection.
+     */
+    public void selectInviteesFirstTime() {
+        assert(inviteeList.isEmpty()); // invitee list should start empty
+        assert(!inviteesHaveBeenSelected); // invitees should not have been selected yet
+
+        // Randomly select entrants from waiting list and move to invitee list
+        Random random = new Random();
+        while(waitList.size() > 0 && inviteeList.size() <= attendeeLimit) {
+            int randomIndex = random.nextInt(waitList.size());
+            // Move id from waitlist to invitee list
+            String selectedId = waitList.get(randomIndex);
+            inviteeList.add(selectedId);
+            // Remove id from waitlist
+            waitList.remove(randomIndex);
+            waitlistUsers.remove(randomIndex);
+            if(hasGeolocation) {
+                waitlistLocations.remove(randomIndex);
+            }
+        }
+
+        inviteesHaveBeenSelected = true; // invitees have now been selected
+    }
+
+    public Long getCreatedTimeMillis() {
+        return createdTimeMillis;
     }
 }
