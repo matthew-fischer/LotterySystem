@@ -75,6 +75,7 @@ public class Event extends Observable implements Serializable {
             return String.format("%d:%02d %s", hours > 12 ? hours - 12 : hours, minutes, AMorPM);
         }
     }
+
     // TODO: REMOVE DEFAULT
     private transient FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -95,6 +96,8 @@ public class Event extends Observable implements Serializable {
     private List<String> inviteeList = new ArrayList<>();
     private List<String> attendeeList = new ArrayList<>();
     private List<String> cancelledList = new ArrayList<>();
+
+    private List<Location> waitlistLocations = new ArrayList<>();
 
     private ArrayList<User> waitlistUsers = new ArrayList<>();
 
@@ -177,6 +180,7 @@ public class Event extends Observable implements Serializable {
         eventData.put("inviteeList", inviteeList);
         eventData.put("attendeeList", attendeeList);
         eventData.put("cancelledList", cancelledList);
+        eventData.put("waitListLocations", waitlistLocations);
 
         if (id == null || id.isEmpty()) {
             throw new RuntimeException("Event id should not be empty!");
@@ -251,14 +255,22 @@ public class Event extends Observable implements Serializable {
         time = new Time(hours, minutes);
 
         if (eventData.get("waitList") != null) {
-            waitList = (List<String>) eventData.get("waitList");
+            if(!waitList.equals((List<String>) eventData.get("waitList"))) {
+                waitList = (List<String>) eventData.get("waitList");
 
-            // populate waitlist users
-            waitlistUsers = new ArrayList<>();
-            for(String userId : waitList) {
-                User user = new User(userId, db);
-                user.fetchData();
-                waitlistUsers.add(user);
+                // populate waitlist users
+                waitlistUsers = new ArrayList<>();
+                for(String userId : waitList) {
+                    User user = new User(userId, db);
+                    user.fetchData();
+                    waitlistUsers.add(user);
+                }
+            };
+        }
+        if(eventData.get("waitListLocations") != null) {
+            waitlistLocations = new ArrayList<>();
+            for(HashMap<String, Object> oMap : (ArrayList<HashMap<String, Object>>) eventData.get("waitListLocations")) {
+                waitlistLocations.add(new Location((double) oMap.get("latitude"), (double) oMap.get("longitude")));
             }
         }
         if (eventData.get("attendeeList") != null) {
@@ -379,15 +391,47 @@ public class Event extends Observable implements Serializable {
         if (!waitList.contains(deviceId)) {
             waitList.add(deviceId);
         }
+        //notifyObservers();
     }
+
+    /**
+     * Adds location to waitlistLocations.
+     * @param latitude latitude of locaton to add
+     * @param longitude longitude of location to add
+     */
+    public void addWaitlistLocation(double latitude, double longitude) {
+        Location location = new Location(latitude, longitude);
+        waitlistLocations.add(location);
+    }
+
     /** Removes deviceId from joinWaitList when cancel button is clicked
      * @param deviceId users unique deviceID
      */
     public void leaveWaitList(String deviceId) {
         if (waitList.contains(deviceId)) {
             waitList.remove(deviceId);
-            notifyObservers();
+            //notifyObservers();
         }
+    }
+
+    /**
+     * Removes deviceId from waitList and corresponding location from waitListLocations.
+     * @param deviceId the device id to remove
+     */
+    public void leaveWaitlistWithLocation(String deviceId) {
+        // find index of id in waitlist
+        int index = 0;
+        for(; index < waitList.size(); index++) {
+            if(Objects.equals(waitList.get(index), deviceId)) {
+                break;
+            }
+        }
+        if(index == waitList.size()) return;
+
+        waitList.remove(index);
+        waitlistLocations.remove(index);
+
+        //notifyObservers();
     }
 
     /**
@@ -397,6 +441,7 @@ public class Event extends Observable implements Serializable {
     public void leaveInviteeList(String deviceId) {
         if (inviteeList.contains(deviceId)) {
             inviteeList.remove(deviceId);
+            //notifyObservers();
         }
     }
 
@@ -407,6 +452,7 @@ public class Event extends Observable implements Serializable {
     public void joinAttendeeList(String deviceId) {
         if (!attendeeList.contains(deviceId)) {
             attendeeList.add(deviceId);
+            //notifyObservers();
         }
     }
 
@@ -417,6 +463,7 @@ public class Event extends Observable implements Serializable {
     public void leaveAttendeeList(String deviceId) {
         if (attendeeList.contains(deviceId)) {
             attendeeList.remove(deviceId);
+            //notifyObservers();
         }
     }
 
@@ -427,6 +474,7 @@ public class Event extends Observable implements Serializable {
     public void joinCancelledList(String deviceId) {
         if (!cancelledList.contains(deviceId)) {
             cancelledList.add(deviceId);
+            //notifyObservers();
         }
     }
 
@@ -613,10 +661,13 @@ public class Event extends Observable implements Serializable {
 
     public void setIsLoaded(boolean newIsLoaded) {
         this.isLoaded = newIsLoaded;
-        notifyObservers();
     }
 
     public boolean isLoaded() {
         return isLoaded;
+    }
+
+    public List<Location> getWaitlistLocations() {
+        return waitlistLocations;
     }
 }

@@ -1,11 +1,17 @@
 package com.example.luckydragon.Fragments;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.luckydragon.Controllers.EventController;
@@ -13,6 +19,8 @@ import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.R;
 import com.example.luckydragon.Views.EntrantEventWaitlistView;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 
 /**
  * This is the fragment containing the entrant-specific event info.
@@ -30,6 +38,24 @@ public class EntrantEventWaitlistFragment extends Fragment {
     private Event event;
     private EntrantEventWaitlistView entrantEventWaitlistView; // TODO define view
     private EventController eventController;
+    private FusedLocationProviderClient fusedLocationClient;
+    private Double latitude;
+    private Double longitude;
+
+    private ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    getLocationAndJoinWaitlist();
+                    // Permission is granted. Continue the action or workflow in your
+                    // app.
+                } else {
+                    // Explain to the user that the feature is unavailable because the
+                    // feature requires a permission that the user has denied. At the
+                    // same time, respect the user's decision. Don't link to system
+                    // settings in an effort to convince the user to change their
+                    // decision.
+                }
+            });
 
     /**
      * Creates an EntrantEventFragment.
@@ -40,6 +66,7 @@ public class EntrantEventWaitlistFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+
         // Get event
         GlobalApp globalApp = (GlobalApp) requireActivity().getApplication();
         event = globalApp.getEventToView();
@@ -55,7 +82,21 @@ public class EntrantEventWaitlistFragment extends Fragment {
 
         // Set up waitlist action button on click listener
         Button waitlistActionButton = view.findViewById(R.id.waitlistActionButton);
-        waitlistActionButton.setOnClickListener(v -> eventController.toggleWaitlist(deviceId));
+        waitlistActionButton.setOnClickListener(v -> {
+            if(!event.onWaitList(deviceId)) {
+                if(event.hasGeolocation()) {
+                    getLocationAndJoinWaitlist();
+                } else {
+                    eventController.waitList(deviceId);
+                }
+            } else {
+                if(event.hasGeolocation()) {
+                    eventController.cancelWithLocation(deviceId);
+                } else {
+                    eventController.cancel(deviceId);
+                }
+            }
+        });
 
         // Set up view poster button on click listener
         Button viewPosterButton = view.findViewById(R.id.viewEventPosterButton);
@@ -153,5 +194,25 @@ public class EntrantEventWaitlistFragment extends Fragment {
         } else {
             geolocationMessageTextView.setVisibility(View.GONE);
         }
+    }
+
+    private void getLocationAndJoinWaitlist() {
+        if (ActivityCompat.checkSelfPermission(requireContext().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
+            return;
+        }
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
+        fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
+            if(location != null) {
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+                eventController.waitlistWithLocation(deviceId, latitude, longitude);
+            } else {
+                Log.e("LOCATION", "Last location could not be accessed.");
+            }
+        }).addOnFailureListener(e -> {
+            Log.e("LOCATION", "Request for location failed");
+            Log.e("LOCATION", e.getMessage());
+        });
     }
 }

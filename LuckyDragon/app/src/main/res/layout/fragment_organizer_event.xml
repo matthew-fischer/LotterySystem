@@ -25,6 +25,14 @@
             android:text="Capacity: No Limit"
             android:textSize="25sp"/>
     </LinearLayout>
+    <Button
+        android:id="@+id/seeMapButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="See Map"
+        android:layout_marginStart="10dp"
+        android:visibility="gone"/>
     <TextView
         android:id="@+id/noWaitlisteesTextView"
         android:layout_width="wrap_content"

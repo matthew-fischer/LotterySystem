@@ -1,6 +1,7 @@
 package com.example.luckydragon.Controllers;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +32,6 @@ public class EntrantArrayAdapter extends ArrayAdapter<User> {
         // Set name
         TextView eventNameTextView = rowView.findViewById(R.id.entrantNameTextView);
         eventNameTextView.setText(entrant.getName());
-        //eventNameTextView.setText(user.getName());
 
         return rowView;
     }
