@@ -23,7 +23,6 @@ public class EntrantEventAttendingFragment extends Fragment {
         // Get event
         GlobalApp globalApp = (GlobalApp) requireActivity().getApplication();
         event = globalApp.getEventToView();
-        globalApp.setEventToView(null); // no longer need to store event in globalApp
 
         // Set text views
         setCurrentAttendeesMessage();

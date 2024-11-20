@@ -29,7 +29,6 @@ import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.OverlayItem;
 
 import java.util.ArrayList;
-import java.util.List;
 
 // Heavily based on osmdroid docs: https://github.com/osmdroid/osmdroid/wiki/How-to-use-the-osmdroid-library-(Java)
 public class OrganizerMapFragment extends DialogFragment {
@@ -39,6 +38,7 @@ public class OrganizerMapFragment extends DialogFragment {
 
     /**
      * Creates an OrganizerMapFragment.
+     *
      * @param event the event to display the map for
      */
     public OrganizerMapFragment(Event event) {
@@ -47,8 +47,7 @@ public class OrganizerMapFragment extends DialogFragment {
 
     @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState)
-    {
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
@@ -72,13 +71,13 @@ public class OrganizerMapFragment extends DialogFragment {
         ArrayList<OverlayItem> items = new ArrayList<>();
 
         boolean first = true;
-        for(Location location : event.getWaitlistLocations()) {
+        for (Location location : event.getWaitlistLocations()) {
             GeoPoint locationPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
             OverlayItem locationOverlay = new OverlayItem("Waitlisted User", "", locationPoint);
             items.add(locationOverlay);
 
             // Centre map on first location point
-            if(first) {
+            if (first) {
                 map.setExpectedCenter(locationPoint);
                 first = true;
             }
@@ -100,9 +99,10 @@ public class OrganizerMapFragment extends DialogFragment {
 
     /**
      * Requests the given permissions.
-     * @param permissions the permissions to request
      *
-     * Directly from osmdroid docs: https://github.com/osmdroid/osmdroid/wiki/How-to-use-the-osmdroid-library-(Java)
+     * @param permissions the permissions to request
+     *                    <p>
+     *                    Directly from osmdroid docs: https://github.com/osmdroid/osmdroid/wiki/How-to-use-the-osmdroid-library-(Java)
      */
     private void requestPermissionsIfNecessary(String[] permissions) {
         ArrayList<String> permissionsToRequest = new ArrayList<>();
