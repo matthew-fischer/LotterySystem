@@ -23,7 +23,6 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -256,16 +255,17 @@ public class Event extends Observable implements Serializable {
         time = new Time(hours, minutes);
 
         if (eventData.get("waitList") != null) {
-            if(waitList.equals((List<String>) eventData.get("waitList"))) return;
-            waitList = (List<String>) eventData.get("waitList");
+            if(!waitList.equals((List<String>) eventData.get("waitList"))) {
+                waitList = (List<String>) eventData.get("waitList");
 
-            // populate waitlist users
-            waitlistUsers = new ArrayList<>();
-            for(String userId : waitList) {
-                User user = new User(userId, db);
-                user.fetchData();
-                waitlistUsers.add(user);
-            }
+                // populate waitlist users
+                waitlistUsers = new ArrayList<>();
+                for(String userId : waitList) {
+                    User user = new User(userId, db);
+                    user.fetchData();
+                    waitlistUsers.add(user);
+                }
+            };
         }
         if(eventData.get("waitListLocations") != null) {
             waitlistLocations = new ArrayList<>();
@@ -391,6 +391,7 @@ public class Event extends Observable implements Serializable {
         if (!waitList.contains(deviceId)) {
             waitList.add(deviceId);
         }
+        //notifyObservers();
     }
 
     /**
@@ -409,7 +410,7 @@ public class Event extends Observable implements Serializable {
     public void leaveWaitList(String deviceId) {
         if (waitList.contains(deviceId)) {
             waitList.remove(deviceId);
-            notifyObservers();
+            //notifyObservers();
         }
     }
 
@@ -429,6 +430,8 @@ public class Event extends Observable implements Serializable {
 
         waitList.remove(index);
         waitlistLocations.remove(index);
+
+        //notifyObservers();
     }
 
     /**
@@ -438,6 +441,7 @@ public class Event extends Observable implements Serializable {
     public void leaveInviteeList(String deviceId) {
         if (inviteeList.contains(deviceId)) {
             inviteeList.remove(deviceId);
+            //notifyObservers();
         }
     }
 
@@ -448,6 +452,7 @@ public class Event extends Observable implements Serializable {
     public void joinAttendeeList(String deviceId) {
         if (!attendeeList.contains(deviceId)) {
             attendeeList.add(deviceId);
+            //notifyObservers();
         }
     }
 
@@ -458,6 +463,7 @@ public class Event extends Observable implements Serializable {
     public void leaveAttendeeList(String deviceId) {
         if (attendeeList.contains(deviceId)) {
             attendeeList.remove(deviceId);
+            //notifyObservers();
         }
     }
 
@@ -468,6 +474,7 @@ public class Event extends Observable implements Serializable {
     public void joinCancelledList(String deviceId) {
         if (!cancelledList.contains(deviceId)) {
             cancelledList.add(deviceId);
+            //notifyObservers();
         }
     }
 
@@ -662,14 +669,5 @@ public class Event extends Observable implements Serializable {
 
     public List<Location> getWaitlistLocations() {
         return waitlistLocations;
-    }
-
-    /**
-     * Fetches data for all users on the waitlist.
-     */
-    public void loadWaitlistUsers() {
-        for(User user : waitlistUsers) {
-            user.fetchData();
-        }
     }
 }

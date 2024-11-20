@@ -31,12 +31,16 @@ import org.osmdroid.views.overlay.OverlayItem;
 import java.util.ArrayList;
 import java.util.List;
 
-
+// Heavily based on osmdroid docs: https://github.com/osmdroid/osmdroid/wiki/How-to-use-the-osmdroid-library-(Java)
 public class OrganizerMapFragment extends DialogFragment {
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private MapView map = null;
     private Event event;
 
+    /**
+     * Creates an OrganizerMapFragment.
+     * @param event the event to display the map for
+     */
     public OrganizerMapFragment(Event event) {
         this.event = event;
     }
@@ -94,6 +98,12 @@ public class OrganizerMapFragment extends DialogFragment {
         return builder.setView(dialogView).setNegativeButton("Close", null).create();
     }
 
+    /**
+     * Requests the given permissions.
+     * @param permissions the permissions to request
+     *
+     * Directly from osmdroid docs: https://github.com/osmdroid/osmdroid/wiki/How-to-use-the-osmdroid-library-(Java)
+     */
     private void requestPermissionsIfNecessary(String[] permissions) {
         ArrayList<String> permissionsToRequest = new ArrayList<>();
         for (String permission : permissions) {
