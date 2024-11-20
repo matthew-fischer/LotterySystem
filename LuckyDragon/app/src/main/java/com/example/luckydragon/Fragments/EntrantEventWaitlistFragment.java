@@ -90,7 +90,11 @@ public class EntrantEventWaitlistFragment extends Fragment {
                     eventController.waitList(deviceId);
                 }
             } else {
-                eventController.cancel(deviceId);
+                if(event.hasGeolocation()) {
+                    eventController.cancelWithLocation(deviceId);
+                } else {
+                    eventController.cancel(deviceId);
+                }
             }
         });
 
@@ -203,7 +207,6 @@ public class EntrantEventWaitlistFragment extends Fragment {
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
                 eventController.waitlistWithLocation(deviceId, latitude, longitude);
-                Log.e("LOCATION", longitude.toString());
             } else {
                 Log.e("LOCATION", "Last location could not be accessed.");
             }
