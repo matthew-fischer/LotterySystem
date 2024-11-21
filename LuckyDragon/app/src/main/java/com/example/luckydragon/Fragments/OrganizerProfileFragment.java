@@ -9,8 +9,10 @@
 package com.example.luckydragon.Fragments;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -20,8 +22,10 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
+import com.example.luckydragon.Activities.ViewEventActivity;
 import com.example.luckydragon.Controllers.EventArrayAdapter;
 import com.example.luckydragon.GlobalApp;
+import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.Models.User;
 import com.example.luckydragon.Views.OrganizerProfileView;
 import com.example.luckydragon.R;
@@ -47,6 +51,7 @@ public class OrganizerProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         // Get user
+        GlobalApp globalApp = ((GlobalApp) requireActivity().getApplication());
         user = ((GlobalApp) requireActivity().getApplication()).getUser();
         assert user.getOrganizer() != null; // user must be an organizer by this point
         user.getOrganizer().fetchEvents();
@@ -55,6 +60,14 @@ public class OrganizerProfileFragment extends Fragment {
         ListView eventsListView = view.findViewById(R.id.organizerProfileEventsListview);
         eventListAdapter = new EventArrayAdapter(user.getOrganizer().getEvents(), requireActivity().getApplicationContext(), this, "ORGANIZER");
         eventsListView.setAdapter(eventListAdapter);
+
+        // Set up onClick listener for event in organizer events listview
+        eventsListView.setOnItemClickListener((parent, elementView, position, id) -> {
+            Event clickedEvent = (Event) parent.getItemAtPosition(position);
+            // Start ViewEventActivity
+            globalApp.setEventToView(clickedEvent);
+            startActivity(new Intent(getContext(), ViewEventActivity.class));
+        });
 
         // Create view
         organizerProfileView = new OrganizerProfileView(user, this);

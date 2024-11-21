@@ -161,7 +161,6 @@ public class EventView extends Observer {
                 signUp.setVisibility(View.VISIBLE);
                 viewPoster.setVisibility(View.VISIBLE);
             }
-
         }
     }
 }

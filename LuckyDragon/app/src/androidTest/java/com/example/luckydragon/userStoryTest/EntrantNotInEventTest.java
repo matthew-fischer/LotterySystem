@@ -2,7 +2,10 @@ package com.example.luckydragon.userStoryTest;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
@@ -12,6 +15,7 @@ import androidx.test.core.app.ActivityScenario;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.example.luckydragon.Activities.EventActivity;
+import com.example.luckydragon.Activities.ViewEventActivity;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.MockedDb;
 import com.example.luckydragon.Models.Event;
@@ -24,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class EntrantNotInEventTest extends MockedDb {
+    private String deviceId = "fakeDeviceId";
     @Override
     protected HashMap<String, Object> getMockData() {
         // Define test user
@@ -69,30 +74,39 @@ public class EntrantNotInEventTest extends MockedDb {
      * Launch activity directly on event activity
      * User clicks sign up
      * User is now part of the waitlist
+     * Button changes from "Join Waitlist" to "Cancel"
      * TODO: Below
      * User can see that they are part of the waitlist
      * User can see on their profile they are on the waitlist
      */
     @Test
     public void testJoinWaitlist() {
+        // Launch event activity directly
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
         globalApp.setDb(mockFirestore);
-        globalApp.setDeviceId("fakeDeviceId");
-
-
-        // Launch event activity directly
-        final Intent intent = new Intent(targetContext, EventActivity.class);
-        intent.putExtra("eventID", "fakeEventId");
-        try (final ActivityScenario<EventActivity> scenario = ActivityScenario.launch(intent)) {
-            // Ensure we are not on waitlist
-            Event event = globalApp.getEvent("fakeEventId");
-            assertTrue(event.getWaitList().isEmpty());
-            // Click signup
-            onView(withId(R.id.signUpButton)).perform(click());
-
-            // Check we are on waitlist
-            assertTrue(event.getWaitList().contains("fakeDeviceId"));
+        globalApp.setDeviceId(deviceId);
+        globalApp.setRole(GlobalApp.ROLE.ENTRANT);
+        // Set event to view
+        Event testEvent = new Event(eventId, mockFirestore);
+        testEvent.parseEventDocument(getMockEventData());
+        testEvent.setIsLoaded(true);
+        globalApp.setEventToView(testEvent);
+        // Launch event activity
+        final Intent intent = new Intent(targetContext, ViewEventActivity.class);
+        try(final ActivityScenario<ViewEventActivity> scenario = ActivityScenario.launch(intent)) {
+            // Ensure that all event lists are empty
+            assertTrue(testEvent.getInviteeList().isEmpty());
+            assertTrue(testEvent.getAttendeeList().isEmpty());
+            assertTrue(testEvent.getCancelledList().isEmpty());
+            // Check that waitlist action button has correct text
+            onView(withId(R.id.waitlistActionButton)).check(matches(withText("Join Waitlist")));
+            // Click "join waitlist"
+            onView(withId(R.id.waitlistActionButton)).perform(click());
+            // Check that we are on waitlist
+            assertTrue(testEvent.getWaitList().contains(deviceId));
+            // Check that waitlist action button text changes to "Cancel"
+            onView(withId(R.id.waitlistActionButton)).check(matches(withText("Cancel")));
         }
     }
 }

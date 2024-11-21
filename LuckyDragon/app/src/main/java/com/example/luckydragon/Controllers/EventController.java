@@ -1,5 +1,7 @@
 package com.example.luckydragon.Controllers;
 
+import android.util.Log;
+
 import com.example.luckydragon.Models.Event;
 
 /**
@@ -19,12 +21,38 @@ public class EventController extends Controller {
     }
 
     /**
+     * Adds or removes entrant from waiting list, depending on whether entrant is already on waiting list or not.
+     * @param deviceId the deviceId of the entrant
+     */
+    public void toggleWaitlist(String deviceId) {
+        if(getObservable().onWaitList(deviceId)) {
+            getObservable().leaveWaitList(deviceId);
+        } else {
+            getObservable().joinWaitList(deviceId);
+        }
+        getObservable().notifyObservers();
+    }
+
+    /**
      * Update the Event model after an Entrant joins the waiting list.
      * @param deviceId the deviceId of the entrant who is joining the waitlist
      */
     public void waitList(String deviceId) {
         // Add deviceID to Waitlist:
         getObservable().joinWaitList(deviceId);
+        getObservable().notifyObservers();
+    }
+
+    /**
+     * Update the Event model after an Entrant joins the waiting list.
+     * Updates the waitlist locations too.
+     */
+    public void waitlistWithLocation(String deviceId, double latitude, double longitude) {
+        // Add deviceID to Waitlist:
+        getObservable().joinWaitList(deviceId);
+        // Add location to waitlist locations
+        getObservable().addWaitlistLocation(latitude, longitude);
+        getObservable().notifyObservers();
     }
 
     /**
@@ -35,6 +63,13 @@ public class EventController extends Controller {
     public void cancel(String deviceId) {
         getObservable().leaveWaitList(deviceId);
         getObservable().leaveAttendeeList(deviceId);
+        getObservable().notifyObservers();
+    }
+
+    public void cancelWithLocation(String deviceId) {
+        getObservable().leaveWaitlistWithLocation(deviceId);
+        getObservable().leaveAttendeeList(deviceId);
+        getObservable().notifyObservers();
     }
 
     /**
@@ -42,8 +77,10 @@ public class EventController extends Controller {
      * @param deviceId the deviceId of the entrant
      */
     public void acceptInvitation(String deviceId) {
+        Log.e("RUN", "accept");
         getObservable().leaveInviteeList(deviceId);
         getObservable().joinAttendeeList(deviceId);
+        getObservable().notifyObservers();
     }
 
     /**
@@ -51,8 +88,10 @@ public class EventController extends Controller {
      * @param deviceId the deviceId of the entrant
      */
     public void declineInvitation(String deviceId) {
+        Log.e("RUN", "decline");
         getObservable().leaveInviteeList(deviceId);
         getObservable().joinCancelledList(deviceId);
+        getObservable().notifyObservers();
     }
 
     /**

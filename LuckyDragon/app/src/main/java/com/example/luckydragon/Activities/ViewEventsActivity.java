@@ -38,8 +38,9 @@ public class ViewEventsActivity extends AppBarActivity {
         setContentView(R.layout.activity_browse_events);
         getSupportActionBar().setTitle("Events");
 
+        GlobalApp globalApp = (GlobalApp) getApplication();
         // Set up admin events listview
-        eventList = ((GlobalApp) getApplication()).getEvents();
+        eventList = globalApp.getEvents();
         eventsListView = findViewById(R.id.adminProfileEventsListview);
         eventListAdapter = new EventArrayAdapter(eventList.getEventList(), this, null, "ADMINISTRATOR");
         eventsListView.setAdapter(eventListAdapter);
@@ -49,12 +50,8 @@ public class ViewEventsActivity extends AppBarActivity {
         // Set up item click listener for ListView
         eventsListView.setOnItemClickListener((adapterView, v, position, l) -> {
             Event event = (Event) adapterView.getItemAtPosition(position);
-            //Intent intent = new Intent(ViewEventsActivity.this, AdminEventActivity.class);
-            Intent intent = new Intent(ViewEventsActivity.this, EventActivity.class);
-            //intent.putExtra("event", event.getId());
-            intent.putExtra("eventID", event.getId());
-            intent.putExtra("role", "ADMIN");
-            startActivity(intent);
+            globalApp.setEventToView(event);
+            startActivity(new Intent(this, ViewEventActivity.class));
         });
     }
 
@@ -62,9 +59,7 @@ public class ViewEventsActivity extends AppBarActivity {
      * Notifies the adapter that the data has changed.
      */
     public void notifyAdapter() {
-
         eventListAdapter.notifyDataSetChanged();
-
     }
 
 }

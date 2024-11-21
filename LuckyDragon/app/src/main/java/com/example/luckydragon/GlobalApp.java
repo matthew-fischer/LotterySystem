@@ -3,6 +3,7 @@ package com.example.luckydragon;
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.provider.Settings;
+import android.util.Log;
 
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.Models.EventList;
@@ -34,6 +35,9 @@ public class GlobalApp extends Application {
     private String deviceId = null;
 
     public final Bitmap profilePictureSize = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
+
+    private Event eventToView = null; // temporary storage for eventToView to be passed into ViewEventActivity (avoids passing event through intent or having to re-fetch it unneccessarily)
+
 
     /**
      * Gets the current user of the app, fetching the DB if needed.
@@ -82,6 +86,7 @@ public class GlobalApp extends Application {
      * @return the event object
      */
     public Event getEvent(String eventId) {
+        Log.e("FETCH", "get event");
         if (db == null) {
             setDb(FirebaseFirestore.getInstance());
         }
@@ -148,5 +153,13 @@ public class GlobalApp extends Application {
         users = null;
         eventList = null;
         deviceId = null;
+    }
+
+    public void setEventToView(Event eventToView) {
+        this.eventToView = eventToView;
+    }
+
+    public Event getEventToView() {
+        return eventToView;
     }
 }

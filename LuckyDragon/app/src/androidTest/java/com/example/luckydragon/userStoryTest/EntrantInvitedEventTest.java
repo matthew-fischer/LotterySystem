@@ -2,6 +2,8 @@ package com.example.luckydragon.userStoryTest;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.junit.Assert.assertTrue;
 
@@ -12,6 +14,7 @@ import androidx.test.core.app.ActivityScenario;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.example.luckydragon.Activities.EventActivity;
+import com.example.luckydragon.Activities.ViewEventActivity;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.MockedDb;
 import com.example.luckydragon.Models.Event;
@@ -68,39 +71,43 @@ public class EntrantInvitedEventTest extends MockedDb {
 
     /**
      * USER STORY TEST
-     * >
-     * US 01.05.02 Entrant - be able to accept the invitation to
-     *      register/sign up when chosen to participate in an event
+     * US 01.05.02
+     * Entrant - be able to accept the invitation to register/sign up when chosen to participate in an event
      * Launch activity directly on event activity
      * User clicks accept
      * User is now part of the attendee list
-     * TODO: Below
-     * User can see that they are part of the attendee list
-     * User can see on their profile they are on the attendee list
+     * User sees a message confirming that they are attending this event
+     * TODO below
+     *      User can see that they are part of the attendee list
+     *      User can see on their profile they are on the attendee list
      */
     @Test
     public void testAcceptInvite() {
+        // Launch event activity directly
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
         globalApp.setDb(mockFirestore);
         globalApp.setDeviceId(deviceId);
-
-        // Launch event activity directly
-        final Intent intent = new Intent(targetContext, EventActivity.class);
-        intent.putExtra("eventID", eventId);
-        try (final ActivityScenario<EventActivity> scenario = ActivityScenario.launch(intent)) {
+        globalApp.setRole(GlobalApp.ROLE.ENTRANT);
+        // Set event to view
+        Event testEvent = new Event(eventId, mockFirestore);
+        testEvent.parseEventDocument(getMockEventData());
+        testEvent.setIsLoaded(true);
+        globalApp.setEventToView(testEvent);
+        // Launch event activity
+        final Intent intent = new Intent(targetContext, ViewEventActivity.class);
+        try(final ActivityScenario<ViewEventActivity> scenario = ActivityScenario.launch(intent)) {
             // Ensure we are on invitee list
-            Event event = globalApp.getEvent(eventId);
-            assertTrue(event.getInviteeList().contains(deviceId));
-            assertTrue(event.getAttendeeList().isEmpty());
+            assertTrue(testEvent.getInviteeList().contains(deviceId));
+            assertTrue(testEvent.getAttendeeList().isEmpty());
             // Click accept
-            onView(withId(R.id.eventAccept)).perform(click());
+            onView(withId(R.id.invitationAcceptButton)).perform(click());
             // Check we are on attendee list
-            assertTrue(event.getAttendeeList().contains(deviceId));
+            assertTrue(testEvent.getAttendeeList().contains(deviceId));
             // And not on invitee
-            assertTrue(event.getInviteeList().isEmpty());
+            assertTrue(testEvent.getInviteeList().isEmpty());
+            // Check that we are taken to the attending fragment
+            onView(withId(R.id.eventAttendingMessage)).check(matches(isDisplayed()));
         }
     }
-
-
 }

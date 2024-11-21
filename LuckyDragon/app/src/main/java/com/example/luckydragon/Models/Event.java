@@ -72,9 +72,10 @@ public class Event extends Observable implements Serializable {
          */
         public String toString12h() {
             String AMorPM = hours < 12 ? "AM" : "PM";
-            return String.format("%02d:%02d %s", hours > 12 ? hours - 12 : hours, minutes, AMorPM);
+            return String.format("%d:%02d %s", hours > 12 ? hours - 12 : hours, minutes, AMorPM);
         }
     }
+
     // TODO: REMOVE DEFAULT
     private transient FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -95,6 +96,12 @@ public class Event extends Observable implements Serializable {
     private List<String> inviteeList = new ArrayList<>();
     private List<String> attendeeList = new ArrayList<>();
     private List<String> cancelledList = new ArrayList<>();
+
+    private List<Location> waitlistLocations = new ArrayList<>();
+
+    private ArrayList<User> waitlistUsers = new ArrayList<>();
+
+    private boolean isLoaded = false;
 
     /**
      * Creates an event instance without a given id.
@@ -131,7 +138,7 @@ public class Event extends Observable implements Serializable {
      * @param timeHours: the hour time e.g. "8" for 8:30
      * @param timeMinutes: the minute time e.g. "30" for 8:30
      */
-    public Event(String id, String name, String organizerDeviceId, String facility, Integer waitListLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes)  {
+    public Event(String id, String name, String organizerDeviceId, String facility, Integer waitListLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes, FirebaseFirestore db)  {
         this.id = id;
         this.name = name;
         this.organizerDeviceId = organizerDeviceId;
@@ -142,6 +149,7 @@ public class Event extends Observable implements Serializable {
         this.time = new Time(timeHours, timeMinutes);
         this.qrHash = generateQRCode();
         this.qrCode = createBitMap(this.qrHash);
+        this.db = db;
     }
 
     /**
@@ -172,6 +180,7 @@ public class Event extends Observable implements Serializable {
         eventData.put("inviteeList", inviteeList);
         eventData.put("attendeeList", attendeeList);
         eventData.put("cancelledList", cancelledList);
+        eventData.put("waitListLocations", waitlistLocations);
 
         if (id == null || id.isEmpty()) {
             throw new RuntimeException("Event id should not be empty!");
@@ -229,10 +238,10 @@ public class Event extends Observable implements Serializable {
             facility = (String) eventData.get("facility");
         }
         if (nonNull(eventData.get("waitListLimit"))) {
-            waitListLimit = ((Long) eventData.get("waitListLimit")).intValue();
+            waitListLimit = Math.toIntExact((Long) eventData.get("waitListLimit"));
         }
         if (nonNull(eventData.get("attendeeLimit"))) {
-            attendeeLimit = ((Long) eventData.get("attendeeLimit")).intValue();
+            attendeeLimit = Math.toIntExact((Long) eventData.get("attendeeLimit"));
         }
         if (nonNull(eventData.get("hasGeolocation"))) {
             hasGeolocation = (boolean) eventData.get("hasGeolocation");
@@ -241,12 +250,28 @@ public class Event extends Observable implements Serializable {
             date = (String) eventData.get("date");
         }
 
-        int hours = eventData.get("hours") != null ? ((Long) eventData.get("hours")).intValue() : null;
-        int minutes = eventData.get("minutes") != null ? ((Long) eventData.get("minutes")).intValue() : null;
+        int hours = eventData.get("hours") != null ? Math.toIntExact((Long) eventData.get("hours")) : null;
+        int minutes = eventData.get("minutes") != null ? Math.toIntExact((Long) eventData.get("minutes")) : null;
         time = new Time(hours, minutes);
 
         if (eventData.get("waitList") != null) {
-            waitList = (List<String>) eventData.get("waitList");
+            if(!waitList.equals((List<String>) eventData.get("waitList"))) {
+                waitList = (List<String>) eventData.get("waitList");
+
+                // populate waitlist users
+                waitlistUsers = new ArrayList<>();
+                for(String userId : waitList) {
+                    User user = new User(userId, db);
+                    user.fetchData();
+                    waitlistUsers.add(user);
+                }
+            };
+        }
+        if(eventData.get("waitListLocations") != null) {
+            waitlistLocations = new ArrayList<>();
+            for(HashMap<String, Object> oMap : (ArrayList<HashMap<String, Object>>) eventData.get("waitListLocations")) {
+                waitlistLocations.add(new Location((double) oMap.get("latitude"), (double) oMap.get("longitude")));
+            }
         }
         if (eventData.get("attendeeList") != null) {
             attendeeList = (List<String>) eventData.get("attendeeList");
@@ -257,6 +282,8 @@ public class Event extends Observable implements Serializable {
         if (eventData.get("cancelledList") != null) {
             cancelledList = (List<String>) eventData.get("cancelledList");
         }
+
+        setIsLoaded(true);
     }
 
     /**
@@ -316,7 +343,7 @@ public class Event extends Observable implements Serializable {
      * @return the string representation of the QR hash
      */
     public String getQrHash() {
-        return qrHash.toString("1", "0");
+        return qrHash != null ? qrHash.toString("1", "0") : null;
     }
 
     /**
@@ -363,17 +390,48 @@ public class Event extends Observable implements Serializable {
     public void joinWaitList(String deviceId) {
         if (!waitList.contains(deviceId)) {
             waitList.add(deviceId);
-            notifyObservers();
         }
+        //notifyObservers();
     }
+
+    /**
+     * Adds location to waitlistLocations.
+     * @param latitude latitude of locaton to add
+     * @param longitude longitude of location to add
+     */
+    public void addWaitlistLocation(double latitude, double longitude) {
+        Location location = new Location(latitude, longitude);
+        waitlistLocations.add(location);
+    }
+
     /** Removes deviceId from joinWaitList when cancel button is clicked
      * @param deviceId users unique deviceID
      */
     public void leaveWaitList(String deviceId) {
         if (waitList.contains(deviceId)) {
             waitList.remove(deviceId);
-            notifyObservers();
+            //notifyObservers();
         }
+    }
+
+    /**
+     * Removes deviceId from waitList and corresponding location from waitListLocations.
+     * @param deviceId the device id to remove
+     */
+    public void leaveWaitlistWithLocation(String deviceId) {
+        // find index of id in waitlist
+        int index = 0;
+        for(; index < waitList.size(); index++) {
+            if(Objects.equals(waitList.get(index), deviceId)) {
+                break;
+            }
+        }
+        if(index == waitList.size()) return;
+
+        waitList.remove(index);
+        waitlistLocations.remove(index);
+
+        //notifyObservers();
     }
 
     /**
@@ -383,7 +441,7 @@ public class Event extends Observable implements Serializable {
     public void leaveInviteeList(String deviceId) {
         if (inviteeList.contains(deviceId)) {
             inviteeList.remove(deviceId);
-            notifyObservers();
+            //notifyObservers();
         }
     }
 
@@ -394,7 +452,7 @@ public class Event extends Observable implements Serializable {
     public void joinAttendeeList(String deviceId) {
         if (!attendeeList.contains(deviceId)) {
             attendeeList.add(deviceId);
-            notifyObservers();
+            //notifyObservers();
         }
     }
 
@@ -405,7 +463,7 @@ public class Event extends Observable implements Serializable {
     public void leaveAttendeeList(String deviceId) {
         if (attendeeList.contains(deviceId)) {
             attendeeList.remove(deviceId);
-            notifyObservers();
+            //notifyObservers();
         }
     }
 
@@ -416,7 +474,7 @@ public class Event extends Observable implements Serializable {
     public void joinCancelledList(String deviceId) {
         if (!cancelledList.contains(deviceId)) {
             cancelledList.add(deviceId);
-            notifyObservers();
+            //notifyObservers();
         }
     }
 
@@ -446,6 +504,7 @@ public class Event extends Observable implements Serializable {
      * @param eventId the event id
      */
     public void removeQR(String eventId) {
+        qrHash = null;
         db.collection("events")
                 .document(eventId)
                 .update("hashedQR", "null");
@@ -594,5 +653,21 @@ public class Event extends Observable implements Serializable {
 
     public List<String> getCancelledList() {
         return cancelledList;
+    }
+
+    public ArrayList<User> getWaitlistUsers() {
+        return waitlistUsers;
+    }
+
+    public void setIsLoaded(boolean newIsLoaded) {
+        this.isLoaded = newIsLoaded;
+    }
+
+    public boolean isLoaded() {
+        return isLoaded;
+    }
+
+    public List<Location> getWaitlistLocations() {
+        return waitlistLocations;
     }
 }

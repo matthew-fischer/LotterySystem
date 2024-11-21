@@ -434,7 +434,6 @@ public class User extends Observable {
             } else {
                 organizer = new Organizer(deviceId, this::notifyObservers, db);
             }
-            organizer.fetchEvents();
         }
         isAdmin = userData.get("isAdmin") != null
                 && userData.get("isAdmin").toString().equals("true");
