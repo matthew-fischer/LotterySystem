@@ -24,7 +24,6 @@ import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.MockedDb;
 import com.example.luckydragon.Models.User;
 import com.example.luckydragon.R;
-
 import org.junit.Test;
 
 import java.util.HashMap;
