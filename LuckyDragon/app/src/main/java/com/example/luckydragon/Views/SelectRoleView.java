@@ -7,8 +7,6 @@
 
 package com.example.luckydragon.Views;
 
-import android.util.Log;
-
 import com.example.luckydragon.Activities.SelectRoleActivity;
 import com.example.luckydragon.Models.Observable;
 import com.example.luckydragon.Models.User;
