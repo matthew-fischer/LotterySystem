@@ -1,6 +1,7 @@
 package com.example.luckydragon.Controllers;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.widget.EditText;
 
 import com.example.luckydragon.Models.User;

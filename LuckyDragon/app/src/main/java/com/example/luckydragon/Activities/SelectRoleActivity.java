@@ -11,17 +11,30 @@
 
 package com.example.luckydragon.Activities;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.User;
 import com.example.luckydragon.R;
 import com.example.luckydragon.Views.SelectRoleView;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 /**
  * This is the activity for the select role page.
@@ -42,6 +55,26 @@ public class SelectRoleActivity extends AppCompatActivity {
         user = ((GlobalApp) getApplication()).getUser();
         // Create view
         selectRoleView = new SelectRoleView(user, this);
+
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w("TONY", "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+
+                        // Get new FCM registration token
+                        String token = task.getResult();
+
+                        // Log and toast
+                        String msg = token;
+//                        String msg = getString(R.string.msg_token_fmt, token);
+                        Log.d("TONY1", msg);
+//                        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     /**
@@ -102,6 +135,49 @@ public class SelectRoleActivity extends AppCompatActivity {
                 });
             }
         }
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+//                requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 101);
+//            }
+//        }
+//
+//        // Based off: https://developer.android.com/develop/ui/views/notifications/build-notification
+//        // Inside your activity or service
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            String channelId = "my_channel_id";
+//            String channelName = "My Channel";
+//            String channelDescription = "Description of my channel";
+//            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+//
+//            NotificationChannel channel = new NotificationChannel(channelId, channelName, importance);
+//            channel.setDescription(channelDescription);
+//
+//            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+//            notificationManager.createNotificationChannel(channel);
+//        }
+//
+//        // Inside your activity or service
+//        String channelId = "my_channel_id"; // Use the same channel ID created earlier
+//        int notificationId = 1; // Unique ID for the notification
+//
+//        // Create an intent to open an activity when the notification is tapped
+//        Intent intent = new Intent(this, ProfileActivity.class);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+//
+//        // Build the notification
+//        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
+//                .setSmallIcon(R.drawable.baseline_notifications_24) // Replace with your drawable resource
+//                .setContentTitle("My Notification Title")
+//                .setContentText("This is the notification content.")
+//                .setPriority(NotificationCompat.PRIORITY_DEFAULT) // For older devices
+//                .setContentIntent(pendingIntent) // Add the intent
+//                .setAutoCancel(true); // Dismiss the notification on tap
+//
+//        // Show the notification
+//        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//        notificationManager.notify(notificationId, builder.build());
     }
 
     /**

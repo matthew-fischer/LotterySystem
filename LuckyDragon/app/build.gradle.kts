@@ -60,7 +60,10 @@ dependencies {
 //    androidTestImplementation(libs.ext.junit)
 //    androidTestImplementation(libs.espresso.core)
     // noinspection UseTomlInstead
+    
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
+    implementation("com.google.firebase:firebase-messaging")
+
     implementation("com.google.zxing:core:3.3.0")
     implementation(libs.play.services.location)
     androidTestImplementation(libs.junit.jupiter)

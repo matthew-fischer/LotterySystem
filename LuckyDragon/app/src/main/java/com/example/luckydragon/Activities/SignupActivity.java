@@ -1,9 +1,13 @@
 package com.example.luckydragon.Activities;
 
+import static android.Manifest.permission.POST_NOTIFICATIONS;
+
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -12,6 +16,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
@@ -20,6 +25,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.content.ContextCompat;
 
 import com.example.luckydragon.Controllers.SignupController;
 import com.example.luckydragon.GlobalApp;
@@ -47,6 +53,38 @@ public class SignupActivity extends AppBarActivity {
     private Button submitButton;
     private ActivityResultLauncher<Intent> uploadImageResultLauncher;
     private ImageButton profilePictureButton;
+
+    // from: https://firebase.google.com/docs/cloud-messaging/android/client
+    // Declare the launcher at the top of your Activity/Fragment:
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    onSubmit();
+                    // FCM SDK (and your app) can post notifications.
+                } else {
+                    // TODO: Inform user that that your app will not show notifications.
+                }
+            });
+
+    private void askNotificationPermission() {
+        // This is only necessary for API level >= 33 (TIRAMISU)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, POST_NOTIFICATIONS) ==
+                    PackageManager.PERMISSION_GRANTED) {
+                throw new RuntimeException("entered into notification perm request with requests enabled already!");
+                // FCM SDK (and your app) can post notifications.
+//            } else if (shouldShowRequestPermissionRationale(POST_NOTIFICATIONS)) {
+//                // TODO: display an educational UI explaining to the user the features that will be enabled
+//                //       by them granting the POST_NOTIFICATION permission. This UI should provide the user
+//                //       "OK" and "No thanks" buttons. If the user selects "OK," directly request the permission.
+//                //       If the user selects "No thanks," allow the user to continue without notifications.
+            } else {
+                // Directly ask for the permission
+                requestPermissionLauncher.launch(POST_NOTIFICATIONS);
+            }
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -136,7 +174,7 @@ public class SignupActivity extends AppBarActivity {
                 signupController.extractPhoneNumber(editPhone);
             } catch(Exception ignored) {};
         });
-        switchNotifications.setOnClickListener(view -> {
+        switchNotifications.setOnCheckedChangeListener((compoundButton, b) -> {
             signupController.setNotifications(switchNotifications);
         });
 
@@ -166,37 +204,48 @@ public class SignupActivity extends AppBarActivity {
         });
 
         submitButton.setOnClickListener(view -> {
-            // Validate input fields
-            boolean valid = true;
-            try {
-                signupController.extractName(editName);
-            } catch (Exception e) {
-                editName.setError(e.getMessage());
-                valid = false;
-            }
-            try {
-                signupController.extractEmail(editEmail);
-            } catch(Exception e) {
-                editEmail.setError(e.getMessage());
-                valid = false;
-            }
-            try {
-                signupController.extractPhoneNumber(editPhone);
-            } catch (Exception e) {
-                editEmail.setError(e.getMessage());
-                valid = false;
-            }
-            if (!valid) return;
-
-            // tell activity to launch profile
-            Intent intent = new Intent(this, ProfileActivity.class);
-            // Start profile activity
-            startActivity(intent);
-            finish();
-
-            // become entrant and organizer
-            signupController.becomeEntrantAndOrganizer();
+            onSubmit();
         });
+    }
+
+    private void onSubmit() {
+        // Validate input fields
+        boolean valid = true;
+        try {
+            signupController.extractName(editName);
+        } catch (Exception e) {
+            editName.setError(e.getMessage());
+            valid = false;
+        }
+        try {
+            signupController.extractEmail(editEmail);
+        } catch(Exception e) {
+            editEmail.setError(e.getMessage());
+            valid = false;
+        }
+        try {
+            signupController.extractPhoneNumber(editPhone);
+        } catch (Exception e) {
+            editEmail.setError(e.getMessage());
+            valid = false;
+        }
+        if (!valid) return;
+
+        // check for notifications enabled and perms not enabled
+        if (switchNotifications.isChecked() && ContextCompat.checkSelfPermission(this, POST_NOTIFICATIONS) !=
+                PackageManager.PERMISSION_GRANTED) {
+            askNotificationPermission();  // make sure notifs are enabled
+            return;
+        }
+
+        // tell activity to launch profile
+        Intent intent = new Intent(this, ProfileActivity.class);
+        // Start profile activity
+        startActivity(intent);
+        finish();
+
+        // become entrant and organizer
+        signupController.becomeEntrantAndOrganizer();
     }
 
     private void setListener(EditText editText, Runnable runnable) {
