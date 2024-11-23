@@ -78,7 +78,7 @@ public class BrowseEventsAdminTest extends MockedDb{
         final Intent intent = new Intent(targetContext, ViewEventsActivity.class);
 
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
-
+        globalApp.setDb(mockFirestore);
         // Launch event activity directly
         try (final ActivityScenario<ViewEventsActivity> scenario = ActivityScenario.launch(intent)) {
             SystemClock.sleep(5000);

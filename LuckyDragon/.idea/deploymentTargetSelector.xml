@@ -16,13 +16,7 @@
       <SelectionState runConfigName="Tests in 'com.example.luckydragon.userStoryTest'">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="EntrantInvitedEventDenyTest">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="OrganizerViewMapTest">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="Tests in 'com.example.luckydragon'">
+      <SelectionState runConfigName="testBrowseEvents()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
