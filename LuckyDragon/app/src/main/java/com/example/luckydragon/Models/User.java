@@ -126,6 +126,12 @@ public class User extends Observable {
                 });
     }
 
+    public void deleteUser(String deviceId) {
+        db.collection("users")
+                .document(deviceId)
+                .delete();
+    }
+
     /**
      * Returns whether a user is valid.
      * A user is valid if their name is not empty.
