@@ -41,17 +41,15 @@ public class UserList extends Observable {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Map<String, Object> userData = document.getData();
                             User user = new User(
-                                    userData.get("name") instanceof String ? (String) userData.get("name") : null,
-                                    userData.get("email") instanceof String ? (String) userData.get("email") : null,
-                                    userData.get("phoneNumber") instanceof String ? (String) userData.get("phoneNumber") : null,
-                                    (Bitmap) User.stringToBitmap((String) userData.get("defaultProfilePicture")),
-                                    (Bitmap) User.stringToBitmap((String) userData.get("profilePicture"))
+                                    document.getId(),
+                                    db,
+                                    userData
                             );
-
                             users.add(user);
                         }
 
                         Log.d(TAG, "Users loaded successfully with initial get()");
+
                         notifyObservers();
                     } else {
                         Log.w(TAG, "Error getting initial documents.", task.getException());

@@ -24,6 +24,9 @@ public class AdminBrowseProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         GlobalApp globalApp = ((GlobalApp) requireActivity().getApplication());
         user = globalApp.getUserToView();
+
+        // Create controller
+        userController = new UserController(user);
     }
 
 }

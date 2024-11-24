@@ -15,6 +15,7 @@ package com.example.luckydragon.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -80,10 +81,12 @@ public class ProfileActivity extends AppBarActivity {
                         .replace(R.id.fragment_container_view, AdminBrowseProfileFragment.class, null)
                         .commit();
             }
-            getSupportFragmentManager().beginTransaction()
-                    .setReorderingAllowed(true)
-                    .replace(R.id.fragment_container_view, AdminProfileFragment.class, null)
-                    .commit();
+            else {
+                getSupportFragmentManager().beginTransaction()
+                        .setReorderingAllowed(true)
+                        .replace(R.id.fragment_container_view, AdminProfileFragment.class, null)
+                        .commit();
+            }
         } else {
             throw new RuntimeException("User role not set!");
         }
