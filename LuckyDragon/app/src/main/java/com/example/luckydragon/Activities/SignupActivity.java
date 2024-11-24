@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -67,6 +68,10 @@ public class SignupActivity extends AppBarActivity {
         user = ((GlobalApp) getApplication()).getUser();
         signupController = new SignupController(user);
         signupView = new SignupView(user, this, signupController);
+
+        // Phone number formatting
+        editPhone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
+
 
         uploadImageResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
