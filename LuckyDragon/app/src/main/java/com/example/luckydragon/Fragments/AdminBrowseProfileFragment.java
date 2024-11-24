@@ -2,6 +2,8 @@ package com.example.luckydragon.Fragments;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -27,6 +29,14 @@ public class AdminBrowseProfileFragment extends Fragment {
 
         // Create controller
         userController = new UserController(user);
+
+        // Set up delete profile button on click listener
+        Button adminDeleteProfileButton = view.findViewById(R.id.adminDeleteProfileButton);
+        adminDeleteProfileButton.setOnClickListener(v -> {
+            userController.deleteUser(user.getDeviceId());
+            Toast.makeText(getContext(), "Profile Deleted Successfully", Toast.LENGTH_SHORT).show();
+            requireActivity().finish();
+        });
     }
 
 }
