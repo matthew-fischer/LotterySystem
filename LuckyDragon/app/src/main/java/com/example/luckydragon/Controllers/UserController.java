@@ -11,4 +11,9 @@ public class UserController extends Controller{
     public User getObservable() {
         return (User) super.getObservable();
     }
+
+    public void deleteUser(String deviceId) {
+        getObservable().deleteUser(deviceId);
+    }
+
 }
