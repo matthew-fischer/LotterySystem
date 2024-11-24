@@ -73,6 +73,12 @@ public class ProfileActivity extends AppBarActivity {
                     .replace(R.id.fragment_container_view, OrganizerProfileFragment.class, null)
                     .commit();
         } else if (role == GlobalApp.ROLE.ADMINISTRATOR) {
+            if (((GlobalApp) getApplication()).getUserToView() != null) {
+                getSupportFragmentManager().beginTransaction()
+                        .setReorderingAllowed(true)
+                        .replace(R.id.fragment_container_view, AdminBrowseProfileFragment.class, null)
+                        .commit();
+            }
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
                     .replace(R.id.fragment_container_view, AdminProfileFragment.class, null)
