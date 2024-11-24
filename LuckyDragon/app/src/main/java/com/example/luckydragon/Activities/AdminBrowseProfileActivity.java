@@ -18,6 +18,15 @@ public class AdminBrowseProfileActivity extends AppBarActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_browse_profile);
         getSupportActionBar().setTitle("Profile Management");
+
+        // Get user from global app
+        user = ((GlobalApp) getApplication()).getUserToView();
+        role = ((GlobalApp) getApplication()).getRole();
+
+        // Create profile view
+        profileView = new ProfileView(user, this);
+
+
     }
 
 }
