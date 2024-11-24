@@ -47,6 +47,10 @@ public class ProfileActivity extends AppBarActivity {
         // Get user from global app
         user = ((GlobalApp) getApplication()).getUser();
         role = ((GlobalApp) getApplication()).getRole();
+        // Admin is viewing a profile
+        if (role == GlobalApp.ROLE.ADMINISTRATOR && ((GlobalApp) getApplication()).getUserToView() != null) {
+            user = ((GlobalApp) getApplication()).getUserToView();
+        }
 
         // Create profile view
         // initializeView() uses profileView, but it will run before the ProfileView constructor returns so it still thinks ProfileView is null
