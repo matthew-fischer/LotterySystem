@@ -17,16 +17,18 @@
         android:padding="10dp">
 
         <TextView
+            android:id="@+id/signupTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Register:"
+            android:text="@string/ProfileSignUpTitle"
             android:textSize="25sp"
             android:textAlignment="center"
             android:textStyle="bold" />
         <TextView
+            android:id="@+id/signupSubtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Fill in your personal information."
+            android:text="@string/ProfileSignUpSubtitle"
             android:textAlignment="center"/>
 
             <androidx.cardview.widget.CardView
