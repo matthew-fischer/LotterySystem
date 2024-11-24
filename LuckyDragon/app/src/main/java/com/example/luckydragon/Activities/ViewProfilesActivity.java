@@ -51,7 +51,7 @@ public class ViewProfilesActivity extends AppBarActivity {
         usersListView.setOnItemClickListener(((adapterView, v, position, l) -> {
             User user = (User) adapterView.getItemAtPosition(position);
             globalApp.setUserToView(user);
-            // Start fragment
+            startActivity(new Intent(this, AdminBrowseProfileActivity.class));
         }));
 
     }
