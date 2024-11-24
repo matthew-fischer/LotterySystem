@@ -20,6 +20,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
@@ -130,6 +131,17 @@ public class User extends Observable {
         db.collection("users")
                 .document(deviceId)
                 .delete();
+    }
+
+    public void deleteOrganizerEvents(String deviceId) {
+        db.collection("events")
+                .whereEqualTo("organizerDeviceId", deviceId)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot document: queryDocumentSnapshots) {
+                        document.getReference().delete();
+                    }
+                });
     }
 
     /**
