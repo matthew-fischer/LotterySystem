@@ -33,6 +33,9 @@ public class AdminBrowseProfileFragment extends Fragment {
         // Set up delete profile button on click listener
         Button adminDeleteProfileButton = view.findViewById(R.id.adminDeleteProfileButton);
         adminDeleteProfileButton.setOnClickListener(v -> {
+            if (user.isOrganizer()) {
+                userController.deleteOrganizerEvents(user.getDeviceId());
+            }
             userController.deleteUser(user.getDeviceId());
             Toast.makeText(getContext(), "Profile Deleted Successfully", Toast.LENGTH_SHORT).show();
             requireActivity().finish();
