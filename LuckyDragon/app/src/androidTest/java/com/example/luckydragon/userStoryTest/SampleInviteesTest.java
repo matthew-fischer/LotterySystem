@@ -179,11 +179,14 @@ public class SampleInviteesTest {
         eventData1.put("name", "Piano Lesson");
         eventData1.put("organizerDeviceId", "abcd1234");
         eventData1.put("facility", "Piano Place");
-        eventData1.put("waitlistLimit", new Long(10));
-        eventData1.put("attendeeLimit", new Long(2));
+        eventData1.put("waitlistLimit", 10L);
+        eventData1.put("attendeeLimit", 2L);
         eventData1.put("date", "2025-01-15");
-        eventData1.put("hours", new Long(18));
-        eventData1.put("minutes", new Long(15));
+        eventData1.put("hours", 18L);
+        eventData1.put("minutes", 15L);
+        eventData1.put("lotteryDate", "2024-09-01");
+        eventData1.put("lotteryHours", 8L);
+        eventData1.put("lotteryMinuts", 0L);
         eventData1.put("waitList", List.of("ts123", "mf456"));
         eventData1.put("createdTimeMillis", 1731294000000L); // event created Nov 10 2024 8:00:00 PM
         eventData.add(eventData1);
