@@ -64,7 +64,10 @@ public class SelectRoleActivity extends AppCompatActivity {
                 } else {
                     // Send to entrant signup
                     Intent signupIntent = new Intent(this, SignupActivity.class);
+                    signupIntent.putExtra("title", getString(R.string.ProfileSignUpTitle));
+                    signupIntent.putExtra("subtitle", getString(R.string.ProfileSignUpSubtitle));
                     startActivity(signupIntent);
+
                 }
             });
         }
