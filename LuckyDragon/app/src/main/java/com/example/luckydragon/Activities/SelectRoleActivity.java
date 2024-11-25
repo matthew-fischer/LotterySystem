@@ -135,49 +135,6 @@ public class SelectRoleActivity extends AppCompatActivity {
                 });
             }
         }
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-//            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-//                requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 101);
-//            }
-//        }
-//
-//        // Based off: https://developer.android.com/develop/ui/views/notifications/build-notification
-//        // Inside your activity or service
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            String channelId = "my_channel_id";
-//            String channelName = "My Channel";
-//            String channelDescription = "Description of my channel";
-//            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-//
-//            NotificationChannel channel = new NotificationChannel(channelId, channelName, importance);
-//            channel.setDescription(channelDescription);
-//
-//            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-//            notificationManager.createNotificationChannel(channel);
-//        }
-//
-//        // Inside your activity or service
-//        String channelId = "my_channel_id"; // Use the same channel ID created earlier
-//        int notificationId = 1; // Unique ID for the notification
-//
-//        // Create an intent to open an activity when the notification is tapped
-//        Intent intent = new Intent(this, ProfileActivity.class);
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-//
-//        // Build the notification
-//        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
-//                .setSmallIcon(R.drawable.baseline_notifications_24) // Replace with your drawable resource
-//                .setContentTitle("My Notification Title")
-//                .setContentText("This is the notification content.")
-//                .setPriority(NotificationCompat.PRIORITY_DEFAULT) // For older devices
-//                .setContentIntent(pendingIntent) // Add the intent
-//                .setAutoCancel(true); // Dismiss the notification on tap
-//
-//        // Show the notification
-//        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//        notificationManager.notify(notificationId, builder.build());
     }
 
     /**
