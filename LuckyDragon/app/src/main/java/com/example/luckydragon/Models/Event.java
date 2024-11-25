@@ -249,6 +249,7 @@ public class Event extends Observable implements Serializable {
      * @param eventData the raw event data from Firestore
      */
     public void parseEventDocument(Map<String, Object> eventData) {
+        if(eventData == null) return;
         if (nonNull(eventData.get("name"))) {
             name = (String) eventData.get("name");
         }
