@@ -676,7 +676,14 @@ public class Event extends Observable implements Serializable {
     }
 
     public void setEventPoster(Bitmap poster) {
+        if (poster != null) {
+            Log.e("JXU", "poster is good");
+        }
         this.eventPoster = poster;
         notifyObservers();
+    }
+
+    public Bitmap getEventPoster() {
+        return this.eventPoster;
     }
 }

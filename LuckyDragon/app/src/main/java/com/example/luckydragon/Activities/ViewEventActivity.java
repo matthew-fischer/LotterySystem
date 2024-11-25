@@ -1,8 +1,12 @@
 package com.example.luckydragon.Activities;
 
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -10,6 +14,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.example.luckydragon.Fragments.AdminEventFragment;
+import com.example.luckydragon.Fragments.DisplayImageFragment;
 import com.example.luckydragon.Fragments.DisplayQRCodeFragment;
 import com.example.luckydragon.Fragments.EntrantEventAttendingFragment;
 import com.example.luckydragon.Fragments.EntrantEventInvitedFragment;
@@ -20,6 +25,8 @@ import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.R;
 import com.example.luckydragon.Views.ViewEventView;
+
+import java.io.FileOutputStream;
 
 /**
  * This is the activity for the view event page.

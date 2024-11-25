@@ -125,7 +125,7 @@ public class AddEventDialogFragment extends DialogFragment {
                                 eventPoster = Bitmap.createScaledBitmap(eventPoster, 200,
                                         (200 * height)/width, false);
                                 posterFile.setText(file);
-                                controller.setEventPoster(eventPoster);
+                                controller.uploadEventPoster(eventPoster);
                             } catch (Exception e) {
                                 Log.e("signup", e.getMessage());
                                 Log.e("signup", "error uploading event poster");

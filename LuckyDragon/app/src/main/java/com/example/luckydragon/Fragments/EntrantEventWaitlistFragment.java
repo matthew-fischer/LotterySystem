@@ -12,6 +12,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.example.luckydragon.Controllers.EventController;
@@ -101,7 +102,18 @@ public class EntrantEventWaitlistFragment extends Fragment {
         // Set up view poster button on click listener
         Button viewPosterButton = view.findViewById(R.id.viewEventPosterButton);
         viewPosterButton.setOnClickListener(v -> {
-            // TODO show poster
+            assert event.getEventPoster() != null;
+            try {
+                Bundle args = new Bundle();
+                args.putSerializable("event", event);
+                DialogFragment displayPosterFragment = new DisplayImageFragment();
+                Log.e("JXU", "frag inside frag");
+                displayPosterFragment.setArguments(args);
+                displayPosterFragment.show(getChildFragmentManager(), "DisplayQRCodeFragment");
+            } catch (Exception e) {
+                Log.e("JXU", "can't view poster");
+                Log.e("JXU", e.getMessage());
+            }
         });
     }
 
