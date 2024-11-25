@@ -137,13 +137,23 @@
         android:background="@drawable/frame"
         android:paddingVertical="17.5dp"
         android:layout_marginTop="10dp"
+        android:paddingStart="17.5dp"
         >
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/timeTextView"
+            android:id="@+id/lotteryLabelTextView"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:text="Time"
+            android:text="Lottery:"
+            android:textSize="16sp"
+            android:textAlignment="viewStart"
+            android:textColor="@color/black"/>
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/lotteryTimeTextView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:text="Draw Time"
             android:textSize="16sp"
             android:textAlignment="viewEnd"
             android:textColor="?attr/colorPrimary"/>
@@ -156,13 +166,57 @@
             android:textColor="?attr/colorPrimary"
             android:clickable="false"/>
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/dateTextView"
+            android:id="@+id/lotteryDateTextView"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:text="Date"
+            android:text="Draw Date"
             android:textSize="16sp"
             android:textColor="?attr/colorPrimary"/>
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="horizontal"
+        android:background="@drawable/frame"
+        android:paddingVertical="17.5dp"
+        android:layout_marginTop="10dp"
+        android:paddingStart="17.5dp"
+        >
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/eventLabelTextView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:text="Event:"
+            android:textSize="16sp"
+            android:textAlignment="viewStart"
+            android:textColor="@color/black"/>
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/eventTimeTextView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:text="Event Time"
+            android:textSize="16sp"
+            android:textAlignment="viewEnd"
+            android:textColor="?attr/colorPrimary"/>
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="|"
+            android:textSize="16sp"
+            android:layout_marginHorizontal="5dp"
+            android:textColor="?attr/colorPrimary"
+            android:clickable="false"/>
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/eventDateTextView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:text="Event Date"
+            android:textSize="16sp"
+            android:textColor="?attr/colorPrimary"/>
+    </LinearLayout>
 </LinearLayout>

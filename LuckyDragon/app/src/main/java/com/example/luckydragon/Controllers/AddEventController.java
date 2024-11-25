@@ -33,7 +33,6 @@ public class AddEventController extends Controller {
      */
     public void extractName(EditText et) {
         String eventName = et.getText().toString();
-        Log.d("EXTRACTING", eventName);
 
         // Validate input
         if (eventName.isEmpty()) {
@@ -73,23 +72,43 @@ public class AddEventController extends Controller {
     }
 
     /**
-     * Extracts the time from the MaterialTimePicker and updates the model.
+     * Extracts the time from the MaterialTimePicker and updates the event time in the model.
      * @param picker the MaterialTimePicker for the event time
      */
-    public void extractTime(MaterialTimePicker picker) {
+    public void extractEventTime(MaterialTimePicker picker) {
         int timeHours = picker.getHour();
         int timeMinutes = picker.getMinute();
         getObservable().setTime(timeHours, timeMinutes);
     }
 
     /**
-     * Extracts the date from a EPOCH timestamp and updates the model.
+     * Extracts the date from a EPOCH timestamp and updates the event date in the model.
      * @param selection the time in millliseconds since epoch of the date
      */
-    public void extractDate(Long selection) {
+    public void extractEventDate(Long selection) {
         Instant dateInstant = Instant.ofEpochMilli(selection);
         String date = dateInstant.toString().substring(0, 10);
         getObservable().setDate(date);
+    }
+
+    /**
+     * Extracts the time from the MaterialTimePicker and updates the event time in the model.
+     * @param picker the MaterialTimePicker for the event time
+     */
+    public void extractLotteryTime(MaterialTimePicker picker) {
+        int timeHours = picker.getHour();
+        int timeMinutes = picker.getMinute();
+        getObservable().setLotteryTime(timeHours, timeMinutes);
+    }
+
+    /**
+     * Extracts the date from a EPOCH timestamp and updates the lottery date in the model..
+     * @param selection the time in millliseconds since epoch of the date
+     */
+    public void extractLotteryDate(Long selection) {
+        Instant dateInstant = Instant.ofEpochMilli(selection);
+        String date = dateInstant.toString().substring(0, 10);
+        getObservable().setLotteryDate(date);
     }
 
     /**

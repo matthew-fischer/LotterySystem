@@ -90,8 +90,10 @@ public class Event extends Observable implements Serializable {
     private Integer waitListLimit = -1;
     private Integer attendeeLimit = -1;
     private Boolean hasGeolocation = false;
-    private String date = LocalDate.now().toString();
+    private String date = LocalDate.now().plusDays(7).toString();
     private Time time = new Time(19, 0);
+    private String lotteryDate = LocalDate.now().plusDays(3).toString();
+    private Time lotteryTime = new Time(8, 0);
     private BitMatrix qrHash;
     private Bitmap qrCode;
 
@@ -182,6 +184,10 @@ public class Event extends Observable implements Serializable {
         if(nonNull(date) && !date.isEmpty()) eventData.put("date", date);
         if(nonNull(time.hours)) eventData.put("hours", time.hours);
         if(nonNull(time.minutes)) eventData.put("minutes", time.minutes);
+        if(nonNull(lotteryDate) && !lotteryDate.isEmpty()) eventData.put("lotteryDate", lotteryDate);
+        System.out.println(lotteryTime == null ? "null" : "not null");
+        if(nonNull(lotteryTime.hours)) eventData.put("lotteryHours", lotteryTime.hours);
+        if(nonNull(lotteryTime.hours)) eventData.put("lotteryMinutes", lotteryTime.minutes);
         if(nonNull(qrHash)) eventData.put("hashedQR", qrHash.toString("1", "0"));
         eventData.put("waitList", waitList);
         eventData.put("inviteeList", inviteeList);
@@ -261,8 +267,11 @@ public class Event extends Observable implements Serializable {
         if (nonNull(eventData.get("hasGeolocation"))) {
             hasGeolocation = (boolean) eventData.get("hasGeolocation");
         }
-        if (nonNull(eventData.get("data"))) {
+        if (nonNull(eventData.get("date"))) {
             date = (String) eventData.get("date");
+        }
+        if (nonNull(eventData.get("lotteryDate"))) {
+            lotteryDate = (String) eventData.get("lotteryDate");
         }
         if(nonNull(eventData.get("createdTimeMillis"))) {
             createdTimeMillis = (Long) eventData.get("createdTimeMillis");
@@ -274,6 +283,10 @@ public class Event extends Observable implements Serializable {
         int hours = eventData.get("hours") != null ? Math.toIntExact((Long) eventData.get("hours")) : null;
         int minutes = eventData.get("minutes") != null ? Math.toIntExact((Long) eventData.get("minutes")) : null;
         time = new Time(hours, minutes);
+
+        if(eventData.get("lotteryHours") != null && eventData.get("lotteryMinutes") != null) {
+            lotteryTime = new Time(Math.toIntExact((Long) eventData.get("lotteryHours")), Math.toIntExact((Long) eventData.get("lotteryMinutes")));
+        }
 
         if (eventData.get("waitList") != null) {
             if(!waitList.equals((List<String>) eventData.get("waitList"))) {
@@ -536,6 +549,8 @@ public class Event extends Observable implements Serializable {
         return time.toString12h();
     }
 
+    public String getLotteryTime12h() { return lotteryTime.toString12h(); }
+
     public String getDate() {
         return date;
     }
@@ -728,5 +743,22 @@ public class Event extends Observable implements Serializable {
 
     public Long getCreatedTimeMillis() {
         return createdTimeMillis;
+    }
+
+    public String getLotteryDate() {
+        return lotteryDate;
+    }
+
+    public void setLotteryDate(String lotteryDate) {
+        this.lotteryDate = lotteryDate;
+    }
+
+    public Time getLotteryTime() {
+        return lotteryTime;
+    }
+
+    public void setLotteryTime(int hours, int minutes) {
+        Time lotteryTime = new Time(hours, minutes);
+        this.lotteryTime = lotteryTime;
     }
 }
