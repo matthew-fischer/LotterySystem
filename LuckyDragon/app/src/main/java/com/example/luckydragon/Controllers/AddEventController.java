@@ -1,5 +1,6 @@
 package com.example.luckydragon.Controllers;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.EditText;
 
@@ -98,5 +99,9 @@ public class AddEventController extends Controller {
      */
     public void extractHasGeolocation(SwitchMaterial toggle) {
         getObservable().setHasGeolocation(toggle.isChecked());
+    }
+
+    public void uploadEventPoster(Bitmap bitmap) {
+        getObservable().setEventPoster(bitmap);
     }
 }
