@@ -59,15 +59,6 @@ public class ViewEventActivity extends AppBarActivity {
         event.fetchData(); // get all event data
         viewEventView = new ViewEventView(event, this);
 
-        // Check if invitees need to be sampled
-        if(!event.haveInviteesBeenSelected()) {
-            Long elapsedMs = System.currentTimeMillis() - event.getCreatedTimeMillis();
-            Long delayMs = globalApp.getInviteeSelectionDelay() * 86400000L;
-            if(elapsedMs >= delayMs) {
-                event.selectInviteesFirstTime();
-            }
-        }
-
         // Hide buttons for entrant
         if(globalApp.getRole() == GlobalApp.ROLE.ENTRANT) {
             hideEditButton();
@@ -177,6 +168,21 @@ public class ViewEventActivity extends AppBarActivity {
                         .setReorderingAllowed(true)
                         .replace(R.id.eventFragmentContainer, AdminEventFragment.class, null)
                         .commit();
+            }
+        }
+    }
+
+    /**
+     * Samples attendees if the waitlist period has passed and they have not been sampled yet.
+     */
+    public void sampleAttendeesIfNeccessary() {
+        if(event == null || event.getCreatedTimeMillis() == null) return;
+        GlobalApp globalApp = (GlobalApp) getApplication();
+        if(!event.haveInviteesBeenSelected()) {
+            Long elapsedMs = System.currentTimeMillis() - event.getCreatedTimeMillis();
+            Long delayMs = globalApp.getInviteeSelectionDelay() * 86400000L;
+            if(elapsedMs >= delayMs) {
+                event.selectInviteesFirstTime();
             }
         }
     }
