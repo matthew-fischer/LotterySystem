@@ -176,6 +176,7 @@ public class ViewEventActivity extends AppBarActivity {
      * Samples attendees if the waitlist period has passed and they have not been sampled yet.
      */
     public void sampleAttendeesIfNeccessary() {
+        if(!event.isLoaded()) return;
         if(event == null || event.getCreatedTimeMillis() == null) return;
         GlobalApp globalApp = (GlobalApp) getApplication();
         if(!event.haveInviteesBeenSelected()) {

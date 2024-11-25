@@ -190,6 +190,7 @@ public class Event extends Observable implements Serializable {
         eventData.put("waitListLocations", waitlistLocations);
 
         if(nonNull(createdTimeMillis)) eventData.put("createdTimeMillis", createdTimeMillis);
+        if(nonNull(inviteesHaveBeenSelected)) eventData.put("inviteesHaveBeenSelected", inviteesHaveBeenSelected);
         // if event is loaded and createdTimeMillis is still null, then add the time stamp
         if(createdTimeMillis == null && isLoaded) {
             createdTimeMillis = System.currentTimeMillis();
@@ -265,6 +266,9 @@ public class Event extends Observable implements Serializable {
         }
         if(nonNull(eventData.get("createdTimeMillis"))) {
             createdTimeMillis = (Long) eventData.get("createdTimeMillis");
+        }
+        if(nonNull(eventData.get("inviteesHaveBeenSelected"))) {
+            inviteesHaveBeenSelected = (boolean) eventData.get("inviteesHaveBeenSelected");
         }
 
         int hours = eventData.get("hours") != null ? Math.toIntExact((Long) eventData.get("hours")) : null;
