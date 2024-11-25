@@ -13,6 +13,8 @@ import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.User;
 import com.example.luckydragon.R;
 
+import java.util.Objects;
+
 public class AdminBrowseProfileFragment extends Fragment {
 
     private User user;
@@ -33,6 +35,10 @@ public class AdminBrowseProfileFragment extends Fragment {
         // Set up delete profile button on click listener
         Button adminDeleteProfileButton = view.findViewById(R.id.adminDeleteProfileButton);
         adminDeleteProfileButton.setOnClickListener(v -> {
+            if (Objects.equals(user.getDeviceId(), globalApp.getUser().getDeviceId())) {
+                Toast.makeText(getContext(), "Cannot delete your own profile", Toast.LENGTH_SHORT).show();
+                requireActivity().finish();
+            }
             if (user.isOrganizer()) {
                 userController.deleteOrganizerEvents(user.getDeviceId());
             }
