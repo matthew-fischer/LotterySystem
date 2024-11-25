@@ -21,6 +21,10 @@ import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.R;
 import com.example.luckydragon.Views.ViewEventView;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 /**
  * This is the activity for the view event page.
  * It shows general event information like name, facility, date, and time.
@@ -178,13 +182,15 @@ public class ViewEventActivity extends AppBarActivity {
     public void sampleAttendeesIfNeccessary() {
         if(!event.isLoaded()) return;
         if(event == null || event.getCreatedTimeMillis() == null) return;
-        GlobalApp globalApp = (GlobalApp) getApplication();
         if(!event.haveInviteesBeenSelected()) {
-            Long elapsedMs = System.currentTimeMillis() - event.getCreatedTimeMillis();
-            Long delayMs = globalApp.getInviteeSelectionDelay() * 86400000L;
-            if(elapsedMs >= delayMs) {
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            LocalDate lotteryDate = LocalDate.parse(event.getLotteryDate());
+            LocalTime lotteryTime = LocalTime.of(event.getLotteryHours(), event.getLotteryMinutes());
+            LocalDateTime lotteryDateTime = LocalDateTime.of(lotteryDate, lotteryTime);
+            if(currentDateTime.isAfter(lotteryDateTime)) {
                 event.selectInviteesFirstTime();
             }
+            loadChildFragment(); // reload child fragment since we now want to show invitee fragment instead of waitlist fragment
         }
     }
 }

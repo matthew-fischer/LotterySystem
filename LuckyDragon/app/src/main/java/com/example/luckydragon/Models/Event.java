@@ -751,6 +751,7 @@ public class Event extends Observable implements Serializable {
 
     public void setLotteryDate(String lotteryDate) {
         this.lotteryDate = lotteryDate;
+        notifyObservers();
     }
 
     public Time getLotteryTime() {
@@ -760,5 +761,14 @@ public class Event extends Observable implements Serializable {
     public void setLotteryTime(int hours, int minutes) {
         Time lotteryTime = new Time(hours, minutes);
         this.lotteryTime = lotteryTime;
+        notifyObservers();
+    }
+
+    public int getLotteryHours() {
+        return lotteryTime.hours;
+    }
+
+    public int getLotteryMinutes() {
+        return lotteryTime.minutes;
     }
 }
