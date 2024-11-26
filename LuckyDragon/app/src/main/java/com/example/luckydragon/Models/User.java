@@ -89,9 +89,11 @@ public class User extends Observable {
      * Users are identified in the database by their unique device ID
      */
     public void fetchData() {
+        Log.d("UserFetch", "Initiating Fetch");
         db.collection("users").document(getDeviceId())
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
+                    Log.d("UserFetch", "Completed Fetch");
                     Map<String, Object> userData = documentSnapshot.getData();
                     if (userData == null) {
                         save();
