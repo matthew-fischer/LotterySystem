@@ -10,19 +10,16 @@ package com.example.luckydragon.Models;
 import static java.util.Objects.nonNull;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Base64;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -121,8 +118,8 @@ public class User extends Observable {
         map.put("email", nonNull(email) && !email.isEmpty() ? email : null);
         map.put("phoneNumber", nonNull(phoneNumber) && !phoneNumber.isEmpty() ? phoneNumber : null);
         map.put("notifications", notifications);
-        map.put("profilePicture", bitmapToString(uploadedProfilePicture));
-        map.put("defaultProfilePicture", bitmapToString(defaultProfilePicture));
+        map.put("profilePicture", BitmapUtil.bitmapToString(uploadedProfilePicture));
+        map.put("defaultProfilePicture", BitmapUtil.bitmapToString(defaultProfilePicture));
         db.collection("users").document(deviceId)
                 .set(map).addOnFailureListener(e -> {
                     Log.e("SAVE DB", "fail");
@@ -380,35 +377,6 @@ public class User extends Observable {
     }
 
     /**
-     * Converts bitmap to string
-     * @param image: the bitmap to convert to base 64 string
-     * @return image encoded as string
-     */
-    public static String bitmapToString(Bitmap image) {
-        // reference: https://stackoverflow.com/questions/13562429/how-many-ways-to-convert-bitmap-to-string-and-vice-versa
-        if (image == null) return "";
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-        byte[] byteArray = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(byteArray, Base64.DEFAULT);
-    }
-
-    /**
-     * Converts base64 string to bitmap
-     * @param base64Str: The base 64 string to convert to bitmap
-     * @return base64Str decoded to bitmap
-     */
-    public static Bitmap stringToBitmap(String base64Str) {
-        // reference: https://stackoverflow.com/questions/13562429/how-many-ways-to-convert-bitmap-to-string-and-vice-versa
-        if (base64Str == null || base64Str.isEmpty()) return null;
-        byte[] decodedBytes = Base64.decode(
-                base64Str.substring(base64Str.indexOf(",")  + 1),
-                Base64.DEFAULT
-        );
-        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-    }
-
-    /**
      * Sets user attributes based on a map of user data.
      * Used for loading user from database.
      * @param userData the map of user data
@@ -437,7 +405,7 @@ public class User extends Observable {
         }
         isAdmin = userData.get("isAdmin") != null
                 && userData.get("isAdmin").toString().equals("true");
-        uploadedProfilePicture = stringToBitmap((String)userData.get("profilePicture"));
-        defaultProfilePicture = stringToBitmap((String)userData.get("defaultProfilePicture"));
+        uploadedProfilePicture = BitmapUtil.stringToBitmap((String)userData.get("profilePicture"));
+        defaultProfilePicture = BitmapUtil.stringToBitmap((String)userData.get("defaultProfilePicture"));
     }
 }

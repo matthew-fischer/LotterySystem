@@ -44,8 +44,8 @@ public class UserList extends Observable {
                                     userData.get("name") instanceof String ? (String) userData.get("name") : null,
                                     userData.get("email") instanceof String ? (String) userData.get("email") : null,
                                     userData.get("phoneNumber") instanceof String ? (String) userData.get("phoneNumber") : null,
-                                    (Bitmap) User.stringToBitmap((String) userData.get("defaultProfilePicture")),
-                                    (Bitmap) User.stringToBitmap((String) userData.get("profilePicture"))
+                                    (Bitmap) BitmapUtil.stringToBitmap((String) userData.get("defaultProfilePicture")),
+                                    (Bitmap) BitmapUtil.stringToBitmap((String) userData.get("profilePicture"))
                             );
 
                             users.add(user);

@@ -177,7 +177,7 @@ public class Event extends Observable implements Serializable {
         if(nonNull(time.hours)) eventData.put("hours", time.hours);
         if(nonNull(time.minutes)) eventData.put("minutes", time.minutes);
         if(nonNull(qrHash)) eventData.put("hashedQR", qrHash.toString("1", "0"));
-        eventData.put("poster", User.bitmapToString(eventPoster));
+        eventData.put("poster", BitmapUtil.bitmapToString(eventPoster));
         eventData.put("waitList", waitList);
         eventData.put("inviteeList", inviteeList);
         eventData.put("attendeeList", attendeeList);
@@ -252,7 +252,7 @@ public class Event extends Observable implements Serializable {
             date = (String) eventData.get("date");
         }
 
-        eventPoster = User.stringToBitmap((String)eventData.get("poster"));
+        eventPoster = BitmapUtil.stringToBitmap((String)eventData.get("poster"));
 
         int hours = eventData.get("hours") != null ? Math.toIntExact((Long) eventData.get("hours")) : null;
         int minutes = eventData.get("minutes") != null ? Math.toIntExact((Long) eventData.get("minutes")) : null;
