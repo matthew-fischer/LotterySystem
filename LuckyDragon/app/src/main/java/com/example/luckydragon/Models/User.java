@@ -129,19 +129,18 @@ public class User extends Observable {
 
     public void deleteUser(String deviceId) {
         db.collection("users")
-                .document(deviceId)
+                .document(getDeviceId())
                 .delete();
-    }
-
-    public void deleteOrganizerEvents(String deviceId) {
-        db.collection("events")
-                .whereEqualTo("organizerDeviceId", deviceId)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    for (DocumentSnapshot document: queryDocumentSnapshots) {
-                        document.getReference().delete();
-                    }
-                });
+        if (isOrganizer()) {
+            db.collection("events")
+                    .whereEqualTo("organizerDeviceId", getDeviceId())
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (DocumentSnapshot document: queryDocumentSnapshots) {
+                            document.getReference().delete();
+                        }
+                    });
+        }
     }
 
     /**
