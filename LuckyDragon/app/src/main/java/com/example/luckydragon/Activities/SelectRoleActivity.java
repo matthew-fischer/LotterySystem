@@ -11,6 +11,8 @@
 
 package com.example.luckydragon.Activities;
 
+import static java.util.Objects.nonNull;
+
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -50,7 +52,6 @@ public class SelectRoleActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.select_role_page);
         super.onCreate(savedInstanceState);
-
         // Get user
         user = ((GlobalApp) getApplication()).getUser();
         // Create view
@@ -75,6 +76,16 @@ public class SelectRoleActivity extends AppCompatActivity {
 //                        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Intent intent = getIntent();
+        String msg = intent.getStringExtra("eventId");
+        if (nonNull(msg)) {
+            Log.d("TONY", msg);
+        }
     }
 
     /**
