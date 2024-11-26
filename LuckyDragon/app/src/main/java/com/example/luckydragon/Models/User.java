@@ -20,6 +20,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
@@ -61,18 +62,15 @@ public class User extends Observable {
 
     /**
      * User constructor for loading data in UserList
-     * @param name the name of the user
-     * @param email the email of the user
-     * @param phoneNumber the phone number of the user
-     * @param defaultProfilePicture the default profile picture (Bitmap)
-     * @param profilePicture the user's profile picture (Bitmap)
+     * @param deviceId the device ID of the user
+     * @param db the database to use
+     * @param userData the userData
      */
-    public User(String name, String email, String phoneNumber, Bitmap defaultProfilePicture, Bitmap profilePicture) {
-        this.name = name;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.defaultProfilePicture = defaultProfilePicture;
-        this.uploadedProfilePicture = profilePicture;
+    public User(String deviceId, FirebaseFirestore db, Map<String, Object> userData) {
+        this.deviceId = deviceId;
+        this.db = db;
+        buildUserFromMap(userData);
+        this.isLoaded = true;  // default set to true because not going to fetch data
     }
 
     /**
@@ -127,6 +125,22 @@ public class User extends Observable {
                 .set(map).addOnFailureListener(e -> {
                     Log.e("SAVE DB", "fail");
                 });
+    }
+
+    public void deleteUser() {
+        db.collection("users")
+                .document(getDeviceId())
+                .delete();
+        if (isOrganizer()) {
+            db.collection("events")
+                    .whereEqualTo("organizerDeviceId", getDeviceId())
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (DocumentSnapshot document: queryDocumentSnapshots) {
+                            document.getReference().delete();
+                        }
+                    });
+        }
     }
 
     /**

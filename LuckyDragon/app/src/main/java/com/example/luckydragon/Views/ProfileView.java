@@ -7,6 +7,7 @@
 
 package com.example.luckydragon.Views;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
