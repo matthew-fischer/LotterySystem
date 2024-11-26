@@ -127,7 +127,7 @@ public class User extends Observable {
                 });
     }
 
-    public void deleteUser(String deviceId) {
+    public void deleteUser() {
         db.collection("users")
                 .document(getDeviceId())
                 .delete();

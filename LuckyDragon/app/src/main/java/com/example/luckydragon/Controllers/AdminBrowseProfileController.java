@@ -24,10 +24,9 @@ public class AdminBrowseProfileController extends Controller{
      * Deletes a user associated with the specified device ID.
      * This method delegates the deletion logic to the observable {@link User} instance.
      *
-     * @param deviceId The unique device ID of the user to be deleted.
      */
-    public void deleteUser(String deviceId) {
-        getObservable().deleteUser(deviceId);
+    public void deleteUser() {
+        getObservable().deleteUser();
     }
 
 }

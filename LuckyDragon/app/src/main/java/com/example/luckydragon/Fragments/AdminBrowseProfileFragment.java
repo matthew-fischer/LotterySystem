@@ -46,7 +46,7 @@ public class AdminBrowseProfileFragment extends Fragment {
                 requireActivity().finish();
             }
             else {
-                userController.deleteUser(user.getDeviceId());
+                userController.deleteUser();
                 Toast.makeText(getContext(), "Profile Deleted Successfully", Toast.LENGTH_SHORT).show();
                 requireActivity().finish();
             }
