@@ -65,10 +65,4 @@ public class ViewProfilesActivity extends AppBarActivity {
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        userList.fetchData();
-    }
-
 }
