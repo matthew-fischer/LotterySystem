@@ -15,6 +15,12 @@ import com.example.luckydragon.R;
 
 import java.util.Objects;
 
+/**
+ * A fragment used by administrators to browse user profiles. This
+ * fragment provides a UI to view user details and it interacts with
+ * {@link AdminBrowseProfileController} to perform administrator actions
+ * such as deleting an user.
+ */
 public class AdminBrowseProfileFragment extends Fragment {
 
     private User user;
