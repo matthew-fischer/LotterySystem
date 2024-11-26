@@ -95,6 +95,9 @@ public class ProfileActivity extends AppBarActivity {
         ImageButton edit_profile_button = findViewById(R.id.edit_profile_button);
         edit_profile_button.setOnClickListener(view -> {
             Intent goToSignup = new Intent(this, SignupActivity.class);
+            goToSignup.putExtra("title", getString(R.string.ProfileEditTitle));
+            goToSignup.putExtra("subtitle", getString(R.string.ProfileEditSubtitle));
+            goToSignup.putExtra("navbar", getString(R.string.ProfileEditNavbar));
             startActivity(goToSignup);
         });
     }

@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -47,6 +49,7 @@ public class SignupActivity extends AppBarActivity {
     private Button submitButton;
     private ActivityResultLauncher<Intent> uploadImageResultLauncher;
     private ImageButton profilePictureButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +70,25 @@ public class SignupActivity extends AppBarActivity {
         user = ((GlobalApp) getApplication()).getUser();
         signupController = new SignupController(user);
         signupView = new SignupView(user, this, signupController);
+
+        // Phone number formatting
+        editPhone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
+
+        // Set page titles
+        String titleString = getIntent().getStringExtra("title");
+        String subtitleString = getIntent().getStringExtra("subtitle");
+        String navbarString = getIntent().getStringExtra("navbar");
+        if (titleString != null) {
+            TextView titleText = findViewById(R.id.signupTitle);
+            titleText.setText(titleString);
+        }
+        if (subtitleString != null) {
+            TextView subtitleText = findViewById(R.id.signupSubtitle);
+            subtitleText.setText(subtitleString);
+        }
+        if (navbarString != null) {
+            getSupportActionBar().setTitle(navbarString);
+        }
 
         uploadImageResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
