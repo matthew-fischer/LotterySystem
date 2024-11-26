@@ -2,8 +2,8 @@ package com.example.luckydragon.Controllers;
 
 import com.example.luckydragon.Models.User;
 
-public class UserController extends Controller{
-    public UserController(User observable) {
+public class AdminBrowseProfileController extends Controller{
+    public AdminBrowseProfileController(User observable) {
         super(observable);
     }
 

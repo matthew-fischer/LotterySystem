@@ -8,7 +8,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.luckydragon.Controllers.UserController;
+import com.example.luckydragon.Controllers.AdminBrowseProfileController;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.User;
 import com.example.luckydragon.R;
@@ -18,7 +18,7 @@ import java.util.Objects;
 public class AdminBrowseProfileFragment extends Fragment {
 
     private User user;
-    private UserController userController;
+    private AdminBrowseProfileController userController;
 
     public AdminBrowseProfileFragment() {
         super(R.layout.fragment_admin_browse_profile);
@@ -30,7 +30,7 @@ public class AdminBrowseProfileFragment extends Fragment {
         user = globalApp.getUserToView();
 
         // Create controller
-        userController = new UserController(user);
+        userController = new AdminBrowseProfileController(user);
 
         // Set up delete profile button on click listener
         Button adminDeleteProfileButton = view.findViewById(R.id.adminDeleteProfileButton);
