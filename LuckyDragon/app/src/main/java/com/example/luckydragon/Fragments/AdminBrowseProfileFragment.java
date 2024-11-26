@@ -45,9 +45,6 @@ public class AdminBrowseProfileFragment extends Fragment {
                 Toast.makeText(getContext(), "Cannot delete your own profile", Toast.LENGTH_SHORT).show();
                 requireActivity().finish();
             }
-            if (user.isOrganizer()) {
-                userController.deleteOrganizerEvents(user.getDeviceId());
-            }
             userController.deleteUser(user.getDeviceId());
             Toast.makeText(getContext(), "Profile Deleted Successfully", Toast.LENGTH_SHORT).show();
             requireActivity().finish();

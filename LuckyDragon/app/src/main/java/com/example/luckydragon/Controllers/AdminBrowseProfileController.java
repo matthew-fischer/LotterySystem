@@ -16,8 +16,4 @@ public class AdminBrowseProfileController extends Controller{
         getObservable().deleteUser(deviceId);
     }
 
-    public void deleteOrganizerEvents(String deviceId) {
-        getObservable().deleteOrganizerEvents(deviceId);
-    }
-
 }
