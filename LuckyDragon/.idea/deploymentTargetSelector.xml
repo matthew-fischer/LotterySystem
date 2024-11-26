@@ -13,10 +13,13 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="Tests in 'com.example.luckydragon.userStoryTest'">
+      <SelectionState runConfigName="testSampleInvitees()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="SampleInviteesTest">
+      <SelectionState runConfigName="testSampleInvitees() (1)">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="testReplacementInvitees()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
