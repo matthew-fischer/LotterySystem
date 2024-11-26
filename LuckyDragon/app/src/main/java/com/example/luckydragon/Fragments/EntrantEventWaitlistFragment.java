@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -102,18 +104,21 @@ public class EntrantEventWaitlistFragment extends Fragment {
         // Set up view poster button on click listener
         Button viewPosterButton = view.findViewById(R.id.viewEventPosterButton);
         viewPosterButton.setOnClickListener(v -> {
-            assert event.getEventPoster() != null;
-            try {
-                Bundle args = new Bundle();
-                args.putSerializable("event", event);
-                DialogFragment displayPosterFragment = new DisplayImageFragment();
-                Log.e("JXU", "frag inside frag");
-                displayPosterFragment.setArguments(args);
-                displayPosterFragment.show(getChildFragmentManager(), "DisplayQRCodeFragment");
-            } catch (Exception e) {
-                Log.e("JXU", "can't view poster");
-                Log.e("JXU", e.getMessage());
+            // There is no poster uploaded
+            if (event.getEventPoster() == null) {
+                Toast.makeText(getContext(), "Organizer did not upload a poster.",
+                        Toast.LENGTH_SHORT).show();
+                return;
             }
+            // Put together arguments for image fragment
+            Bundle args = new Bundle();
+            args.putString("title", "Event Poster");
+            args.putString("negativeButton", "Close");
+            args.putParcelable("image", event.getEventPoster());
+            // Show image fragment
+            DialogFragment displayPosterFragment = new DisplayImageFragment();
+            displayPosterFragment.setArguments(args);
+            displayPosterFragment.show(getChildFragmentManager(), "DisplayQRCodeFragment");
         });
     }
 
