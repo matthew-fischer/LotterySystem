@@ -2,9 +2,12 @@ package com.example.luckydragon.Fragments;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.example.luckydragon.GlobalApp;
@@ -29,7 +32,24 @@ public class EntrantEventAttendingFragment extends Fragment {
         setAttendeeSpotsMessage();
 
         // Set up view poster button
-        // TODO Set up view poster button
+        Button viewPosterButton = view.findViewById(R.id.viewEventPosterButton);
+        viewPosterButton.setOnClickListener(v -> {
+            // There is no poster uploaded
+            if (event.getEventPoster() == null) {
+                Toast.makeText(getContext(), "Organizer did not upload a poster.",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            // Put together arguments for image fragment
+            Bundle args = new Bundle();
+            args.putString("title", "Event Poster");
+            args.putString("negativeButton", "Close");
+            args.putParcelable("image", event.getEventPoster());
+            // Show image fragment
+            DialogFragment displayPosterFragment = new DisplayImageFragment();
+            displayPosterFragment.setArguments(args);
+            displayPosterFragment.show(getChildFragmentManager(), "DisplayQRCodeFragment");
+        });
     }
 
     private void setCurrentAttendeesMessage() {
