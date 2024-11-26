@@ -24,6 +24,14 @@ public class UserList extends Observable {
     private ArrayList<User> users = new ArrayList<>();
     private FirebaseFirestore db;
 
+    /**
+     * Constructs an UserList with the specified database instance.
+     * <p>
+     *     Sets up a real-time listener on the "events" collection to keep the
+     *     users list updated with any changes from firestore.
+     * </p>
+     * @param db The firestore database instance
+     */
     public UserList(FirebaseFirestore db) {
         this.db = db;
 
