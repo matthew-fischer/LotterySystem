@@ -75,6 +75,11 @@ public class UserList extends Observable {
 
     }
 
+    /**
+     * Creates an User object from a firestore document.
+     * @param document The firestore QueryDocumentSnapshot containing user data
+     * @return An User object
+     */
     public User createUser(QueryDocumentSnapshot document) {
         Map<String, Object> userData = document.getData();
         User user = new User(document.getId(), db, userData);
