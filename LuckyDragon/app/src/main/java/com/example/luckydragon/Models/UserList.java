@@ -26,6 +26,19 @@ public class UserList extends Observable {
 
     public UserList(FirebaseFirestore db) {
         this.db = db;
+
+        db.collection("users").addSnapshotListener((value, error) -> {
+            if (error != null) {
+                Log.e("Firestore", error.toString());
+            }
+            if (value != null) {
+                users.clear();
+                for (QueryDocumentSnapshot doc: value) {
+                    users.add(createUser(doc));
+                }
+                notifyObservers();
+            }
+        });
     }
 
     /**
@@ -39,13 +52,7 @@ public class UserList extends Observable {
                     if (task.isSuccessful() && task.getResult() != null) {
                         users.clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            Map<String, Object> userData = document.getData();
-                            User user = new User(
-                                    document.getId(),
-                                    db,
-                                    userData
-                            );
-                            users.add(user);
+                            users.add(createUser(document));
                         }
 
                         Log.d(TAG, "Users loaded successfully with initial get()");
@@ -66,6 +73,12 @@ public class UserList extends Observable {
 
         return users;
 
+    }
+
+    public User createUser(QueryDocumentSnapshot document) {
+        Map<String, Object> userData = document.getData();
+        User user = new User(document.getId(), db, userData);
+        return user;
     }
 
 }
