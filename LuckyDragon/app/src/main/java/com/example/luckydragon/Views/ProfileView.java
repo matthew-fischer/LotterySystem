@@ -41,7 +41,6 @@ public class ProfileView extends Observer {
      */
     @Override
     public void update(Observable whoUpdatedMe) {
-        Log.d("APE", getObservable().isLoaded().toString());
         if(getObservable().isLoaded()) {
             setName(profileActivity.findViewById(R.id.nameTextView));
             setEmail(profileActivity.findViewById(R.id.emailTextView));
