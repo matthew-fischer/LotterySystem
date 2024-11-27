@@ -100,6 +100,7 @@ public class Event extends Observable implements Serializable {
     private List<Location> waitlistLocations = new ArrayList<>();
 
     private ArrayList<User> waitlistUsers = new ArrayList<>();
+    private ArrayList<User> inviteelistUsers = new ArrayList<>();
 
     private boolean isLoaded = false;
     private Bitmap eventPoster;
@@ -271,6 +272,21 @@ public class Event extends Observable implements Serializable {
                 }
             };
         }
+
+        if (eventData.get("inviteeList") != null) {
+            if(!inviteeList.equals((List<String>) eventData.get("inviteeList"))) {
+                inviteeList = (List<String>) eventData.get("inviteeList");
+
+                // populate inviteeList users
+                inviteelistUsers = new ArrayList<>();
+                for (String userID : inviteeList) {
+                    User user = new User(userID, db);
+                    user.fetchData();
+                    inviteelistUsers.add(user);
+                }
+            }
+        }
+
         if(eventData.get("waitListLocations") != null) {
             waitlistLocations = new ArrayList<>();
             for(HashMap<String, Object> oMap : (ArrayList<HashMap<String, Object>>) eventData.get("waitListLocations")) {
@@ -647,6 +663,10 @@ public class Event extends Observable implements Serializable {
 
     public ArrayList<User> getWaitlistUsers() {
         return waitlistUsers;
+    }
+
+    public ArrayList<User> getInviteelistUsers() {
+        return inviteelistUsers;
     }
 
     public void setIsLoaded(boolean newIsLoaded) {

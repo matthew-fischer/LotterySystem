@@ -45,6 +45,20 @@ public class OrganizerEventFragment extends Fragment {
         // Need a user array adapter
         entrantArrayAdapter = new EntrantArrayAdapter(event.getWaitlistUsers(), requireActivity().getApplicationContext(), this);
         waitlistListView.setAdapter(entrantArrayAdapter);
+        TextView noWaitlisteesTextView = view.findViewById(R.id.noWaitlisteesTextView);
+        if (event.getWaitlistUsers().size() == 0) {
+            noWaitlisteesTextView.setVisibility(View.VISIBLE);
+        }
+
+        // Set up InviteList list view
+        ListView invitelistListView = view.findViewById(R.id.eventInvitelistListView);
+        // Need a user array adapter
+        entrantArrayAdapter = new EntrantArrayAdapter(event.getInviteelistUsers(), requireActivity().getApplicationContext(), this);
+        invitelistListView.setAdapter(entrantArrayAdapter);
+        TextView noinviteesTextView = view.findViewById(R.id.noinviteesTextView);
+        if (event.getInviteelistUsers().size() == 0) {
+            noinviteesTextView.setVisibility(View.VISIBLE);
+        }
 
         if(event.hasGeolocation()) {
             Button seeMapButton = view.findViewById(R.id.seeMapButton);
