@@ -51,6 +51,12 @@ public class AdminBrowseProfileFragment extends Fragment {
                 requireActivity().finish();
             }
         });
+
+        // Set up remove profile picture button on click listener
+        Button adminRemoveProfilePictureButton = view.findViewById(R.id.adminRemoveProfilePictureButton);
+        adminRemoveProfilePictureButton.setOnClickListener(v -> {
+
+        });
     }
 
 }
