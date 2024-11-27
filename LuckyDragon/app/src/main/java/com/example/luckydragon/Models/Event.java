@@ -308,7 +308,6 @@ public class Event extends Observable implements Serializable {
         }
         if(eventData.get("waitListLocations") != null) {
             waitlistLocations = new ArrayList<>();
-            Log.w("AHMED", eventData.get("waitListLocations").toString());
             for(HashMap<String, Object> oMap : (ArrayList<HashMap<String, Object>>) eventData.get("waitListLocations")) {
                 waitlistLocations.add(new Location((double) oMap.get("latitude"), (double) oMap.get("longitude")));
             }
