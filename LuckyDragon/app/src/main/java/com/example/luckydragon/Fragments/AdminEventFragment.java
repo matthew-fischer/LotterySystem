@@ -53,9 +53,28 @@ public class AdminEventFragment extends Fragment {
         // Set up remove qr button on click listener
         Button removeQrButton = view.findViewById(R.id.adminRemoveQRButton);
         removeQrButton.setOnClickListener(v -> {
-            eventController.removeQR();
-            Toast.makeText(getContext(), "QR code removed successfully", Toast.LENGTH_SHORT).show();
-            requireActivity().finish();
+            if (event.getQrHash() == null) {
+                Toast.makeText(getContext(), "Event does not have a QR code", Toast.LENGTH_SHORT).show();
+                requireActivity().finish();
+            }
+            else {
+                eventController.removeQR();
+                Toast.makeText(getContext(), "QR code removed successfully", Toast.LENGTH_SHORT).show();
+                requireActivity().finish();
+            }
+        });
+        // Set up remove event poster button on click listener
+        Button adminRemoveEventPoster = view.findViewById(R.id.adminRemoveEventPoster);
+        adminRemoveEventPoster.setOnClickListener(v -> {
+            if (event.getEventPoster() == null) {
+                Toast.makeText(getContext(), "Event does not have a poster", Toast.LENGTH_SHORT).show();
+                requireActivity().finish();
+            }
+            else {
+                eventController.removeEventPoster();
+                Toast.makeText(getContext(), "Event poster removed successfully", Toast.LENGTH_SHORT).show();
+                requireActivity().finish();
+            }
         });
         // Hide remove QR button if event has no QR code
         if(event.getQrHash() == null) {

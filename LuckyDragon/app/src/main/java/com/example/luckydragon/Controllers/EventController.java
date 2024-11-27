@@ -108,4 +108,11 @@ public class EventController extends Controller {
         getObservable().removeQR();
     }
 
+    /**
+     * Updates the Event model after an Admin removes the event poster.
+     */
+    public void removeEventPoster() {
+        getObservable().removeEventPoster();
+    }
+
 }
