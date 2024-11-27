@@ -509,9 +509,10 @@ public class Event extends Observable implements Serializable {
      */
     public void removeQR(String eventId) {
         qrHash = null;
-        db.collection("events")
-                .document(eventId)
-                .update("hashedQR", "null");
+        notifyObservers();
+//        db.collection("events")
+//                .document(eventId)
+//                .update("hashedQR", "null");
     }
 
     // Getters and setters:
