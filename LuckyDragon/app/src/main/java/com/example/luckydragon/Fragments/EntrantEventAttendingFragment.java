@@ -48,7 +48,7 @@ public class EntrantEventAttendingFragment extends Fragment {
             // Show image fragment
             DialogFragment displayPosterFragment = new DisplayImageFragment();
             displayPosterFragment.setArguments(args);
-            displayPosterFragment.show(getChildFragmentManager(), "DisplayQRCodeFragment");
+            displayPosterFragment.show(getChildFragmentManager(), "DisplayImageFragment");
         });
     }
 
