@@ -47,6 +47,6 @@ public class NotificationService extends Observer {
             Log.d("Tony", String.format("Consuming %s", notification.title));
             globalApp.sendNotification(notification.title, notification.body);
         }
-//        getObservable().clearNotifications();
+        getObservable().clearNotifications();
     }
 }
