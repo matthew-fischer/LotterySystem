@@ -10,19 +10,18 @@ package com.example.luckydragon.Models;
 import static java.util.Objects.nonNull;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Base64;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -47,6 +46,7 @@ public class User extends Observable {
     private Organizer organizer;
     private Entrant entrant;
     private Boolean isAdmin = Boolean.FALSE;
+    private NotificationList notificationList;
 
     /**
      * Creates a User.
@@ -57,22 +57,23 @@ public class User extends Observable {
         super();
         this.db = db;
         this.deviceId = deviceId;
+
+        this.notificationList = new NotificationList(db, this);
     }
 
     /**
      * User constructor for loading data in UserList
-     * @param name the name of the user
-     * @param email the email of the user
-     * @param phoneNumber the phone number of the user
-     * @param defaultProfilePicture the default profile picture (Bitmap)
-     * @param profilePicture the user's profile picture (Bitmap)
+     * @param deviceId the device ID of the user
+     * @param db the database to use
+     * @param userData the userData
      */
-    public User(String name, String email, String phoneNumber, Bitmap defaultProfilePicture, Bitmap profilePicture) {
-        this.name = name;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.defaultProfilePicture = defaultProfilePicture;
-        this.uploadedProfilePicture = profilePicture;
+    public User(String deviceId, FirebaseFirestore db, Map<String, Object> userData) {
+        this.deviceId = deviceId;
+        this.db = db;
+        buildUserFromMap(userData);
+        this.isLoaded = true;  // default set to true because not going to fetch data
+
+        this.notificationList = new NotificationList(db, this);
     }
 
     /**
@@ -108,6 +109,7 @@ public class User extends Observable {
      * A logging message is printed in case of database save failure.
      */
     public void save() {
+        Log.d("SAVE DB", String.format("Starting Save, %s", getDeviceId()));
         HashMap<String, Object> map = new HashMap<>();
         map.put("isEntrant", isEntrant());
         map.put("isOrganizer", isOrganizer());
@@ -121,12 +123,43 @@ public class User extends Observable {
         map.put("email", nonNull(email) && !email.isEmpty() ? email : null);
         map.put("phoneNumber", nonNull(phoneNumber) && !phoneNumber.isEmpty() ? phoneNumber : null);
         map.put("notifications", notifications);
-        map.put("profilePicture", bitmapToString(uploadedProfilePicture));
-        map.put("defaultProfilePicture", bitmapToString(defaultProfilePicture));
+        map.put("profilePicture", BitmapUtil.bitmapToString(uploadedProfilePicture));
+        map.put("defaultProfilePicture", BitmapUtil.bitmapToString(defaultProfilePicture));
         db.collection("users").document(deviceId)
                 .set(map).addOnFailureListener(e -> {
                     Log.e("SAVE DB", "fail");
                 });
+    }
+
+    /**
+     * Deletes the current user from the database. If the user is an organizer,
+     * it also deletes all events organized by the user.
+     * Also deletes the associated message document that stores notifications
+     */
+    public void deleteUser() {
+        db.collection("users")
+                .document(getDeviceId())
+                .delete();
+        db.collection("messages")
+                .document(getDeviceId())
+                .delete();
+        if (isOrganizer()) {
+            db.collection("events")
+                    .whereEqualTo("organizerDeviceId", getDeviceId())
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (DocumentSnapshot document: queryDocumentSnapshots) {
+                            document.getReference().delete();
+                        }
+                    });
+        }
+    }
+
+    /**
+     * Removes the uploaded profile picture for a user.
+     */
+    public void removeProfilePicture() {
+        setUploadedProfilePicture(null);
     }
 
     /**
@@ -380,35 +413,6 @@ public class User extends Observable {
     }
 
     /**
-     * Converts bitmap to string
-     * @param image: the bitmap to convert to base 64 string
-     * @return image encoded as string
-     */
-    private static String bitmapToString(Bitmap image) {
-        // reference: https://stackoverflow.com/questions/13562429/how-many-ways-to-convert-bitmap-to-string-and-vice-versa
-        if (image == null) return "";
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-        byte[] byteArray = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(byteArray, Base64.DEFAULT);
-    }
-
-    /**
-     * Converts base64 string to bitmap
-     * @param base64Str: The base 64 string to convert to bitmap
-     * @return base64Str decoded to bitmap
-     */
-    public static Bitmap stringToBitmap(String base64Str) {
-        // reference: https://stackoverflow.com/questions/13562429/how-many-ways-to-convert-bitmap-to-string-and-vice-versa
-        if (base64Str == null || base64Str.isEmpty()) return null;
-        byte[] decodedBytes = Base64.decode(
-                base64Str.substring(base64Str.indexOf(",")  + 1),
-                Base64.DEFAULT
-        );
-        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-    }
-
-    /**
      * Sets user attributes based on a map of user data.
      * Used for loading user from database.
      * @param userData the map of user data
@@ -418,6 +422,9 @@ public class User extends Observable {
         email = userData.get("email") != null ? Objects.requireNonNull(userData.get("email")).toString() : null;
         phoneNumber = userData.get("phoneNumber") != null ? Objects.requireNonNull(userData.get("phoneNumber")).toString() : null;
         assert(name != null);
+
+        notifications = userData.get("notifications") != null
+                && userData.get("notifications").toString().equals("true");
 
         boolean isEntrant = userData.get("isEntrant") != null
                 && userData.get("isEntrant").toString().equals("true");
@@ -437,7 +444,15 @@ public class User extends Observable {
         }
         isAdmin = userData.get("isAdmin") != null
                 && userData.get("isAdmin").toString().equals("true");
-        uploadedProfilePicture = stringToBitmap((String)userData.get("profilePicture"));
-        defaultProfilePicture = stringToBitmap((String)userData.get("defaultProfilePicture"));
+        uploadedProfilePicture = BitmapUtil.stringToBitmap((String)userData.get("profilePicture"));
+        defaultProfilePicture = BitmapUtil.stringToBitmap((String)userData.get("defaultProfilePicture"));
+    }
+
+    /**
+     * Get the notification list associated to this user
+     * @return the notification list
+     */
+    public NotificationList getNotificationList() {
+        return notificationList;
     }
 }

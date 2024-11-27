@@ -8,6 +8,8 @@ import android.view.MenuItem;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.luckydragon.GlobalApp;
+import com.example.luckydragon.Models.User;
 import com.example.luckydragon.R;
 
 /**
@@ -42,6 +44,7 @@ public abstract class AppBarActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.nav_profile) {
 //            Toast.makeText(this, "Click Profile Icon.", Toast.LENGTH_SHORT).show();
+            ((GlobalApp) getApplication()).setUserToView(null);
             Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
             startActivity(intent);
 //        } else if (item.getItemId() == R.id.nav_events) {

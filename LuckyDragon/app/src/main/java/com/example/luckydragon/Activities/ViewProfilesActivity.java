@@ -1,10 +1,12 @@
 package com.example.luckydragon.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ListView;
 
 import com.example.luckydragon.Controllers.UserArrayAdapter;
 import com.example.luckydragon.GlobalApp;
+import com.example.luckydragon.Models.User;
 import com.example.luckydragon.Models.UserList;
 import com.example.luckydragon.R;
 import com.example.luckydragon.Views.ViewProfilesView;
@@ -36,6 +38,7 @@ public class ViewProfilesActivity extends AppBarActivity {
         setContentView(R.layout.activity_browse_profiles);
         getSupportActionBar().setTitle("Profiles");
 
+        GlobalApp globalApp = (GlobalApp) getApplication();
         // Set up admin users listview
         userList = ((GlobalApp) getApplication()).getUsers();
         usersListView = findViewById(R.id.adminProfileUsersListview);
@@ -43,6 +46,13 @@ public class ViewProfilesActivity extends AppBarActivity {
         usersListView.setAdapter(userListAdapter);
 
         viewProfilesView = new ViewProfilesView(userList, this);
+
+        // Set up item click listener for ListView
+        usersListView.setOnItemClickListener(((adapterView, v, position, l) -> {
+            User user = (User) adapterView.getItemAtPosition(position);
+            globalApp.setUserToView(user);
+            startActivity(new Intent(this, ProfileActivity.class));
+        }));
 
     }
 

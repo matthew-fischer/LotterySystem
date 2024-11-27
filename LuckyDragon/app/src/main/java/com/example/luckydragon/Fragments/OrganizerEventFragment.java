@@ -74,4 +74,12 @@ public class OrganizerEventFragment extends Fragment {
         }
         waitlistCapacityTextView.setText(String.format("Capacity: %s", waitlistLimit));
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        // the view associated with this fragment must stop observing when the fragment is destroyed
+        organizerEventView.stopObserving();
+    }
 }

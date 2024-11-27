@@ -114,6 +114,11 @@ public class OrganizerViewWaitingListTest {
     @Mock
     private DocumentSnapshot mockEventDocumentSnapshot2;
 
+    @Mock
+    private CollectionReference mockMessagesCollection;
+    @Mock
+    private DocumentReference mockMessagesDocument;
+
     // Event Data
     private List<Map<String, Object>> eventData = new ArrayList<>();
 
@@ -286,6 +291,14 @@ public class OrganizerViewWaitingListTest {
         when(mockEventTask2.getResult()).thenReturn(mockEventDocumentSnapshot2);
         when(mockEventDocumentSnapshot2.exists()).thenReturn(true);
         when(mockEventDocumentSnapshot2.getData()).thenReturn(eventData.get(1));
+
+        // mock notifications db stuff
+        when(mockFirestore.collection("messages")).thenReturn(mockMessagesCollection);
+        when(mockMessagesCollection.document(any())).thenReturn(mockMessagesDocument);
+        when(mockMessagesDocument.addSnapshotListener(any())).thenAnswer((invocation) -> {
+            return null;
+        });
+        when(mockMessagesDocument.set(anyMap())).thenReturn(mockVoidTask);
     }
 
     @After

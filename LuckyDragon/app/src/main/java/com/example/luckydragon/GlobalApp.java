@@ -1,12 +1,25 @@
 package com.example.luckydragon;
 
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 
+import androidx.core.app.NotificationCompat;
+
+import com.example.luckydragon.Activities.SelectRoleActivity;
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.Models.EventList;
+import com.example.luckydragon.Models.NotificationList;
 import com.example.luckydragon.Models.User;
 import com.example.luckydragon.Models.UserList;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -30,8 +43,6 @@ public class GlobalApp extends Application {
     private Event event;
     private FirebaseFirestore db;
 
-    private Integer inviteeSelectionDelay = 7; // number of days between when an event is created and when invitees are drawn
-
     private UserList users;
     private EventList eventList;
     private String deviceId = null;
@@ -39,11 +50,13 @@ public class GlobalApp extends Application {
     public final Bitmap profilePictureSize = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
 
     private Event eventToView = null; // temporary storage for eventToView to be passed into ViewEventActivity (avoids passing event through intent or having to re-fetch it unneccessarily)
+    private User userToView = null;
 
+    private NotificationService notificationService;
 
     /**
      * Gets the current user of the app, fetching the DB if needed.
-     * if it has not been locally set yet.
+     * if it has not been locally set yet. Also starts the notification service if it hasn't been
      * @return the current user of the app
      */
     public User getUser() {
@@ -54,6 +67,9 @@ public class GlobalApp extends Application {
             if(deviceId == null) deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
             user = new User(deviceId, db);
             user.fetchData();
+
+            // start notification service
+            notificationService = new NotificationService(this, user.getNotificationList());
         }
         return user;
     }
@@ -161,9 +177,56 @@ public class GlobalApp extends Application {
         this.eventToView = eventToView;
     }
 
+    public void setUserToView(User userToView) {
+        this.userToView = userToView;
+    }
+
     public Event getEventToView() {
         return eventToView;
     }
 
-    public Integer getInviteeSelectionDelay() { return inviteeSelectionDelay; }
+    public User getUserToView() {
+        return userToView;
+    }
+
+    /**
+     * Send notification to system tray
+     * @param title the title of the notification
+     * @param messageBody the body of the notification
+     */
+    public void sendNotification(String title, String messageBody) {
+        Intent intent = new Intent(this, SelectRoleActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        Bundle extras = new Bundle();
+//        extras.putString("eventId", eventId);
+//        intent.putExtras(extras);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+                PendingIntent.FLAG_IMMUTABLE);
+
+        String channelId = "fcm_default_channel";
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this, channelId)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle(title)
+                        .setContentText(messageBody)
+//                        .addExtras(extras)
+                        .setAutoCancel(true)
+                        .setSound(defaultSoundUri)
+                        .setContentIntent(pendingIntent);
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // Since android Oreo notification channel is needed.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(channelId,
+                    "Channel human readable title",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        Log.d("TONY", "sendNotification: ");
+        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+    }
 }
