@@ -148,10 +148,7 @@ public class User extends Observable {
      * Removes the uploaded profile picture for a user.
      */
     public void removeProfilePicture() {
-        uploadedProfilePicture = null;
-        db.collection("users")
-                .document(getDeviceId())
-                .update("profilePicture", "");
+        setUploadedProfilePicture(null);
     }
 
     /**
