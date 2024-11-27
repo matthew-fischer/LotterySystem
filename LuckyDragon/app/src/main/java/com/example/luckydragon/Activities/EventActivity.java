@@ -73,7 +73,7 @@ public class EventActivity extends AppBarActivity {
         });
 
         deleteEvent.setOnClickListener(v -> {
-            eventController.deleteEvent(event.getId());
+            eventController.deleteEvent();
             Toast.makeText(EventActivity.this, "Deleted Successfully", Toast.LENGTH_SHORT).show();
             finish();
         });

@@ -46,7 +46,7 @@ public class AdminEventFragment extends Fragment {
         // Set up delete event button on click listener
         Button deleteEventButton = view.findViewById(R.id.adminDeleteEventButton);
         deleteEventButton.setOnClickListener(v -> {
-            eventController.deleteEvent(event.getId());
+            eventController.deleteEvent();
             Toast.makeText(getContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
             requireActivity().finish();
         });
