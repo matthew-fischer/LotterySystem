@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -45,6 +46,7 @@ public class User extends Observable {
     private Organizer organizer;
     private Entrant entrant;
     private Boolean isAdmin = Boolean.FALSE;
+    private NotificationList notificationList;
 
     /**
      * Creates a User.
@@ -55,6 +57,8 @@ public class User extends Observable {
         super();
         this.db = db;
         this.deviceId = deviceId;
+
+        this.notificationList = new NotificationList(db, this);
     }
 
     /**
@@ -68,6 +72,8 @@ public class User extends Observable {
         this.db = db;
         buildUserFromMap(userData);
         this.isLoaded = true;  // default set to true because not going to fetch data
+
+        this.notificationList = new NotificationList(db, this);
     }
 
     /**
@@ -103,6 +109,7 @@ public class User extends Observable {
      * A logging message is printed in case of database save failure.
      */
     public void save() {
+        Log.d("SAVE DB", String.format("Starting Save, %s", getDeviceId()));
         HashMap<String, Object> map = new HashMap<>();
         map.put("isEntrant", isEntrant());
         map.put("isOrganizer", isOrganizer());
@@ -127,9 +134,13 @@ public class User extends Observable {
     /**
      * Deletes the current user from the database. If the user is an organizer,
      * it also deletes all events organized by the user.
+     * Also deletes the associated message document that stores notifications
      */
     public void deleteUser() {
         db.collection("users")
+                .document(getDeviceId())
+                .delete();
+        db.collection("messages")
                 .document(getDeviceId())
                 .delete();
         if (isOrganizer()) {
@@ -412,6 +423,9 @@ public class User extends Observable {
         phoneNumber = userData.get("phoneNumber") != null ? Objects.requireNonNull(userData.get("phoneNumber")).toString() : null;
         assert(name != null);
 
+        notifications = userData.get("notifications") != null
+                && userData.get("notifications").toString().equals("true");
+
         boolean isEntrant = userData.get("isEntrant") != null
                 && userData.get("isEntrant").toString().equals("true");
         if (isEntrant) {
@@ -432,5 +446,13 @@ public class User extends Observable {
                 && userData.get("isAdmin").toString().equals("true");
         uploadedProfilePicture = BitmapUtil.stringToBitmap((String)userData.get("profilePicture"));
         defaultProfilePicture = BitmapUtil.stringToBitmap((String)userData.get("defaultProfilePicture"));
+    }
+
+    /**
+     * Get the notification list associated to this user
+     * @return the notification list
+     */
+    public NotificationList getNotificationList() {
+        return notificationList;
     }
 }
