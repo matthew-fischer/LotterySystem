@@ -14,6 +14,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.example.luckydragon.Fragments.AdminEventFragment;
+import com.example.luckydragon.Fragments.DisplayImageFragment;
 import com.example.luckydragon.Fragments.DisplayQRCodeFragment;
 import com.example.luckydragon.Fragments.EntrantEventAttendingFragment;
 import com.example.luckydragon.Fragments.EntrantEventInvitedFragment;
