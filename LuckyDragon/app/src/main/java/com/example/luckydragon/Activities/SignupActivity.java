@@ -66,6 +66,9 @@ public class SignupActivity extends AppBarActivity {
                 }
             });
 
+    /**
+     * Open a dialog to ask for permission to send notifications to user
+     */
     private void askNotificationPermission() {
         // This is only necessary for API level >= 33 (TIRAMISU)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

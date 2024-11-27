@@ -87,6 +87,9 @@ public class NotificationList extends Observable {
         super.notifyObservers();
     }
 
+    /**
+     * Save the list to firestore
+     */
     private void save() {
         HashMap<String, Object> map = new HashMap<>();
         map.put("notificationList", toPayload());

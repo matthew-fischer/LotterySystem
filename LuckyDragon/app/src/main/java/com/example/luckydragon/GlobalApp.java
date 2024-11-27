@@ -56,7 +56,7 @@ public class GlobalApp extends Application {
 
     /**
      * Gets the current user of the app, fetching the DB if needed.
-     * if it has not been locally set yet.
+     * if it has not been locally set yet. Also starts the notification service if it hasn't been
      * @return the current user of the app
      */
     public User getUser() {
@@ -189,6 +189,11 @@ public class GlobalApp extends Application {
         return userToView;
     }
 
+    /**
+     * Send notification to system tray
+     * @param title the title of the notification
+     * @param messageBody the body of the notification
+     */
     public void sendNotification(String title, String messageBody) {
         Intent intent = new Intent(this, SelectRoleActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
