@@ -423,6 +423,9 @@ public class User extends Observable {
         phoneNumber = userData.get("phoneNumber") != null ? Objects.requireNonNull(userData.get("phoneNumber")).toString() : null;
         assert(name != null);
 
+        notifications = userData.get("notifications") != null
+                && userData.get("notifications").toString().equals("true");
+
         boolean isEntrant = userData.get("isEntrant") != null
                 && userData.get("isEntrant").toString().equals("true");
         if (isEntrant) {
