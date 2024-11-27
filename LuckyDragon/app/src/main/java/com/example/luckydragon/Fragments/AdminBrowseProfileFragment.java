@@ -51,6 +51,29 @@ public class AdminBrowseProfileFragment extends Fragment {
                 requireActivity().finish();
             }
         });
+
+        // Set up remove profile picture button on click listener
+        Button adminRemoveProfilePictureButton = view.findViewById(R.id.adminRemoveProfilePictureButton);
+        adminRemoveProfilePictureButton.setOnClickListener(v -> {
+            // Check if the user being viewed is the current logged in user
+            if (Objects.equals(user.getDeviceId(), globalApp.getUser().getDeviceId())) {
+                Toast.makeText(getContext(), "Cannot remove your own picture, go to edit profile to remove picture", Toast.LENGTH_SHORT).show();
+                requireActivity().finish();
+            }
+            else {
+                // Cannot remove profile picture when there is no uploaded profile picture
+                if (user.getUploadedProfilePicture() == null) {
+                    Toast.makeText(getContext(), "User has default profile picture, cannot remove default picture", Toast.LENGTH_SHORT).show();
+                    requireActivity().finish();
+                }
+                else {
+                    // Remove profile picture
+                    userController.removeProfilePicture();
+                    Toast.makeText(getContext(), "Profile picture removed successfully", Toast.LENGTH_SHORT).show();
+                    requireActivity().finish();
+                }
+            }
+        });
     }
 
 }

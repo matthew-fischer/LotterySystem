@@ -79,7 +79,7 @@ public class EventActivity extends AppBarActivity {
         });
 
         removeQR.setOnClickListener(v -> {
-            eventController.removeQR(event.getId());
+            eventController.removeQR();
             Toast.makeText(EventActivity.this, "QR code removed successfully", Toast.LENGTH_SHORT).show();
             finish();
         });

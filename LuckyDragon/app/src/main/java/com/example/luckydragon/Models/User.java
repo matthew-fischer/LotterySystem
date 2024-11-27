@@ -124,6 +124,10 @@ public class User extends Observable {
                 });
     }
 
+    /**
+     * Deletes the current user from the database. If the user is an organizer,
+     * it also deletes all events organized by the user.
+     */
     public void deleteUser() {
         db.collection("users")
                 .document(getDeviceId())
@@ -138,6 +142,13 @@ public class User extends Observable {
                         }
                     });
         }
+    }
+
+    /**
+     * Removes the uploaded profile picture for a user.
+     */
+    public void removeProfilePicture() {
+        setUploadedProfilePicture(null);
     }
 
     /**

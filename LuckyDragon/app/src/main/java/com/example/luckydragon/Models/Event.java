@@ -505,13 +505,10 @@ public class Event extends Observable implements Serializable {
 
     /**
      * Removes the event's QR data from the database.
-     * @param eventId the event id
      */
-    public void removeQR(String eventId) {
+    public void removeQR() {
         qrHash = null;
-        db.collection("events")
-                .document(eventId)
-                .update("hashedQR", "null");
+        notifyObservers();
     }
 
     // Getters and setters:
