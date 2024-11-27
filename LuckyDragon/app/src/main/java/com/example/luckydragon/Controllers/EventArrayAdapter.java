@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
+import com.example.luckydragon.Fragments.DisplayImageFragment;
 import com.example.luckydragon.Fragments.DisplayQRCodeFragment;
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.R;
@@ -64,23 +65,21 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
         eventNameTextView.setText(event.getName());
         eventDateTimeTextView.setText(event.getDateAndTime());
 
-        // Hide QR Code for admin browsing events
-        if (Objects.equals(role, "ADMINISTRATOR")) {
+        // Hide QR Code for admin browsing events or if QR Code was removed
+        if (Objects.equals(role, "ADMINISTRATOR") || event.getQRBitMatrix() == null) {
             displayQRCode.setVisibility(View.GONE);
         }
 
         // Implement onClickListener for ImageButton to show QR Code corresponding to eventID.
         displayQRCode.setOnClickListener((view) -> {
-            if (fragment != null) {
-                // create a displayQRCode Dialog Fragment.
-                Bundle args = new Bundle();
-                args.putSerializable("event", event);
-                DialogFragment displayQRFragment = new DisplayQRCodeFragment();
-                displayQRFragment.setArguments(args);
-                displayQRFragment.show(fragment.getParentFragmentManager(), "DisplayQRCodeFragment");
-            }
+            Bundle args = new Bundle();
+            args.putParcelable("image", event.createBitMap(event.getQRBitMatrix()));
+            args.putString("title", "QR Code for Event:");
+            args.putString("negativeButton", "Close");
+            DialogFragment displayQRFragment = new DisplayImageFragment();
+            displayQRFragment.setArguments(args);
+            displayQRFragment.show(fragment.getParentFragmentManager(), "DisplayQRCodeFragment");
         });
-
         return rowView;
     }
 

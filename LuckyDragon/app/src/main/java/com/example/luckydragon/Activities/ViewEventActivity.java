@@ -41,24 +41,12 @@ import java.io.FileOutputStream;
 public class ViewEventActivity extends AppBarActivity {
     private Event event;
     private ViewEventView viewEventView; // need to define view
-    // private ViewEventController viewEventController; // need to define controller
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_event);
         getSupportActionBar().setTitle("Event");
-        //getSupportActionBar().setTitle("Event");
-
-        // I think it is best to pass eventId through the intent since it is completely specific to this activity-- we don't need to store this globally
-        //String eventId = getIntent().getStringExtra("eventID");
-
-        /*
-        if (eventId == null) {
-            throw new RuntimeException("ViewEventActivity cannot display an event with a null event id!");
-        }
-
-         */
 
         // Create view
         GlobalApp globalApp = (GlobalApp) getApplication();
@@ -66,10 +54,13 @@ public class ViewEventActivity extends AppBarActivity {
         event.fetchData(); // get all event data
         viewEventView = new ViewEventView(event, this);
 
-        // Hide buttons for entrant
+        // Hide buttons for entrant or if event does not have QR Code
         if(globalApp.getRole() == GlobalApp.ROLE.ENTRANT) {
             hideEditButton();
             hideQrCodeButton();
+        }
+        if (event.getQRBitMatrix() == null) {
+            hideEditButton();
         }
 
         // Start child fragment
@@ -78,10 +69,11 @@ public class ViewEventActivity extends AppBarActivity {
         // Initialize on click listener for qr button
         ImageButton viewQrCodeButton = findViewById(R.id.viewQrCodeButton);
         viewQrCodeButton.setOnClickListener((view) -> {
-            // create a displayQRCode Dialog Fragment.
             Bundle args = new Bundle();
-            args.putSerializable("event", event);
-            DialogFragment displayQRFragment = new DisplayQRCodeFragment();
+            args.putParcelable("image", event.createBitMap(event.getQRBitMatrix()));
+            args.putString("title", "QR Code for Event:");
+            args.putString("negativeButton", "Close");
+            DialogFragment displayQRFragment = new DisplayImageFragment();
             displayQRFragment.setArguments(args);
             displayQRFragment.show(getSupportFragmentManager(), "DisplayQRCodeFragment");
         });
