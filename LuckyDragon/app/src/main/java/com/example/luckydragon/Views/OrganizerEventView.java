@@ -1,8 +1,12 @@
 package com.example.luckydragon.Views;
 
+import android.view.View;
+import android.widget.TextView;
+
 import com.example.luckydragon.Fragments.OrganizerEventFragment;
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.Models.Observable;
+import com.example.luckydragon.R;
 
 /**
  * This is the view that updates OrganizerEventFragment.
@@ -29,6 +33,8 @@ public class OrganizerEventView extends Observer {
     @Override
     public void update(Observable whoUpdatedMe) {
         organizerEventFragment.updateWaitlistCapacity();
+        organizerEventFragment.displayInviteelist();
+        organizerEventFragment.displayWaitlist();
     }
 
     @Override

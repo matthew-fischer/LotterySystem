@@ -45,20 +45,12 @@ public class OrganizerEventFragment extends Fragment {
         // Need a user array adapter
         entrantArrayAdapter = new EntrantArrayAdapter(event.getWaitlistUsers(), requireActivity().getApplicationContext(), this);
         waitlistListView.setAdapter(entrantArrayAdapter);
-        TextView noWaitlisteesTextView = view.findViewById(R.id.noWaitlisteesTextView);
-        if (event.getWaitlistUsers().size() == 0) {
-            noWaitlisteesTextView.setVisibility(View.VISIBLE);
-        }
 
         // Set up InviteList list view
         ListView invitelistListView = view.findViewById(R.id.eventInvitelistListView);
         // Need a user array adapter
         entrantArrayAdapter = new EntrantArrayAdapter(event.getInviteelistUsers(), requireActivity().getApplicationContext(), this);
         invitelistListView.setAdapter(entrantArrayAdapter);
-        TextView noinviteesTextView = view.findViewById(R.id.noinviteesTextView);
-        if (event.getInviteelistUsers().size() == 0) {
-            noinviteesTextView.setVisibility(View.VISIBLE);
-        }
 
         if(event.hasGeolocation()) {
             Button seeMapButton = view.findViewById(R.id.seeMapButton);
@@ -86,6 +78,26 @@ public class OrganizerEventFragment extends Fragment {
             waitlistLimit = String.format("%s", event.getWaitListSpots());
         }
         waitlistCapacityTextView.setText(String.format("Capacity: %s", waitlistLimit));
+    }
+
+    /**
+     * Displays inviteelist textview or inviteelist listview
+     */
+    public void displayInviteelist() {
+        TextView noinviteesTextView = getView().findViewById(R.id.noinviteesTextView);
+        if (event.getInviteelistUsers().size() == 0) {
+            noinviteesTextView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * Displays waitlist textview or waitlist listview
+     */
+    public void displayWaitlist() {
+        TextView noWaitlisteesTextView = getView().findViewById(R.id.noWaitlisteesTextView);
+        if (event.getWaitlistUsers().size() == 0) {
+            noWaitlisteesTextView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
