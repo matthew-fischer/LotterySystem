@@ -55,7 +55,15 @@ public class AdminBrowseProfileFragment extends Fragment {
         // Set up remove profile picture button on click listener
         Button adminRemoveProfilePictureButton = view.findViewById(R.id.adminRemoveProfilePictureButton);
         adminRemoveProfilePictureButton.setOnClickListener(v -> {
-
+            if (Objects.equals(user.getDeviceId(), globalApp.getUser().getDeviceId())) {
+                Toast.makeText(getContext(), "Cannot remove your own picture, go to edit profile to remove picture", Toast.LENGTH_SHORT).show();
+                requireActivity().finish();
+            }
+            else {
+                userController.removeProfilePicture();
+                Toast.makeText(getContext(), "Profile picture removed successfully", Toast.LENGTH_SHORT).show();
+                requireActivity().finish();
+            }
         });
     }
 
