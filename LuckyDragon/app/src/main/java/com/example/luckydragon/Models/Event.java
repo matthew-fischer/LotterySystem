@@ -500,6 +500,13 @@ public class Event extends Observable implements Serializable {
         notifyObservers();
     }
 
+    /**
+     * Sets the event's poster to null, effectively removing it.
+     */
+    public void removeEventPoster() {
+        setEventPoster(null);
+    }
+
     // Getters and setters:
     public String getTime12h() {
         return time.toString12h();
