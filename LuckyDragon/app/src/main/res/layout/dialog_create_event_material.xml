@@ -90,7 +90,7 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:id="@+id/uploadPosterText"
-            android:text="Upload Event Poster"
+            android:text="@string/createEventPosterText"
             android:textSize="16sp"
             android:ellipsize="end"
             android:maxLines="1"
@@ -106,6 +106,7 @@
             android:padding="2dp"
             app:tint="#CC000000"/>
         <ImageButton
+            android:id="@+id/removePosterButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/baseline_clear_24"

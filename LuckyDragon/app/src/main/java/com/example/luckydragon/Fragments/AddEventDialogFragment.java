@@ -142,6 +142,12 @@ public class AddEventDialogFragment extends DialogFragment {
             uploadImageResultLauncher.launch(intent);
         });
 
+        ImageButton removePosterButton = dialogView.findViewById(R.id.removePosterButton);
+        removePosterButton.setOnClickListener(view -> {
+            controller.uploadEventPoster(null);
+            posterFile.setText(getString(R.string.createEventPosterText));
+        });
+
         return builder.setView(dialogView)
                 .setPositiveButton("Create", (dialogInterface, i) -> {
                     // TODO: make sure we only want to extract event on submit
