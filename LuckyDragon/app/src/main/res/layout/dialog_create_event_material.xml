@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:padding="10dp">
 
 
@@ -89,20 +89,28 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:text="Upload Event Poster"
+            android:id="@+id/uploadPosterText"
+            android:text="@string/createEventPosterText"
             android:textSize="16sp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingEnd="4dp"
             android:textColor="#000000"
             />
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/baseline_upload_24"
+            android:id="@+id/uploadPosterButton"
             android:background="@null"
+            android:padding="2dp"
             app:tint="#CC000000"/>
         <ImageButton
+            android:id="@+id/removePosterButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/baseline_clear_24"
+            android:padding="2dp"
             android:background="@null"
             app:tint="#CC000000"/>
     </LinearLayout>

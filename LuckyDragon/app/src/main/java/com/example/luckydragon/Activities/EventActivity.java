@@ -5,7 +5,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.fragment.app.DialogFragment;
+
 import com.example.luckydragon.Controllers.EventController;
+import com.example.luckydragon.Fragments.DisplayImageFragment;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.R;
@@ -48,7 +51,7 @@ public class EventActivity extends AppBarActivity {
         Button cancel = findViewById(R.id.eventCancel);
         Button decline = findViewById(R.id.eventDecline);
         Button accept = findViewById(R.id.eventAccept);
-        Button viewPoster = findViewById(R.id.viewPosterButton);
+        Button viewPosterButton = findViewById(R.id.viewPosterButton);
         Button deleteEvent = findViewById(R.id.deleteEventAdminView);
         Button removeQR = findViewById(R.id.removeQRAdminView);
 
@@ -70,23 +73,33 @@ public class EventActivity extends AppBarActivity {
         });
 
         deleteEvent.setOnClickListener(v -> {
-            eventController.deleteEvent(event.getId());
+            eventController.deleteEvent();
             Toast.makeText(EventActivity.this, "Deleted Successfully", Toast.LENGTH_SHORT).show();
             finish();
         });
 
         removeQR.setOnClickListener(v -> {
-            eventController.removeQR(event.getId());
+            eventController.removeQR();
             Toast.makeText(EventActivity.this, "QR code removed successfully", Toast.LENGTH_SHORT).show();
             finish();
         });
 
-        // ViewPoster button will show a dialog with an ImageView.
-        viewPoster.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // ADD FUNCTIONALITY HERE.
+        viewPosterButton.setOnClickListener(v -> {
+            // There is no poster uploaded
+            if (event.getEventPoster() == null) {
+                Toast.makeText(this, "Organizer did not upload a poster.",
+                        Toast.LENGTH_SHORT).show();
+                return;
             }
+            // Put together arguments for image fragment
+            Bundle args = new Bundle();
+            args.putString("title", "Event Poster");
+            args.putString("negativeButton", "Close");
+            args.putParcelable("image", event.getEventPoster());
+            // Show image fragment
+            DialogFragment displayPosterFragment = new DisplayImageFragment();
+            displayPosterFragment.setArguments(args);
+            displayPosterFragment.show(getSupportFragmentManager(), "DisplayImageFragment");
         });
     }
 

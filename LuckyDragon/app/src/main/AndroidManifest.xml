@@ -38,7 +38,7 @@
         </activity>
         <activity
             android:name=".Activities.ProfileActivity"
-            android:launchMode="singleTask"/>
+            android:launchMode="standard"/>
         <activity
             android:name=".Activities.EventActivity"
             android:launchMode="singleTask"/>
@@ -55,6 +55,7 @@
             android:name=".Activities.ViewEventActivity"
             android:launchMode="singleTask"/>
     </application>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />

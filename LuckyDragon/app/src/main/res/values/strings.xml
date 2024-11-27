@@ -25,6 +25,12 @@
     <string name="remove_qr">REMOVE QR</string>
     <string name="delete_event">DELETE EVENT</string>
     <string name="geolocation_on_warning">The organizer has enabled geolocation for this event. If you join the waitlist, the organizer will be able to view the location you joined from.</string>
+    <string name="ProfileSignUpTitle">Register:</string>
+    <string name="ProfileSignUpSubtitle">Fill in your personal information.</string>
+    <string name="ProfileEditTitle">Edit Profile:</string>
+    <string name="ProfileEditSubtitle">Fill in your personal information.</string>
+    <string name="ProfileEditNavbar">Edit Profile</string>
+    <string name="createEventPosterText">Upload Event Poster</string>
     <string-array name="entrant_statuses">
         <item>Attendees</item>
         <item>Waitlistees</item>

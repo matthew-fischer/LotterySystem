@@ -29,6 +29,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.example.luckydragon.Activities.SelectRoleActivity;
 import com.example.luckydragon.GlobalApp;
+import com.example.luckydragon.Models.BitmapUtil;
 import com.example.luckydragon.Models.User;
 import com.example.luckydragon.R;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -197,7 +198,7 @@ public class RemoveProfilePictureTest {
             assertNotNull(user.getUploadedProfilePicture());
 
             // User profile picture should be not null and match the uploaded one in mock data
-            Bitmap expectedPicture = User.stringToBitmap((String)getMockData().get("profilePicture"));
+            Bitmap expectedPicture = BitmapUtil.stringToBitmap((String)getMockData().get("profilePicture"));
             assertNotNull(user.getProfilePicture());
             assertNotNull(user.getUploadedProfilePicture());
 
@@ -228,7 +229,7 @@ public class RemoveProfilePictureTest {
 
             // User profile picture should be not null and instead match the default
             // profile picture
-            Bitmap expectedDefaultPicture = User.stringToBitmap((String)getMockData()
+            Bitmap expectedDefaultPicture = BitmapUtil.stringToBitmap((String)getMockData()
                     .get("defaultProfilePicture"));
             assertNotNull(user.getProfilePicture());
             assertNotNull(user.getDefaultProfilePicture());
