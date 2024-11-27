@@ -144,6 +144,13 @@ public class User extends Observable {
         }
     }
 
+    public void removeProfilePicture() {
+        uploadedProfilePicture = null;
+        db.collection("users")
+                .document(getDeviceId())
+                .update("profilePicture", "");
+    }
+
     /**
      * Returns whether a user is valid.
      * A user is valid if their name is not empty.
