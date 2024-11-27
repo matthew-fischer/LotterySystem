@@ -124,6 +124,10 @@ public class User extends Observable {
                 });
     }
 
+    /**
+     * Deletes the current user from the database. If the user is an organizer,
+     * it also deletes all events organized by the user.
+     */
     public void deleteUser() {
         db.collection("users")
                 .document(getDeviceId())
