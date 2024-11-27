@@ -81,6 +81,7 @@ public class SelectRoleActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d("TONY", "onResume: ");
         Intent intent = getIntent();
         String msg = intent.getStringExtra("eventId");
         if (nonNull(msg)) {
