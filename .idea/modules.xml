@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/LuckyDragon/.gradle/8.7/dependencies-accessors/320b757b4f033fcc861ac72dffa437e43edc45a2/320b757b4f033fcc861ac72dffa437e43edc45a2.iml" filepath="$PROJECT_DIR$/LuckyDragon/.gradle/8.7/dependencies-accessors/320b757b4f033fcc861ac72dffa437e43edc45a2/320b757b4f033fcc861ac72dffa437e43edc45a2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/LuckyDragon/.gradle/8.7/dependencies-accessors/5933fb53240e7f5ffc55260809dd4fdf0e5bf1f4/5933fb53240e7f5ffc55260809dd4fdf0e5bf1f4.iml" filepath="$PROJECT_DIR$/LuckyDragon/.gradle/8.7/dependencies-accessors/5933fb53240e7f5ffc55260809dd4fdf0e5bf1f4/5933fb53240e7f5ffc55260809dd4fdf0e5bf1f4.iml" />
+      <module fileurl="file://$PROJECT_DIR$/LuckyDragon/app/app.iml" filepath="$PROJECT_DIR$/LuckyDragon/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/lucky-dragons.iml" filepath="$PROJECT_DIR$/.idea/lucky-dragons.iml" />
+    </modules>
+  </component>
+</project>

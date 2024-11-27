@@ -37,12 +37,12 @@ exports.sendNotification = onRequest(async (req, res) => {
     return;
   }
 
-  const data = jsonData.data;
-  if (data === undefined || data === null) {
-    log("There is no data in the request.");
-    res.status(400).status("There is no data in the request.");
-    return;
-  }
+  // const data = jsonData.data;
+  // if (data === undefined || data === null) {
+  //   log("There is no data in the request.");
+  //   res.status(400).status("There is no data in the request.");
+  //   return;
+  // }
 
   log(
     `There are ${notificationTokens.length} tokens` +
@@ -55,9 +55,11 @@ exports.sendNotification = onRequest(async (req, res) => {
     messages.push({
       token,
       notification,
-      data,
+      // data,
     });
   });
+  
+  log(`Sample message: ${JSON.stringify(messages[0])}`);
 
   const batchResponse = await messaging.sendEach(messages);
 
