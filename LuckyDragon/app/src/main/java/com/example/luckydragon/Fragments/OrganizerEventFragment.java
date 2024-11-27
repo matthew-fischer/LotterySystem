@@ -52,6 +52,12 @@ public class OrganizerEventFragment extends Fragment {
         entrantArrayAdapter = new EntrantArrayAdapter(event.getInviteelistUsers(), requireActivity().getApplicationContext(), this);
         invitelistListView.setAdapter(entrantArrayAdapter);
 
+        // Set up CancelledList list view
+        ListView cancelledlistListView = view.findViewById(R.id.eventCancelledlistListView);
+        // Need a user array adapter
+        entrantArrayAdapter = new EntrantArrayAdapter(event.getCancelledlistUsers(), requireActivity().getApplicationContext(), this);
+        cancelledlistListView.setAdapter(entrantArrayAdapter);
+
         if(event.hasGeolocation()) {
             Button seeMapButton = view.findViewById(R.id.seeMapButton);
             // Make "See Map" button visible
@@ -97,6 +103,16 @@ public class OrganizerEventFragment extends Fragment {
         TextView noWaitlisteesTextView = getView().findViewById(R.id.noWaitlisteesTextView);
         if (event.getWaitlistUsers().size() == 0) {
             noWaitlisteesTextView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * Display cancelledlist textview or cancelledlist listview
+     */
+    public void displayCancelledlist() {
+        TextView noCancelledlisteesTextView = getView().findViewById(R.id.noCancelledTextView);
+        if (event.getCancelledlistUsers().size() == 0) {
+            noCancelledlisteesTextView.setVisibility(View.VISIBLE);
         }
     }
 

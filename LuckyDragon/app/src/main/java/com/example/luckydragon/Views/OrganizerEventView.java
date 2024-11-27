@@ -35,6 +35,7 @@ public class OrganizerEventView extends Observer {
         organizerEventFragment.updateWaitlistCapacity();
         organizerEventFragment.displayInviteelist();
         organizerEventFragment.displayWaitlist();
+        organizerEventFragment.displayCancelledlist();
     }
 
     @Override

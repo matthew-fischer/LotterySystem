@@ -101,6 +101,7 @@ public class Event extends Observable implements Serializable {
 
     private ArrayList<User> waitlistUsers = new ArrayList<>();
     private ArrayList<User> inviteelistUsers = new ArrayList<>();
+    private ArrayList<User> cancelledlistUsers = new ArrayList<>();
 
     private boolean isLoaded = false;
     private Bitmap eventPoster;
@@ -283,6 +284,20 @@ public class Event extends Observable implements Serializable {
                     User user = new User(userID, db);
                     user.fetchData();
                     inviteelistUsers.add(user);
+                }
+            }
+        }
+
+        if (eventData.get("cancelledList") != null) {
+            if (!cancelledList.equals((List<String>) eventData.get("cancelledList"))) {
+                cancelledList = (List<String>) eventData.get("cancelledList");
+
+                // populated cancelledList users
+                cancelledlistUsers = new ArrayList<>();
+                for (String userID : cancelledList) {
+                        User user = new User(userID, db);
+                        user.fetchData();
+                        cancelledlistUsers.add(user);
                 }
             }
         }
@@ -674,6 +689,10 @@ public class Event extends Observable implements Serializable {
 
     public ArrayList<User> getInviteelistUsers() {
         return inviteelistUsers;
+    }
+
+    public ArrayList<User> getCancelledlistUsers() {
+        return cancelledlistUsers;
     }
 
     public void setIsLoaded(boolean newIsLoaded) {
