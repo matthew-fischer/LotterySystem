@@ -186,6 +186,10 @@ public class AddEventDialogFragment extends DialogFragment {
                         activity.sendToast("Lottery must be before the event!");
                         event.deleteEventFromDb();
                         return;
+                    } else if(!lotteryDateTime.isAfter(now)) {
+                        activity.sendToast("Lottery must be in the future!");
+                        event.deleteEventFromDb();
+                        return;
                     }
 
                     // TODO: Make view reply if event with same info has been created upon save attempt
