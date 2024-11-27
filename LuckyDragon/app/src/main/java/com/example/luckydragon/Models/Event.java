@@ -483,17 +483,6 @@ public class Event extends Observable implements Serializable {
     }
 
     /**
-     * Deletes an event from the database.
-     * @param eventId the id of the event
-     * - Could this be replaced by deleteEventFromDb()?
-     */
-    public void deleteEvent(String eventId) {
-        db.collection("events")
-                .document(eventId)
-                .delete();
-    }
-
-    /**
      * Deletes this event from the database.
      * This does not take a device id.
      */

@@ -96,15 +96,13 @@ public class EventController extends Controller {
 
     /**
      * Updates the Event model after an Admin deletes the event.
-     * @param eventId the id of the event
      */
-    public void deleteEvent(String eventId) {
-        getObservable().deleteEvent(eventId);
+    public void deleteEvent() {
+        getObservable().deleteEventFromDb();
     }
 
     /**
      * Updates the Event model after an Admin removes the QR code of the event.
-     * @param eventId the id of the event
      */
     public void removeQR() {
         getObservable().removeQR();
