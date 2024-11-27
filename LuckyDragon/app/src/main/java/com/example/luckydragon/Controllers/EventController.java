@@ -115,4 +115,11 @@ public class EventController extends Controller {
         getObservable().removeEventPoster();
     }
 
+    /**
+     * Updates the Event model after an Admin removes the facility.
+     */
+    public void removeFacility() {
+        getObservable().removeFacility();
+    }
+
 }
