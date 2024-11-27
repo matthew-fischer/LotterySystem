@@ -24,8 +24,29 @@ public class UserList extends Observable {
     private ArrayList<User> users = new ArrayList<>();
     private FirebaseFirestore db;
 
+    /**
+     * Constructs an UserList with the specified database instance.
+     * <p>
+     *     Sets up a real-time listener on the "events" collection to keep the
+     *     users list updated with any changes from firestore.
+     * </p>
+     * @param db The firestore database instance
+     */
     public UserList(FirebaseFirestore db) {
         this.db = db;
+
+        db.collection("users").addSnapshotListener((value, error) -> {
+            if (error != null) {
+                Log.e("Firestore", error.toString());
+            }
+            if (value != null) {
+                users.clear();
+                for (QueryDocumentSnapshot doc: value) {
+                    users.add(createUser(doc));
+                }
+                notifyObservers();
+            }
+        });
     }
 
     /**
@@ -39,19 +60,11 @@ public class UserList extends Observable {
                     if (task.isSuccessful() && task.getResult() != null) {
                         users.clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            Map<String, Object> userData = document.getData();
-                            User user = new User(
-                                    userData.get("name") instanceof String ? (String) userData.get("name") : null,
-                                    userData.get("email") instanceof String ? (String) userData.get("email") : null,
-                                    userData.get("phoneNumber") instanceof String ? (String) userData.get("phoneNumber") : null,
-                                    (Bitmap) BitmapUtil.stringToBitmap((String) userData.get("defaultProfilePicture")),
-                                    (Bitmap) BitmapUtil.stringToBitmap((String) userData.get("profilePicture"))
-                            );
-
-                            users.add(user);
+                            users.add(createUser(document));
                         }
 
                         Log.d(TAG, "Users loaded successfully with initial get()");
+
                         notifyObservers();
                     } else {
                         Log.w(TAG, "Error getting initial documents.", task.getException());
@@ -68,6 +81,17 @@ public class UserList extends Observable {
 
         return users;
 
+    }
+
+    /**
+     * Creates an User object from a firestore document.
+     * @param document The firestore QueryDocumentSnapshot containing user data
+     * @return An User object
+     */
+    public User createUser(QueryDocumentSnapshot document) {
+        Map<String, Object> userData = document.getData();
+        User user = new User(document.getId(), db, userData);
+        return user;
     }
 
 }
