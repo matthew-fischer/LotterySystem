@@ -102,6 +102,7 @@ public class Event extends Observable implements Serializable {
     private ArrayList<User> waitlistUsers = new ArrayList<>();
 
     private boolean isLoaded = false;
+    private Bitmap eventPoster;
 
     /**
      * Creates an event instance without a given id.
@@ -176,6 +177,7 @@ public class Event extends Observable implements Serializable {
         if(nonNull(time.hours)) eventData.put("hours", time.hours);
         if(nonNull(time.minutes)) eventData.put("minutes", time.minutes);
         if(nonNull(qrHash)) eventData.put("hashedQR", qrHash.toString("1", "0"));
+        eventData.put("poster", BitmapUtil.bitmapToString(eventPoster));
         eventData.put("waitList", waitList);
         eventData.put("inviteeList", inviteeList);
         eventData.put("attendeeList", attendeeList);
@@ -249,6 +251,8 @@ public class Event extends Observable implements Serializable {
         if (nonNull(eventData.get("data"))) {
             date = (String) eventData.get("date");
         }
+
+        eventPoster = BitmapUtil.stringToBitmap((String)eventData.get("poster"));
 
         int hours = eventData.get("hours") != null ? Math.toIntExact((Long) eventData.get("hours")) : null;
         int minutes = eventData.get("minutes") != null ? Math.toIntExact((Long) eventData.get("minutes")) : null;
@@ -669,5 +673,17 @@ public class Event extends Observable implements Serializable {
 
     public List<Location> getWaitlistLocations() {
         return waitlistLocations;
+    }
+
+    public void setEventPoster(Bitmap poster) {
+        if (poster != null) {
+            Log.e("JXU", "poster is good");
+        }
+        this.eventPoster = poster;
+        notifyObservers();
+    }
+
+    public Bitmap getEventPoster() {
+        return this.eventPoster;
     }
 }
