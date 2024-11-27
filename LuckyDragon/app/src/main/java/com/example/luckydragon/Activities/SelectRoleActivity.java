@@ -83,12 +83,15 @@ public class SelectRoleActivity extends AppCompatActivity {
         super.onResume();
         Log.d("TONY", "onResume: ");
         Intent intent = getIntent();
-        String msg = intent.getStringExtra("eventId");
-        if (nonNull(msg)) {
-            Log.d("TONY", msg);
+        Bundle extras = intent.getExtras();
+        if (nonNull(extras)) {
+            Log.d("TONY", extras.toString());
         }
+//        String msg = intent.getStringExtra("eventId");
+//        if (nonNull(msg)) {
+//            Log.d("TONY", msg);
+//        }
     }
-
     /**
      * Set button visibilities and on click listeners.
      * This runs once the user data has been fetched, so that admin button can be hidden if user is not an admin.

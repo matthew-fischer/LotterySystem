@@ -56,9 +56,11 @@
             android:launchMode="singleTask"/>
 
 <!--    from: https://firebase.google.com/docs/cloud-messaging/android/receive#edit-the-app-manifest-->
+<!--        https://stackoverflow.com/a/39197197-->
         <service
             android:name=".MyFirebaseMessagingService"
-            android:exported="false">
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
