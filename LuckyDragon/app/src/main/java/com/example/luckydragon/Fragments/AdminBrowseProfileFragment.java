@@ -60,9 +60,15 @@ public class AdminBrowseProfileFragment extends Fragment {
                 requireActivity().finish();
             }
             else {
-                userController.removeProfilePicture();
-                Toast.makeText(getContext(), "Profile picture removed successfully", Toast.LENGTH_SHORT).show();
-                requireActivity().finish();
+                if (user.getUploadedProfilePicture() == null) {
+                    Toast.makeText(getContext(), "User has default profile picture, cannot remove default picture", Toast.LENGTH_SHORT).show();
+                    requireActivity().finish();
+                }
+                else {
+                    userController.removeProfilePicture();
+                    Toast.makeText(getContext(), "Profile picture removed successfully", Toast.LENGTH_SHORT).show();
+                    requireActivity().finish();
+                }
             }
         });
     }
