@@ -781,4 +781,8 @@ public class Event extends Observable implements Serializable {
     public Bitmap getEventPoster() {
         return this.eventPoster;
     }
+
+    public int getEventHours() { return time.hours; }
+
+    public int getEventMinutes() { return time.minutes; }
 }
