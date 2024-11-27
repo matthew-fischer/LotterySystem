@@ -53,7 +53,7 @@ public class AdminEventFragment extends Fragment {
         // Set up remove qr button on click listener
         Button removeQrButton = view.findViewById(R.id.adminRemoveQRButton);
         removeQrButton.setOnClickListener(v -> {
-            eventController.removeQR(event.getId());
+            eventController.removeQR();
             Toast.makeText(getContext(), "QR code removed successfully", Toast.LENGTH_SHORT).show();
             requireActivity().finish();
         });

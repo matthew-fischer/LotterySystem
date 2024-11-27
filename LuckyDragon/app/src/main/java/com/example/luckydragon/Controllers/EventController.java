@@ -106,8 +106,8 @@ public class EventController extends Controller {
      * Updates the Event model after an Admin removes the QR code of the event.
      * @param eventId the id of the event
      */
-    public void removeQR(String eventId) {
-        getObservable().removeQR(eventId);
+    public void removeQR() {
+        getObservable().removeQR();
     }
 
 }
