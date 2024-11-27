@@ -14,6 +14,7 @@ import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.R;
 import com.example.luckydragon.Views.OrganizerEventView;
+import com.google.type.DateTime;
 
 /**
  * This is the fragment containing the organizer-specific event info.
