@@ -97,7 +97,7 @@ public class EventController extends Controller {
     /**
      * Updates the Event model after an Admin deletes the event.
      */
-    public void deleteEvent(String eventId) {
+    public void deleteEvent() {
         getObservable().deleteEventFromDb();
     }
 
