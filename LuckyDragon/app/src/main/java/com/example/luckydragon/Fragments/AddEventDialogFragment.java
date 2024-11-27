@@ -4,14 +4,29 @@
 
 package com.example.luckydragon.Fragments;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
+import android.widget.TextView;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
@@ -45,6 +60,7 @@ public class AddEventDialogFragment extends DialogFragment {
     AddEventController controller;
     AddEventView eventView;
     User user;
+    private ActivityResultLauncher<Intent> uploadImageResultLauncher;
 
     @NonNull
     @Override
@@ -82,6 +98,55 @@ public class AddEventDialogFragment extends DialogFragment {
         TextInputEditText facilityEditText = dialogView.findViewById(R.id.facilityEditText);
         String facility = user.getOrganizer().getFacility();
         facilityEditText.setText(facility);
+        TextView posterFile = dialogView.findViewById(R.id.uploadPosterText);
+        // Upload Event Poster
+        uploadImageResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            Intent data = result.getData();
+                            if (data == null || data.getData() == null) return;
+                            Uri image = data.getData();
+                            try (Cursor cursor = getActivity().getContentResolver().query(image,
+                                    null, null, null, null)) {
+                                if (cursor == null) return;
+                                int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                                cursor.moveToFirst();
+                                String file = cursor.getString(nameIndex);
+
+                                Bitmap eventPoster = MediaStore.Images.Media.getBitmap(
+                                        getActivity().getContentResolver(), image);
+
+                                // Crop image to correct width
+                                int width = eventPoster.getWidth();
+                                int height = eventPoster.getHeight();
+                                eventPoster = Bitmap.createScaledBitmap(eventPoster, 200,
+                                        (200 * height)/width, false);
+                                posterFile.setText(file);
+                                controller.uploadEventPoster(eventPoster);
+                            } catch (Exception e) {
+                                Log.e("signup", e.getMessage());
+                                Log.e("signup", "error uploading event poster");
+                            }
+                        }
+                    }
+                });
+
+        ImageButton uploadPosterButton = dialogView.findViewById(R.id.uploadPosterButton);
+        uploadPosterButton.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            uploadImageResultLauncher.launch(intent);
+        });
+
+        ImageButton removePosterButton = dialogView.findViewById(R.id.removePosterButton);
+        removePosterButton.setOnClickListener(view -> {
+            controller.uploadEventPoster(null);
+            posterFile.setText(getString(R.string.createEventPosterText));
+        });
 
         return builder.setView(dialogView)
                 .setPositiveButton("Create", (dialogInterface, i) -> {

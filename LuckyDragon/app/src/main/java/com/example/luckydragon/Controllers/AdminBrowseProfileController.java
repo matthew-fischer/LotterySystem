@@ -29,4 +29,12 @@ public class AdminBrowseProfileController extends Controller{
         getObservable().deleteUser();
     }
 
+    /**
+     * Removes the profile picture of the user. This method delegates
+     * the deletion logic to the observable {@link User} instance.
+     */
+    public void removeProfilePicture() {
+        getObservable().removeProfilePicture();
+    }
+
 }
