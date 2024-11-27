@@ -37,6 +37,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -79,6 +80,13 @@ public class CreateEventTest {
     private Query mockEventQuery;
     @Mock
     private Task<QuerySnapshot> mockEventQueryTask;
+    @Mock
+    private CollectionReference mockMessagesCollection;
+    @Mock
+    private DocumentReference mockMessagesDocument;
+    @Mock
+    private DocumentSnapshot mockMessagesSnapshot;
+
 
     Map<String, Object> testUserData;
 
@@ -142,6 +150,14 @@ public class CreateEventTest {
                 .thenAnswer((invocation -> {
                     return null; // do nothing
                 }));
+
+        // mock notifications db stuff
+        when(mockFirestore.collection("messages")).thenReturn(mockMessagesCollection);
+        when(mockMessagesCollection.document(any())).thenReturn(mockMessagesDocument);
+        when(mockMessagesDocument.addSnapshotListener(any())).thenAnswer((invocation) -> {
+            return null;
+        });
+        when(mockMessagesDocument.set(anyMap())).thenReturn(mockVoidTask);
     }
 
     @After
