@@ -32,6 +32,7 @@ public class ViewEventView extends Observer {
         viewEventActivity.updateEventFacility();
         viewEventActivity.updateEventDateAndTime();
         viewEventActivity.loadChildFragment();
+        viewEventActivity.sampleAttendeesIfNeccessary();
     }
 
     @Override

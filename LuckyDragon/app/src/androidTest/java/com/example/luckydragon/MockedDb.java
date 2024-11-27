@@ -59,6 +59,10 @@ public abstract class MockedDb {
     private Query mockEventQuery;
     @Mock
     private Task<QuerySnapshot> mockEventQueryTask;
+    @Mock
+    private CollectionReference mockMessagesCollection;
+    @Mock
+    private DocumentReference mockMessagesDocument;
 
     protected String eventId = "fakeEventId";
     protected abstract Map<String, Object> getMockData();
@@ -126,6 +130,14 @@ public abstract class MockedDb {
         // in Organizer.fetchData(), we don't want to pull events from db
         when(mockEventQueryTask.isSuccessful()).thenReturn(true);
         when(mockEventQuery.get()).thenReturn(mockEventQueryTask);
+
+        // mock notifications db stuff
+        when(mockFirestore.collection("messages")).thenReturn(mockMessagesCollection);
+        when(mockMessagesCollection.document(any())).thenReturn(mockMessagesDocument);
+        when(mockMessagesDocument.addSnapshotListener(any())).thenAnswer((invocation) -> {
+            return null;
+        });
+        when(mockMessagesDocument.set(anyMap())).thenReturn(mockVoidTask);
     }
 
     @After
@@ -135,6 +147,7 @@ public abstract class MockedDb {
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
         globalApp.setDb(null);
         globalApp.setUser(null);
+        globalApp.resetState();
 
         Intents.release();
     }

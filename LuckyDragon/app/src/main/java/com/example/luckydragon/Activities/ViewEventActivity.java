@@ -14,19 +14,18 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.example.luckydragon.Fragments.AdminEventFragment;
-import com.example.luckydragon.Fragments.DisplayImageFragment;
 import com.example.luckydragon.Fragments.DisplayQRCodeFragment;
 import com.example.luckydragon.Fragments.EntrantEventAttendingFragment;
 import com.example.luckydragon.Fragments.EntrantEventInvitedFragment;
 import com.example.luckydragon.Fragments.EntrantEventWaitlistFragment;
 import com.example.luckydragon.Fragments.OrganizerEventFragment;
-import com.example.luckydragon.Fragments.OrganizerMapFragment;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.R;
 import com.example.luckydragon.Views.ViewEventView;
-
-import java.io.FileOutputStream;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  * This is the activity for the view event page.
@@ -168,6 +167,24 @@ public class ViewEventActivity extends AppBarActivity {
                         .replace(R.id.eventFragmentContainer, AdminEventFragment.class, null)
                         .commit();
             }
+        }
+    }
+
+    /**
+     * Samples attendees if the waitlist period has passed and they have not been sampled yet.
+     */
+    public void sampleAttendeesIfNeccessary() {
+        if(!event.isLoaded()) return;
+        if(event == null || event.getCreatedTimeMillis() == null) return;
+        if(!event.haveInviteesBeenSelected()) {
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            LocalDate lotteryDate = LocalDate.parse(event.getLotteryDate());
+            LocalTime lotteryTime = LocalTime.of(event.getLotteryHours(), event.getLotteryMinutes());
+            LocalDateTime lotteryDateTime = LocalDateTime.of(lotteryDate, lotteryTime);
+            if(currentDateTime.isAfter(lotteryDateTime)) {
+                event.selectInviteesFirstTime();
+            }
+            loadChildFragment(); // reload child fragment since we now want to show invitee fragment instead of waitlist fragment
         }
     }
 }
