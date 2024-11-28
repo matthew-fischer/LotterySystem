@@ -298,6 +298,14 @@ public class OrganizerViewCancelledListTest {
         Intents.release();
     }
 
+    /**
+     * USER STORY TEST
+     * US 02.06.02 -- As an organizer I want to see a list of all the cancelled entrants.
+     * User opens app and selects Organizer.
+     * User's events are displayed.
+     * User clicks on one of these events.
+     * User sees the names of the entrants on the cancelled list (cancelledlist).
+     */
     @Test
     public void testCancelledlistDisplayedEventData1() {
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();

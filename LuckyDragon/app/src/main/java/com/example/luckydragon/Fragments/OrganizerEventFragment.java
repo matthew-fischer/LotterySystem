@@ -1,7 +1,9 @@
 package com.example.luckydragon.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -9,11 +11,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.luckydragon.Activities.ViewEventActivity;
 import com.example.luckydragon.Controllers.EntrantArrayAdapter;
+import com.example.luckydragon.Controllers.EventArrayAdapter;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
+import com.example.luckydragon.Models.User;
+import com.example.luckydragon.Models.UserList;
 import com.example.luckydragon.R;
 import com.example.luckydragon.Views.OrganizerEventView;
+
+import java.util.ArrayList;
 
 /**
  * This is the fragment containing the organizer-specific event info.
@@ -26,6 +34,16 @@ public class OrganizerEventFragment extends Fragment {
     private Event event;
     private EntrantArrayAdapter entrantArrayAdapter;
     private OrganizerEventView organizerEventView;
+    private UserList userList;
+
+    public EntrantArrayAdapter waitListUsersAdapter;
+    public EntrantArrayAdapter inviteeListUsersAdapter;
+    public EntrantArrayAdapter cancelledListUsersAdapter;
+
+    private ListView waitListUsersListView;
+    private ListView inviteeListUsersListView;
+    private ListView cancelledListUsersListView;
+
 
     /**
      * Creates an OrganizerEventFragment.
@@ -40,23 +58,23 @@ public class OrganizerEventFragment extends Fragment {
         GlobalApp globalApp = (GlobalApp) requireActivity().getApplication();
         event = globalApp.getEventToView();
 
-        // Set up waitlist list view
-        ListView waitlistListView = view.findViewById(R.id.eventWaitlistListView);
-        // Need a user array adapter
-        entrantArrayAdapter = new EntrantArrayAdapter(event.getWaitlistUsers(), requireActivity().getApplicationContext(), this);
-        waitlistListView.setAdapter(entrantArrayAdapter);
+        waitListUsersListView = view.findViewById(R.id.eventWaitlistListView);
+        inviteeListUsersListView = view.findViewById(R.id.eventInvitelistListView);
+        cancelledListUsersListView = view.findViewById(R.id.eventCancelledlistListView);
 
-        // Set up InviteList list view
-        ListView invitelistListView = view.findViewById(R.id.eventInvitelistListView);
-        // Need a user array adapter
-        entrantArrayAdapter = new EntrantArrayAdapter(event.getInviteelistUsers(), requireActivity().getApplicationContext(), this);
-        invitelistListView.setAdapter(entrantArrayAdapter);
+        waitListUsersAdapter = new EntrantArrayAdapter(new ArrayList<>(), requireActivity().getApplicationContext(),
+                this);
+        inviteeListUsersAdapter = new EntrantArrayAdapter(new ArrayList<>(), requireActivity().getApplicationContext(),
+                this);
+        cancelledListUsersAdapter = new EntrantArrayAdapter(new ArrayList<>(), requireActivity().getApplicationContext(),
+                this);
 
-        // Set up CancelledList list view
-        ListView cancelledlistListView = view.findViewById(R.id.eventCancelledlistListView);
-        // Need a user array adapter
-        entrantArrayAdapter = new EntrantArrayAdapter(event.getCancelledlistUsers(), requireActivity().getApplicationContext(), this);
-        cancelledlistListView.setAdapter(entrantArrayAdapter);
+        setupAdapter(waitListUsersAdapter, waitListUsersListView);
+        setupAdapter(inviteeListUsersAdapter, inviteeListUsersListView);
+        setupAdapter(cancelledListUsersAdapter, cancelledListUsersListView);
+
+        // get all event data
+        userList = ((GlobalApp) requireActivity().getApplication()).getUsers();
 
         if(event.hasGeolocation()) {
             Button seeMapButton = view.findViewById(R.id.seeMapButton);
@@ -71,7 +89,53 @@ public class OrganizerEventFragment extends Fragment {
         }
 
         // Initialize view
-        organizerEventView = new OrganizerEventView(event, this);
+        organizerEventView = new OrganizerEventView(userList, this);
+    }
+
+    /**
+     * Calls to update the adapters for each of the four listViews.
+     */
+    public void notifyAdapter() {
+        updateAdapter(waitListUsersAdapter, waitListUsersListView, "waitList");
+        updateAdapter(inviteeListUsersAdapter, inviteeListUsersListView, "inviteeList");
+        updateAdapter(cancelledListUsersAdapter, cancelledListUsersListView, "cancelledList");
+    }
+
+    /**
+     * Setups an adapter with its corresponding listView.
+     * @param adapter the adapter for the listView
+     * @param listView the corresponding listView
+     */
+    private void setupAdapter(EntrantArrayAdapter adapter, ListView listView) {
+        // set the listview's adapter
+        listView.setAdapter(adapter);
+
+        // TODO: Setup item click listener for cancelling entrants
+    }
+
+    /**
+     * Given an adapter, its listView, and the type of list, updates the
+     * adapter to store the current users that are in the listType for this event.
+     * @param adapter the adapter for the listView
+     * @param listView the corresponding listView
+     * @param listType the type of list, can be one of: <attendee|wait|invitee|cancelled>list
+     */
+    private void updateAdapter(EntrantArrayAdapter adapter, ListView listView, String listType) {
+        // if the fragment is not on an activity, we don't need to update the adapter
+        if (!isAdded()) return;
+
+        ArrayList<User> userData = new ArrayList<>();
+        for (User user : userList.getUserList()) {
+            if ((listType.equals("attendeeList") && event.onAttendeeList(user.getDeviceId()))
+                    ||  (listType.equals("waitList") && event.onWaitList(user.getDeviceId()))
+                    ||  (listType.equals("inviteeList") && event.onInviteeList(user.getDeviceId()))
+                    ||  (listType.equals("cancelledList") && event.onCancelledList(user.getDeviceId()))) {
+                userData.add(user);
+            }
+        }
+        adapter.clear();
+        adapter.addAll(userData);
+        adapter.notifyDataSetChanged();
     }
 
     /**
@@ -84,36 +148,6 @@ public class OrganizerEventFragment extends Fragment {
             waitlistLimit = String.format("%s", event.getWaitListSpots());
         }
         waitlistCapacityTextView.setText(String.format("Capacity: %s", waitlistLimit));
-    }
-
-    /**
-     * Displays inviteelist textview or inviteelist listview
-     */
-    public void displayInviteelist() {
-        TextView noinviteesTextView = getView().findViewById(R.id.noinviteesTextView);
-        if (event.getInviteelistUsers().size() == 0) {
-            noinviteesTextView.setVisibility(View.VISIBLE);
-        }
-    }
-
-    /**
-     * Displays waitlist textview or waitlist listview
-     */
-    public void displayWaitlist() {
-        TextView noWaitlisteesTextView = getView().findViewById(R.id.noWaitlisteesTextView);
-        if (event.getWaitlistUsers().size() == 0) {
-            noWaitlisteesTextView.setVisibility(View.VISIBLE);
-        }
-    }
-
-    /**
-     * Display cancelledlist textview or cancelledlist listview
-     */
-    public void displayCancelledlist() {
-        TextView noCancelledlisteesTextView = getView().findViewById(R.id.noCancelledTextView);
-        if (event.getCancelledlistUsers().size() == 0) {
-            noCancelledlisteesTextView.setVisibility(View.VISIBLE);
-        }
     }
 
     @Override

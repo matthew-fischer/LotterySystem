@@ -146,7 +146,7 @@ public class EntrantProfileFragment extends Fragment {
      * listType.
      * @param adapter the adapter for the listView
      * @param listView the corresponding listView
-     * @param listType the type of list, can be one of: <attendee|wait|invitee|cancelled>list
+     * @param listType the type of list, can be one of: <attendee|wait|invitee|cancelled>List
      */
     private void updateAdapter(EventArrayAdapter adapter, ListView listView, String listType) {
         // if the fragment is not on an activity, we don't need to update the adapter
