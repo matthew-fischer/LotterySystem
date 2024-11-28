@@ -698,6 +698,25 @@ public class Event extends Observable implements Serializable {
     }
 
     /**
+     * Samples an invitee from the wait list to be added to the invitee list.
+     */
+    public void sampleInvitee() {
+        assert(waitList.size() > 0);
+
+        Random random = new Random();
+        int randomIndex = random.nextInt(waitList.size());
+        // Move id from waitlist to invitee list
+        String selectedId = waitList.get(randomIndex);
+        inviteeList.add(selectedId);
+        // Remove id from waitlist
+        waitList.remove(randomIndex);
+        waitlistUsers.remove(randomIndex);
+        if(hasGeolocation) {
+            waitlistLocations.remove(randomIndex);
+        }
+    }
+
+    /**
      * Selects invitees from the waiting list for the first time.
      * This is different from fillInvitees(), which is intended to fill spots freed by cancelled entrants after the initial selection.
      */
@@ -705,22 +724,24 @@ public class Event extends Observable implements Serializable {
         assert(inviteeList.isEmpty()); // invitee list should start empty
         assert(!inviteesHaveBeenSelected); // invitees should not have been selected yet
 
-        // Randomly select entrants from waiting list and move to invitee list
-        Random random = new Random();
-        while(waitList.size() > 0 && inviteeList.size() <= attendeeLimit) {
-            int randomIndex = random.nextInt(waitList.size());
-            // Move id from waitlist to invitee list
-            String selectedId = waitList.get(randomIndex);
-            inviteeList.add(selectedId);
-            // Remove id from waitlist
-            waitList.remove(randomIndex);
-            waitlistUsers.remove(randomIndex);
-            if(hasGeolocation) {
-                waitlistLocations.remove(randomIndex);
-            }
+        while(!waitList.isEmpty() && inviteeList.size() <= attendeeLimit) {
+            sampleInvitee();
         }
 
         inviteesHaveBeenSelected = true; // invitees have now been selected
+    }
+
+    /**
+     * Fills the invitee list with replacement entrants from the wait list if there are still
+     * some spots left. Only can be called after the initial sampling of invitees
+     * has happened.
+     */
+    public void fillInvitees() {
+        assert(inviteesHaveBeenSelected);
+
+        while (!waitList.isEmpty() && inviteeList.size() + attendeeList.size() <= attendeeLimit) {
+            sampleInvitee();
+        }
     }
 
     public Long getCreatedTimeMillis() {

@@ -178,6 +178,8 @@ public class ViewEventActivity extends AppBarActivity {
 
     /**
      * Samples attendees if the waitlist period has passed and they have not been sampled yet.
+     * Will sample replacement entrants if has sampled yet and the attendee limit has not been
+     * reached.
      */
     public void sampleAttendeesIfNeccessary() {
         if(!event.isLoaded()) return;
@@ -190,7 +192,11 @@ public class ViewEventActivity extends AppBarActivity {
             if(currentDateTime.isAfter(lotteryDateTime)) {
                 event.selectInviteesFirstTime();
             }
-            loadChildFragment(); // reload child fragment since we now want to show invitee fragment instead of waitlist fragment
+        } else {
+            // check to see if we can fill replacement invitees if there are spots left
+            event.fillInvitees();
         }
+        // reload child fragment since we now want to show invitee fragment instead of waitlist fragment
+        loadChildFragment();
     }
 }
