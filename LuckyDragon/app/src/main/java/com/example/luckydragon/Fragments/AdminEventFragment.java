@@ -9,10 +9,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.luckydragon.Controllers.AdminBrowseProfileController;
 import com.example.luckydragon.Controllers.EventController;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.R;
+import com.example.luckydragon.Views.AdminBrowseEventView;
+import com.example.luckydragon.Views.AdminBrowseProfileView;
 
 /**
  * This is the fragment containing the admin-specific event information.
@@ -37,11 +40,6 @@ public class AdminEventFragment extends Fragment {
 
         // Create controller
         eventController = new EventController(event);
-
-        // Set event details -- this only needs to happen when fragment is created
-        updateCurrentlyJoinedMessage();
-        updateWaitlistSpotsMessage();
-        updateAttendeeSpotsMessage();
 
         // Set up delete event button on click listener
         Button deleteEventButton = view.findViewById(R.id.adminDeleteEventButton);
@@ -80,6 +78,9 @@ public class AdminEventFragment extends Fragment {
         if(event.getQrHash() == null) {
             removeQrButton.setVisibility(View.GONE);
         }
+
+        // Now start observing event
+        new AdminBrowseEventView(event, this);
     }
 
     /**

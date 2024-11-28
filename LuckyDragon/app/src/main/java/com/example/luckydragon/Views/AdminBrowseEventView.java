@@ -20,6 +20,8 @@ public class AdminBrowseEventView extends Observer{
 
     @Override
     public void update(Observable whoUpdatedMe) {
-
+        adminEventFragment.updateCurrentlyJoinedMessage();
+        adminEventFragment.updateWaitlistSpotsMessage();
+        adminEventFragment.updateAttendeeSpotsMessage();
     }
 }
