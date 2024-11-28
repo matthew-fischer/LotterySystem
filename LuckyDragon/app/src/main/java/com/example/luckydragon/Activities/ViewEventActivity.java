@@ -129,14 +129,6 @@ public class ViewEventActivity extends AppBarActivity {
         viewQrCodeButton.setVisibility(View.GONE);
     }
 
-    /**
-     * Shows the QR code button.
-     */
-    public void showQrCodeButton() {
-        ImageButton viewQrCodeButton = findViewById(R.id.viewQrCodeButton);
-        viewQrCodeButton.setVisibility(View.VISIBLE);
-    }
-
     public void loadChildFragment() {
         if(event.isLoaded()) {
             GlobalApp globalApp = (GlobalApp) getApplication();
