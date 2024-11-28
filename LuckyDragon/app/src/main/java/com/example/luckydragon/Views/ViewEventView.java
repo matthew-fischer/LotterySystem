@@ -1,6 +1,7 @@
 package com.example.luckydragon.Views;
 
 import com.example.luckydragon.Activities.ViewEventActivity;
+import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.Models.Observable;
 
@@ -11,15 +12,19 @@ import com.example.luckydragon.Models.Observable;
  */
 public class ViewEventView extends Observer {
     private final ViewEventActivity viewEventActivity;
-
+    private boolean forceHideQR;
     /**
      * Creates a ViewEventView.
      * @param event the event being displayed
      * @param viewEventActivity the activity displaying the event
      */
-    public ViewEventView(Event event, ViewEventActivity viewEventActivity) {
+    public ViewEventView(Event event, ViewEventActivity viewEventActivity, boolean forceHideQR) {
         this.viewEventActivity = viewEventActivity;
+        this.forceHideQR = forceHideQR;
         startObserving(event);
+        if (forceHideQR) {
+            viewEventActivity.hideQrCodeButton();
+        }
     }
 
     /**

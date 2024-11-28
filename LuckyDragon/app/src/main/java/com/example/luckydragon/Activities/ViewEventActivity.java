@@ -43,7 +43,6 @@ import java.time.LocalTime;
 public class ViewEventActivity extends AppBarActivity {
     private Event event;
     private ViewEventView viewEventView; // need to define view
-    // private ViewEventController viewEventController; // need to define controller
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,12 +54,9 @@ public class ViewEventActivity extends AppBarActivity {
         GlobalApp globalApp = (GlobalApp) getApplication();
         event = globalApp.getEventToView();
         event.fetchData(); // get all event data
-        viewEventView = new ViewEventView(event, this);
+        boolean forceHideQR = globalApp.getRole() == GlobalApp.ROLE.ENTRANT;
+        viewEventView = new ViewEventView(event, this, forceHideQR);
 
-        // Hide buttons for entrant
-        if(globalApp.getRole() == GlobalApp.ROLE.ENTRANT) {
-            hideQrCodeButton();
-        }
 
         // Start child fragment
         loadChildFragment();
@@ -68,10 +64,13 @@ public class ViewEventActivity extends AppBarActivity {
         // Initialize on click listener for qr button
         ImageButton viewQrCodeButton = findViewById(R.id.viewQrCodeButton);
         viewQrCodeButton.setOnClickListener((view) -> {
-            // create a displayQRCode Dialog Fragment.
+
             Bundle args = new Bundle();
-            args.putSerializable("event", event);
-            DialogFragment displayQRFragment = new DisplayQRCodeFragment();
+            args.putParcelable("image", event.createBitMap(event.getQRBitMatrix()));
+            args.putString("title", event.getQRBitMatrix() == null ? "No QR Code" :
+                    "QR Code for Event:");
+            args.putString("negativeButton", "Close");
+            DialogFragment displayQRFragment = new DisplayImageFragment();
             displayQRFragment.setArguments(args);
             displayQRFragment.show(getSupportFragmentManager(), "DisplayQRCodeFragment");
         });
@@ -125,9 +124,17 @@ public class ViewEventActivity extends AppBarActivity {
     /**
      * Hides the QR code button.
      */
-    private void hideQrCodeButton() {
+    public void hideQrCodeButton() {
         ImageButton viewQrCodeButton = findViewById(R.id.viewQrCodeButton);
         viewQrCodeButton.setVisibility(View.GONE);
+    }
+
+    /**
+     * Shows the QR code button.
+     */
+    public void showQrCodeButton() {
+        ImageButton viewQrCodeButton = findViewById(R.id.viewQrCodeButton);
+        viewQrCodeButton.setVisibility(View.VISIBLE);
     }
 
     public void loadChildFragment() {
@@ -178,6 +185,8 @@ public class ViewEventActivity extends AppBarActivity {
 
     /**
      * Samples attendees if the waitlist period has passed and they have not been sampled yet.
+     * Will sample replacement entrants if has sampled yet and the attendee limit has not been
+     * reached.
      */
     public void sampleAttendeesIfNeccessary() {
         if(!event.isLoaded()) return;
@@ -190,7 +199,11 @@ public class ViewEventActivity extends AppBarActivity {
             if(currentDateTime.isAfter(lotteryDateTime)) {
                 event.selectInviteesFirstTime();
             }
-            loadChildFragment(); // reload child fragment since we now want to show invitee fragment instead of waitlist fragment
+        } else {
+            // check to see if we can fill replacement invitees if there are spots left
+            event.fillInvitees();
         }
+        // reload child fragment since we now want to show invitee fragment instead of waitlist fragment
+        loadChildFragment();
     }
 }

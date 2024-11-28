@@ -110,7 +110,6 @@ public class User extends Observable {
      * A logging message is printed in case of database save failure.
      */
     public void save() {
-        Log.d("SAVE DB", String.format("Starting Save, %s", getDeviceId()));
         HashMap<String, Object> map = new HashMap<>();
         map.put("isEntrant", isEntrant());
         map.put("isOrganizer", isOrganizer());
