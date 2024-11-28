@@ -85,12 +85,12 @@ public class EntrantProfileFragment extends Fragment {
         // Reference: https://www.geeksforgeeks.org/how-to-read-qr-code-using-zxing-library-in-android/
         scanQRButton.setOnClickListener((View v) -> {
             // This is for starting up a test event
-//            Event event = globalApp.getEvent("hB6LuZms93tj3OYisgxl");
-//            globalApp.setEventToView(event);
-//            startActivity(new Intent(getContext(), ViewEventActivity.class));
+            Event event = globalApp.getEvent("hB6LuZms93tj3OYisgxl");
+            globalApp.setEventToView(event);
+            startActivity(new Intent(getContext(), ViewEventActivity.class));
 
             // This is for testing without scanning QR Code:
-            barcodeLauncher.launch(new ScanOptions());
+//            barcodeLauncher.launch(new ScanOptions());
 
         });
 
