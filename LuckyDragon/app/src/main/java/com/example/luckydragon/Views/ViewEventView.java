@@ -13,30 +13,17 @@ import com.example.luckydragon.Models.Observable;
 public class ViewEventView extends Observer {
     private final ViewEventActivity viewEventActivity;
     private boolean forceHideQR;
-    private Event event;
     /**
-     * Creates a ViewEv(entView.
+     * Creates a ViewEventView.
      * @param event the event being displayed
      * @param viewEventActivity the activity displaying the event
      */
     public ViewEventView(Event event, ViewEventActivity viewEventActivity, boolean forceHideQR) {
         this.viewEventActivity = viewEventActivity;
         this.forceHideQR = forceHideQR;
-        this.event = event;
         startObserving(event);
-        updateQRVisibility();
-    }
-
-    /**
-     * Update the visibility of the QR Code image button of ViewEventActivity.
-     * If it's forced to be hidden, it will always be hidden. Otherwise
-     * decide based on whether or not the event has a QR code.
-     */
-    public void updateQRVisibility() {
-        if (forceHideQR || event.getQRBitMatrix() == null) {
+        if (forceHideQR) {
             viewEventActivity.hideQrCodeButton();
-        } else {
-            viewEventActivity.showQrCodeButton();
         }
     }
 

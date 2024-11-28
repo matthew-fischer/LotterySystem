@@ -54,9 +54,6 @@ public class ViewEventActivity extends AppBarActivity {
         GlobalApp globalApp = (GlobalApp) getApplication();
         event = globalApp.getEventToView();
         event.fetchData(); // get all event data
-
-        // Normally visibility of QR code is based on whether or not QR code exists
-        // For entrants, we always want to QR code button to be hidden
         boolean forceHideQR = globalApp.getRole() == GlobalApp.ROLE.ENTRANT;
         viewEventView = new ViewEventView(event, this, forceHideQR);
 
@@ -67,9 +64,11 @@ public class ViewEventActivity extends AppBarActivity {
         // Initialize on click listener for qr button
         ImageButton viewQrCodeButton = findViewById(R.id.viewQrCodeButton);
         viewQrCodeButton.setOnClickListener((view) -> {
+
             Bundle args = new Bundle();
             args.putParcelable("image", event.createBitMap(event.getQRBitMatrix()));
-            args.putString("title", "QR Code for Event:");
+            args.putString("title", event.getQRBitMatrix() == null ? "No QR Code" :
+                    "QR Code for Event:");
             args.putString("negativeButton", "Close");
             DialogFragment displayQRFragment = new DisplayImageFragment();
             displayQRFragment.setArguments(args);
