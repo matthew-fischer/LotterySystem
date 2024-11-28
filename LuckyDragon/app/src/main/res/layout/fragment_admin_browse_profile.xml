@@ -14,6 +14,39 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+<!--            Organizer Facility-->
+            <LinearLayout
+                android:id="@+id/adminBrowseFacilityContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Facility:"
+                    android:textStyle="bold"
+                    android:textSize="25sp"
+                    android:paddingHorizontal="10dp"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/light_grey"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="10dp"
+                    android:layout_marginTop="2.5dp"
+                    android:gravity="center_vertical"
+                    >
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/adminFacilityTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_margin="3dp"
+                        android:layout_height="wrap_content"
+                        android:text="Facility Name"
+                        android:textSize="24sp"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+<!--            Organizer Facility End-->
             <LinearLayout
                 android:padding="10dp"
                 android:layout_width="match_parent"
@@ -35,6 +68,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Remove profile picture"/>
+                <Button
+                    android:id="@+id/adminRemoveFacilityButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:text="Remove facility"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
