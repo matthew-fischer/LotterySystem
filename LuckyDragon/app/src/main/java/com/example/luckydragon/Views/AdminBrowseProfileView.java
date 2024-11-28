@@ -15,7 +15,7 @@ import com.example.luckydragon.Models.User;
  *     user data displayed to user is up-to-date.
  * </p>
  */
-public class BrowseProfileView extends Observer {
+public class AdminBrowseProfileView extends Observer {
 
     private final AdminBrowseProfileFragment adminBrowseProfileFragment;
 
@@ -24,7 +24,7 @@ public class BrowseProfileView extends Observer {
      * @param user the user to observe for changes
      * @param adminBrowseProfileFragment the fragment to notify of updates
      */
-    public BrowseProfileView(User user, AdminBrowseProfileFragment adminBrowseProfileFragment) {
+    public AdminBrowseProfileView(User user, AdminBrowseProfileFragment adminBrowseProfileFragment) {
         this.adminBrowseProfileFragment = adminBrowseProfileFragment;
         startObserving(user);
     }

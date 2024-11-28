@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,8 +13,7 @@ import com.example.luckydragon.Controllers.AdminBrowseProfileController;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.User;
 import com.example.luckydragon.R;
-import com.example.luckydragon.Views.BrowseProfileView;
-import com.example.luckydragon.Views.ViewProfilesView;
+import com.example.luckydragon.Views.AdminBrowseProfileView;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.util.Objects;
@@ -93,7 +91,7 @@ public class AdminBrowseProfileFragment extends Fragment {
         });
 
         // Now start observing user
-        new BrowseProfileView(user, this);
+        new AdminBrowseProfileView(user, this);
     }
 
     /**
