@@ -82,6 +82,4 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 
     implementation("org.osmdroid:osmdroid-android:6.1.20")
-    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
-
 }
