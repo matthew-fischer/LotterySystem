@@ -84,6 +84,7 @@ public class Organizer {
                                     eventData.get("date") == null ? null : String.format("%s", eventData.get("date")),
                                     eventData.get("hours") == null ? null : Integer.valueOf(String.format("%s", eventData.get("hours"))),
                                     eventData.get("minutes") == null ? null : Integer.valueOf(String.format("%s", eventData.get("minutes"))),
+                                    (String)eventData.get("hashedQR"),
                                     db
                             );
                             // Check for duplicate events (could switch this to a set for performance, but event counts should be low)

@@ -130,7 +130,6 @@ public class Event extends Observable implements Serializable {
         super();
         this.db = db;
         this.id = id;
-        qrHash = generateQRCode();  // TODO: load from db
     }
 
     /**
@@ -146,7 +145,7 @@ public class Event extends Observable implements Serializable {
      * @param timeHours: the hour time e.g. "8" for 8:30
      * @param timeMinutes: the minute time e.g. "30" for 8:30
      */
-    public Event(String id, String name, String organizerDeviceId, String facility, Integer waitListLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes, FirebaseFirestore db)  {
+    public Event(String id, String name, String organizerDeviceId, String facility, Integer waitListLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes, String bitMatrixString, FirebaseFirestore db)  {
         this.id = id;
         this.name = name;
         this.organizerDeviceId = organizerDeviceId;
@@ -155,7 +154,7 @@ public class Event extends Observable implements Serializable {
         this.attendeeLimit = attendeeLimit;
         this.date = date;
         this.time = new Time(timeHours, timeMinutes);
-        this.qrHash = generateQRCode();
+        this.qrHash = stringToBitMatrix(bitMatrixString);
         this.qrCode = createBitMap(this.qrHash);
         this.db = db;
     }
@@ -234,9 +233,6 @@ public class Event extends Observable implements Serializable {
                 }
 
                 parseEventDocument(eventData);
-//                TODO: Decode qrHash
-//                qrHash
-
                 notifyObservers();
             }
         });
@@ -309,6 +305,10 @@ public class Event extends Observable implements Serializable {
         if (eventData.get("cancelledList") != null) {
             cancelledList = (ArrayList<String>) eventData.get("cancelledList");
         }
+
+        // stringToBitMatrix handles null values
+        this.qrHash = stringToBitMatrix((String) eventData.get("hashedQR"));
+        this.qrCode = createBitMap(this.qrHash);
 
         setIsLoaded(true);
     }
@@ -398,6 +398,7 @@ public class Event extends Observable implements Serializable {
      * @return bitMap based on bitMatrix
      */
     public Bitmap createBitMap(BitMatrix bitMatrix) {
+        if (bitMatrix == null) return null;
         int height = bitMatrix.getHeight();
         int width = bitMatrix.getWidth();
         Bitmap bitMap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
@@ -776,14 +777,35 @@ public class Event extends Observable implements Serializable {
     }
 
     public void setEventPoster(Bitmap poster) {
-        if (poster != null) {
-            Log.e("JXU", "poster is good");
-        }
         this.eventPoster = poster;
         notifyObservers();
     }
 
     public Bitmap getEventPoster() {
         return this.eventPoster;
+    }
+
+    public static BitMatrix stringToBitMatrix(String s) {
+        if (s == null || s.isEmpty()) return null;
+
+        String[] grid = s.split("\n");
+
+        int n = grid.length;
+        int m = grid[0].length();
+        BitMatrix matrix = new BitMatrix(n, m);
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (grid[i].charAt(j) == '1') {
+                    matrix.set(i, j);
+                }
+            }
+        }
+
+        return matrix;
+    }
+
+    public BitMatrix getQRBitMatrix() {
+        return this.qrHash;
     }
 }
