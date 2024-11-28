@@ -76,6 +76,11 @@ public class RemoveProfilePictureTest {
     @Mock
     private Task<QuerySnapshot> mockEventQueryTask;
 
+    @Mock
+    private CollectionReference mockMessagesCollection;
+    @Mock
+    private DocumentReference mockMessagesDocument;
+
     Map<String, Object> testUserData;
 
     // Mock user with uploaded profile picture and default profile picture (auto generated on sign up)
@@ -139,6 +144,14 @@ public class RemoveProfilePictureTest {
                     return null; // do nothing
                 }));
         // In EventList.fetchData(), we don't want to pull events from db
+
+        // mock notifications db stuff
+        when(mockFirestore.collection("messages")).thenReturn(mockMessagesCollection);
+        when(mockMessagesCollection.document(any())).thenReturn(mockMessagesDocument);
+        when(mockMessagesDocument.addSnapshotListener(any())).thenAnswer((invocation) -> {
+            return null;
+        });
+        when(mockMessagesDocument.set(anyMap())).thenReturn(mockVoidTask);
     }
 
 

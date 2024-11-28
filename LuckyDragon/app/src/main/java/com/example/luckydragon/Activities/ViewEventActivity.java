@@ -3,12 +3,14 @@ package com.example.luckydragon.Activities;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
@@ -20,13 +22,13 @@ import com.example.luckydragon.Fragments.EntrantEventAttendingFragment;
 import com.example.luckydragon.Fragments.EntrantEventInvitedFragment;
 import com.example.luckydragon.Fragments.EntrantEventWaitlistFragment;
 import com.example.luckydragon.Fragments.OrganizerEventFragment;
-import com.example.luckydragon.Fragments.OrganizerMapFragment;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.R;
 import com.example.luckydragon.Views.ViewEventView;
-
-import java.io.FileOutputStream;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  * This is the activity for the view event page.
@@ -48,17 +50,6 @@ public class ViewEventActivity extends AppBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_event);
         getSupportActionBar().setTitle("Event");
-        //getSupportActionBar().setTitle("Event");
-
-        // I think it is best to pass eventId through the intent since it is completely specific to this activity-- we don't need to store this globally
-        //String eventId = getIntent().getStringExtra("eventID");
-
-        /*
-        if (eventId == null) {
-            throw new RuntimeException("ViewEventActivity cannot display an event with a null event id!");
-        }
-
-         */
 
         // Create view
         GlobalApp globalApp = (GlobalApp) getApplication();
@@ -68,7 +59,6 @@ public class ViewEventActivity extends AppBarActivity {
 
         // Hide buttons for entrant
         if(globalApp.getRole() == GlobalApp.ROLE.ENTRANT) {
-            hideEditButton();
             hideQrCodeButton();
         }
 
@@ -84,6 +74,21 @@ public class ViewEventActivity extends AppBarActivity {
             DialogFragment displayQRFragment = new DisplayQRCodeFragment();
             displayQRFragment.setArguments(args);
             displayQRFragment.show(getSupportFragmentManager(), "DisplayQRCodeFragment");
+        });
+
+        ImageButton viewPosterButton = findViewById(R.id.viewPosterButton);
+        viewPosterButton.setOnClickListener(v -> {
+            Bundle args = new Bundle();
+
+            // Put together arguments for image fragment
+            args.putString("title",
+                    event.getEventPoster() != null ? "Event Poster" : "No Event Poster");
+            args.putString("negativeButton", "Close");
+            args.putParcelable("image", event.getEventPoster());
+            // Show image fragment
+            DialogFragment displayPosterFragment = new DisplayImageFragment();
+            displayPosterFragment.setArguments(args);
+            displayPosterFragment.show(getSupportFragmentManager()  , "DisplayImageFragment");
         });
     }
 
@@ -123,14 +128,6 @@ public class ViewEventActivity extends AppBarActivity {
     private void hideQrCodeButton() {
         ImageButton viewQrCodeButton = findViewById(R.id.viewQrCodeButton);
         viewQrCodeButton.setVisibility(View.GONE);
-    }
-
-    /**
-     * Hides the edit button.
-     */
-    private void hideEditButton() {
-        ImageButton editButton = findViewById(R.id.editEventButton);
-        editButton.setVisibility(View.GONE);
     }
 
     public void loadChildFragment() {
@@ -176,6 +173,24 @@ public class ViewEventActivity extends AppBarActivity {
                         .replace(R.id.eventFragmentContainer, AdminEventFragment.class, null)
                         .commit();
             }
+        }
+    }
+
+    /**
+     * Samples attendees if the waitlist period has passed and they have not been sampled yet.
+     */
+    public void sampleAttendeesIfNeccessary() {
+        if(!event.isLoaded()) return;
+        if(event == null || event.getCreatedTimeMillis() == null) return;
+        if(!event.haveInviteesBeenSelected()) {
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            LocalDate lotteryDate = LocalDate.parse(event.getLotteryDate());
+            LocalTime lotteryTime = LocalTime.of(event.getLotteryHours(), event.getLotteryMinutes());
+            LocalDateTime lotteryDateTime = LocalDateTime.of(lotteryDate, lotteryTime);
+            if(currentDateTime.isAfter(lotteryDateTime)) {
+                event.selectInviteesFirstTime();
+            }
+            loadChildFragment(); // reload child fragment since we now want to show invitee fragment instead of waitlist fragment
         }
     }
 }

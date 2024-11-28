@@ -80,6 +80,10 @@ public class JoinWaitlistTest {
     private Query mockEventQuery;
     @Mock
     private Task<QuerySnapshot> mockEventQueryTask;
+    @Mock
+    private CollectionReference mockMessagesCollection;
+    @Mock
+    private DocumentReference mockMessagesDocument;
 
     Map<String, Object> testUserData;
 
@@ -169,6 +173,14 @@ public class JoinWaitlistTest {
                 .thenAnswer((invocation -> {
                     return null; // do nothing
                 }));
+
+        // mock notifications db stuff
+        when(mockFirestore.collection("messages")).thenReturn(mockMessagesCollection);
+        when(mockMessagesCollection.document(any())).thenReturn(mockMessagesDocument);
+        when(mockMessagesDocument.addSnapshotListener(any())).thenAnswer((invocation) -> {
+            return null;
+        });
+        when(mockMessagesDocument.set(anyMap())).thenReturn(mockVoidTask);
     }
 
     @After

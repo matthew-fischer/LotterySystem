@@ -49,12 +49,12 @@ public class BrowseEventsAdminTest extends MockedDb{
         eventData.put("name", "C301 Standup");
         eventData.put("organizerDeviceId", "mockOrgId");
         eventData.put("facility", "UofA");
-        eventData.put("waitListLimit", 10);
-        eventData.put("attendeeLimit", 10);
+        eventData.put("waitListLimit", 10L);
+        eventData.put("attendeeLimit", 10L);
         eventData.put("hasGeolocation", true);
         eventData.put("date", LocalDate.now().toString());
-        eventData.put("hours", 10);
-        eventData.put("minutes", 30);
+        eventData.put("hours", 10L);
+        eventData.put("minutes", 30L);
         eventData.put("hashedQR", "Fake QR");
         eventData.put("waitList", new ArrayList<>());
         eventData.put("inviteeList", new ArrayList<>());
