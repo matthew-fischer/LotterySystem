@@ -3,12 +3,14 @@ package com.example.luckydragon.Activities;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
@@ -56,7 +58,6 @@ public class ViewEventActivity extends AppBarActivity {
 
         // Hide buttons for entrant or if event does not have QR Code
         if(globalApp.getRole() == GlobalApp.ROLE.ENTRANT) {
-            hideEditButton();
             hideQrCodeButton();
         }
         if (event.getQRBitMatrix() == null) {
@@ -76,6 +77,21 @@ public class ViewEventActivity extends AppBarActivity {
             DialogFragment displayQRFragment = new DisplayImageFragment();
             displayQRFragment.setArguments(args);
             displayQRFragment.show(getSupportFragmentManager(), "DisplayQRCodeFragment");
+        });
+
+        ImageButton viewPosterButton = findViewById(R.id.viewPosterButton);
+        viewPosterButton.setOnClickListener(v -> {
+            Bundle args = new Bundle();
+
+            // Put together arguments for image fragment
+            args.putString("title",
+                    event.getEventPoster() != null ? "Event Poster" : "No Event Poster");
+            args.putString("negativeButton", "Close");
+            args.putParcelable("image", event.getEventPoster());
+            // Show image fragment
+            DialogFragment displayPosterFragment = new DisplayImageFragment();
+            displayPosterFragment.setArguments(args);
+            displayPosterFragment.show(getSupportFragmentManager()  , "DisplayImageFragment");
         });
     }
 
@@ -115,14 +131,6 @@ public class ViewEventActivity extends AppBarActivity {
     private void hideQrCodeButton() {
         ImageButton viewQrCodeButton = findViewById(R.id.viewQrCodeButton);
         viewQrCodeButton.setVisibility(View.GONE);
-    }
-
-    /**
-     * Hides the edit button.
-     */
-    private void hideEditButton() {
-        ImageButton editButton = findViewById(R.id.editEventButton);
-        editButton.setVisibility(View.GONE);
     }
 
     public void loadChildFragment() {
