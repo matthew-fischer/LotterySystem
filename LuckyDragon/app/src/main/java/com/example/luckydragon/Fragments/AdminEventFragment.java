@@ -76,13 +76,6 @@ public class AdminEventFragment extends Fragment {
                 requireActivity().finish();
             }
         });
-        // Set up remove facility button on click listener
-        Button adminRemoveFacility = view.findViewById(R.id.adminRemoveFacilityButton);
-        adminRemoveFacility.setOnClickListener(v -> {
-            eventController.removeFacility();
-            Toast.makeText(getContext(), "Facility removed and all events associated with it", Toast.LENGTH_SHORT).show();
-            requireActivity().finish();
-        });
         // Hide remove QR button if event has no QR code
         if(event.getQrHash() == null) {
             removeQrButton.setVisibility(View.GONE);
