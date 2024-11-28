@@ -62,6 +62,7 @@ dependencies {
     // noinspection UseTomlInstead
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
     implementation("com.google.zxing:core:3.3.0")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation(libs.play.services.location)
     androidTestImplementation(libs.junit.jupiter)
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.2")
