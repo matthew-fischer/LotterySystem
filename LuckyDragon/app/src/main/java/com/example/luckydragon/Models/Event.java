@@ -235,9 +235,6 @@ public class Event extends Observable implements Serializable {
                 }
 
                 parseEventDocument(eventData);
-//                TODO: Decode qrHash
-//                qrHash
-
                 notifyObservers();
             }
         });
@@ -322,7 +319,7 @@ public class Event extends Observable implements Serializable {
         }
 
         // stringToBitMatrix handles null values
-        this.qrHash = stringToBitMatrix((String) eventData.get("bitMatrixString"));
+        this.qrHash = stringToBitMatrix((String) eventData.get("hashedQR"));
         this.qrCode = createBitMap(this.qrHash);
 
         setIsLoaded(true);
