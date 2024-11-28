@@ -106,8 +106,6 @@ public class Event extends Observable implements Serializable {
 
     private List<Location> waitlistLocations = new ArrayList<>();
 
-    private ArrayList<User> waitlistUsers = new ArrayList<>();
-
     private boolean isLoaded = false;
     private Bitmap eventPoster;
 
@@ -293,24 +291,14 @@ public class Event extends Observable implements Serializable {
             lotteryTime = new Time(Math.toIntExact((Long) eventData.get("lotteryHours")), Math.toIntExact((Long) eventData.get("lotteryMinutes")));
         }
 
-        if (eventData.get("waitList") != null) {
-            if(!waitList.equals((List<String>) eventData.get("waitList"))) {
-                waitList = new ArrayList<>((List<String>) eventData.get("waitList"));
-
-                // populate waitlist users
-                waitlistUsers = new ArrayList<>();
-                for(String userId : waitList) {
-                    User user = new User(userId, db);
-                    user.fetchData();
-                    waitlistUsers.add(user);
-                }
-            };
-        }
         if(eventData.get("waitListLocations") != null) {
             waitlistLocations = new ArrayList<>();
             for(HashMap<String, Object> oMap : (ArrayList<HashMap<String, Object>>) eventData.get("waitListLocations")) {
                 waitlistLocations.add(new Location((double) oMap.get("latitude"), (double) oMap.get("longitude")));
             }
+        }
+        if (eventData.get("waitList") != null) {
+            waitList = (List<String>) eventData.get("waitList");
         }
         if (eventData.get("attendeeList") != null) {
             attendeeList = (ArrayList<String>) eventData.get("attendeeList");
@@ -687,10 +675,6 @@ public class Event extends Observable implements Serializable {
 
     public List<String> getCancelledList() {
         return cancelledList;
-    }
-
-    public ArrayList<User> getWaitlistUsers() {
-        return waitlistUsers;
     }
 
     public void setIsLoaded(boolean newIsLoaded) {
