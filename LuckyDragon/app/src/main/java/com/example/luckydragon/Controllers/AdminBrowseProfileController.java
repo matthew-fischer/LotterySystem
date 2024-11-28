@@ -37,4 +37,11 @@ public class AdminBrowseProfileController extends Controller{
         getObservable().removeProfilePicture();
     }
 
+    /**
+     * Removes the facility that is associated with the user.
+     */
+    public void removeFacility() {
+        getObservable().removeFacility();
+    }
+
 }
