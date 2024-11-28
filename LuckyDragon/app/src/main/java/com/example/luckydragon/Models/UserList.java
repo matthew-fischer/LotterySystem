@@ -33,16 +33,24 @@ public class UserList extends Observable {
      * @param db The firestore database instance
      */
     public UserList(FirebaseFirestore db) {
+        Log.e("TEST", "Create userlist");
         this.db = db;
 
         db.collection("users").addSnapshotListener((value, error) -> {
+            Log.e("TEST", "RUN SNAPSHOT LISTENER");
             if (error != null) {
                 Log.e("Firestore", error.toString());
             }
             if (value != null) {
+                Log.e("TEST", "RUN");
                 users.clear();
+                /*
                 for (QueryDocumentSnapshot doc: value) {
                     users.add(createUser(doc));
+                }
+                */
+                for(int i = 0; i < value.size(); i++) {
+                    users.add(createUser((QueryDocumentSnapshot) value.getDocuments().get(i)));
                 }
                 notifyObservers();
             }
@@ -53,7 +61,6 @@ public class UserList extends Observable {
      * Fetches the current users data from firestore and updates the users list.
      */
     public void fetchData() {
-
         db.collection("users")
                 .get()
                 .addOnCompleteListener(task -> {
