@@ -507,6 +507,22 @@ public class Event extends Observable implements Serializable {
         setEventPoster(null);
     }
 
+    /**
+     * Removes the facility associated to an event and deletes all events with
+     * that facility.
+     */
+    public void removeFacility() {
+        db.collection("events")
+                .whereEqualTo("facility", facility)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot document: queryDocumentSnapshots) {
+                        document.getReference().delete();
+                    }
+                });
+        //getOrganizerDeviceId()
+    }
+
     // Getters and setters:
     public String getTime12h() {
         return time.toString12h();
