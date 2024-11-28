@@ -711,7 +711,6 @@ public class Event extends Observable implements Serializable {
         inviteeList.add(selectedId);
         // Remove id from waitlist
         waitList.remove(randomIndex);
-        waitlistUsers.remove(randomIndex);
         if(hasGeolocation) {
             waitlistLocations.remove(randomIndex);
         }
