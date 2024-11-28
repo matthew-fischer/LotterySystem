@@ -10,7 +10,7 @@ import com.example.luckydragon.Models.User;
  * Observer class that listens for updates to a User and
  * refreshes the AdminBrowseProfileFragment UI when changes occur.
  * <p>
- *     The BrowseProfileView class observes a User and triggers an update
+ *     The AdminBrowseProfileView class observes a User and triggers an update
  *     in AdminBrowseProfileFragment when the user is modified, ensuring that the
  *     user data displayed to user is up-to-date.
  * </p>
@@ -20,7 +20,7 @@ public class AdminBrowseProfileView extends Observer {
     private final AdminBrowseProfileFragment adminBrowseProfileFragment;
 
     /**
-     * Constructs a new ViewProfilesView observer and begins observing the UserList.
+     * Constructs a new ViewProfilesView observer and begins observing the User.
      * @param user the user to observe for changes
      * @param adminBrowseProfileFragment the fragment to notify of updates
      */
