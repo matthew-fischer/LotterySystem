@@ -132,7 +132,6 @@ public class Event extends Observable implements Serializable {
         super();
         this.db = db;
         this.id = id;
-        qrHash = generateQRCode();
     }
 
     /**
@@ -321,6 +320,10 @@ public class Event extends Observable implements Serializable {
         if (eventData.get("cancelledList") != null) {
             cancelledList = (ArrayList<String>) eventData.get("cancelledList");
         }
+
+        // stringToBitMatrix handles null values
+        this.qrHash = stringToBitMatrix((String) eventData.get("bitMatrixString"));
+        this.qrCode = createBitMap(this.qrHash);
 
         setIsLoaded(true);
     }

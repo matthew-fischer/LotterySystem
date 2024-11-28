@@ -121,13 +121,12 @@ public class GlobalApp extends Application {
      * @return the event after it has been created
      */
     public Event makeEvent() {
-        // create an eventId
         if (db == null) {
             setDb(FirebaseFirestore.getInstance());
         }
         Event event = new Event(db);
 
-        return getEvent(event.getId());
+        return event;
     }
 
     /**
