@@ -44,8 +44,6 @@ public class AdminProfileFragment extends Fragment {
         // Initialize all the buttons
         Button viewEvents = view.findViewById(R.id.viewEventsButton);
         Button viewProfiles = view.findViewById(R.id.viewProfilesButton);
-        Button viewImages = view.findViewById(R.id.viewImagesButton);
-        Button viewFacilities = view.findViewById(R.id.viewFacilitiesButton);
 
         // Click listeners for all the buttons
         viewEvents.setOnClickListener((View v) -> {
@@ -59,18 +57,6 @@ public class AdminProfileFragment extends Fragment {
 
             intent = new Intent(getActivity(), ViewProfilesActivity.class);
             startActivity(intent);
-
-        });
-
-        viewImages.setOnClickListener((View v) -> {
-
-            // TO DO
-
-        });
-
-        viewFacilities.setOnClickListener((View v) -> {
-
-            // TO DO
 
         });
 

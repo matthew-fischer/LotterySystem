@@ -7,13 +7,14 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -28,6 +29,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.example.luckydragon.Activities.SelectRoleActivity;
 import com.example.luckydragon.GlobalApp;
+import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -36,7 +38,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -46,11 +47,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -58,7 +59,7 @@ import java.util.Map;
  * Contains tests for US 02.02.01.
  * As an organizer I want to view the list of entrants who joined my event waiting list.
  */
-public class OrganizerViewWaitingListTest {
+public class SampleInviteesTest {
     @Mock
     private FirebaseFirestore mockFirestore;
     // User mocks
@@ -183,13 +184,16 @@ public class OrganizerViewWaitingListTest {
         eventData1.put("name", "Piano Lesson");
         eventData1.put("organizerDeviceId", "abcd1234");
         eventData1.put("facility", "Piano Place");
-        eventData1.put("waitlistLimit", new Long(10));
-        eventData1.put("attendeeLimit", new Long(1));
+        eventData1.put("waitlistLimit", 10L);
+        eventData1.put("attendeeLimit", 2L);
         eventData1.put("date", "2025-01-15");
-        eventData1.put("hours", new Long(18));
-        eventData1.put("minutes", new Long(15));
+        eventData1.put("hours", 18L);
+        eventData1.put("minutes", 15L);
+        eventData1.put("lotteryDate", "2024-09-01");
+        eventData1.put("lotteryHours", 8L);
+        eventData1.put("lotteryMinuts", 0L);
         eventData1.put("waitList", List.of("ts123", "mf456"));
-
+        eventData1.put("createdTimeMillis", 1731294000000L); // event created Nov 10 2024 8:00:00 PM
         eventData.add(eventData1);
 
         HashMap<String, Object> eventData2 = new HashMap<>();
@@ -250,7 +254,7 @@ public class OrganizerViewWaitingListTest {
         when(mockEventQuerySnapshot.getDocuments()).thenReturn(mockEventDocumentSnapshotList);
         when(mockEventDocumentSnapshotList.get(anyInt())).thenAnswer((invocation) -> {
             int index = invocation.getArgument(0);
-            if (index == 0) return mockEventQueryDocumentSnapshot1;
+            if(index == 0) return mockEventQueryDocumentSnapshot1;
             else return mockEventQueryDocumentSnapshot2;
         });
         when(mockEventQueryDocumentSnapshot1.getId()).thenReturn(String.valueOf(0));
@@ -296,29 +300,6 @@ public class OrganizerViewWaitingListTest {
         when(mockEventDocumentSnapshot2.exists()).thenReturn(true);
         when(mockEventDocumentSnapshot2.getData()).thenReturn(eventData.get(1));
 
-        // add userlist mocking
-        Task<QuerySnapshot> mockUserQuerySnapshotTask = mock(Task.class);
-        QuerySnapshot mockUserQuerySnapshot = mock(QuerySnapshot.class);
-        when(mockUsersCollection.addSnapshotListener(any())).thenAnswer(invocation -> {
-            EventListener listener = invocation.getArgument(0);
-            listener.onEvent(mockUserQuerySnapshot, null);
-            return null;
-        });
-        when(mockUserQuerySnapshot.size()).thenReturn(2);
-        List<DocumentSnapshot> mockDocumentSnapshots = mock(List.class);
-        when(mockUserQuerySnapshot.getDocuments()).thenReturn(mockDocumentSnapshots);
-        QueryDocumentSnapshot userDocumentSnapshot1 = Mockito.mock(QueryDocumentSnapshot.class);
-        when(mockDocumentSnapshots.get(0)).thenReturn(userDocumentSnapshot1);
-        QueryDocumentSnapshot userDocumentSnapshot2 = Mockito.mock(QueryDocumentSnapshot.class);
-        when(mockDocumentSnapshots.get(1)).thenReturn(userDocumentSnapshot2);
-        when(userDocumentSnapshot1.getData()).thenReturn(getMockWaitlistUser1());
-        when(userDocumentSnapshot2.getData()).thenReturn(getMockWaitlistUser2());
-        when(userDocumentSnapshot1.getId()).thenReturn("ts123");
-        when(userDocumentSnapshot2.getId()).thenReturn("mf456");
-        // mock UserList fetch data to do nothing
-        Task<QuerySnapshot> mockQuerySnapshotVoidTask = Mockito.mock(Task.class);
-        when(mockUsersCollection.get()).thenReturn(mockQuerySnapshotVoidTask);
-
         // mock notifications db stuff
         when(mockFirestore.collection("messages")).thenReturn(mockMessagesCollection);
         when(mockMessagesCollection.document(any())).thenReturn(mockMessagesDocument);
@@ -347,7 +328,7 @@ public class OrganizerViewWaitingListTest {
      * User sees the names of the entrants on the waitlist.
      */
     @Test
-    public void testWaitlistDisplayed() {
+    public void testSampleInvitees() {
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
 
@@ -373,6 +354,12 @@ public class OrganizerViewWaitingListTest {
             onView(withText("Piano Lesson")).check(matches(isDisplayed()));
             onView(withText("Group Piano Lesson")).check(matches(isDisplayed()));
 
+            // Check that users are on the waitlist for "Piano Lesson" event
+            Event event = globalApp.getUser().getOrganizer().getEvents().get(0);
+            assertTrue(event.getWaitList().size() == 2);
+            assertTrue(event.getWaitList().contains("ts123"));
+            assertTrue(event.getWaitList().contains("mf456"));
+
             // Organizer clicks on "Piano Lesson"
             onView(withText("Piano Lesson")).perform(click());
 
@@ -384,9 +371,15 @@ public class OrganizerViewWaitingListTest {
             // Waitlist capacity is displayed correctly
             onView(withId(R.id.waitlistCapacityTextView)).check(matches(withText("Capacity: 10")));
 
-            // Waitlist members are shown correctly
-            onView(withText("Tony Sun")).check(matches(isDisplayed()));
-            onView(withText("Matthew Fischer")).check(matches(isDisplayed()));
+            // Check that users are now in inviteeList
+            assertTrue(event.getInviteeList().contains("ts123"));
+            assertTrue(event.getInviteeList().contains("mf456"));
+            assertTrue(event.getWaitList().isEmpty());
+            assertEquals(event.getInviteeList().size(), 2);
+
+            // TODO could check that invited users are displayed -- invitee display isn't implemented yet
+            //onView(withText("Tony Sun")).check(matches(isDisplayed()));
+            //onView(withText("Matthew Fischer")).check(matches(isDisplayed()));
         }
     }
 }

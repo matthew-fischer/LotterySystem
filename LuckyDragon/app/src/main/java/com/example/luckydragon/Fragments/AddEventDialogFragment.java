@@ -194,9 +194,9 @@ public class AddEventDialogFragment extends DialogFragment {
         // make view
         eventView = new AddEventView(event, this);
 
-        // Set up time picker
-        MaterialTextView timeTextView = dialog.findViewById(R.id.timeTextView);
-        timeTextView.setOnClickListener(v -> {
+        // Set up event time picker
+        MaterialTextView eventTimeTextView = dialog.findViewById(R.id.eventTimeTextView);
+        eventTimeTextView.setOnClickListener(v -> {
             MaterialTimePicker picker =
                     new MaterialTimePicker.Builder()
                             .setTimeFormat(TimeFormat.CLOCK_12H)
@@ -206,24 +206,54 @@ public class AddEventDialogFragment extends DialogFragment {
                             .setInputMode(MaterialTimePicker.INPUT_MODE_KEYBOARD)
                             .build();
             picker.addOnPositiveButtonClickListener(p -> {
-                controller.extractTime(picker);
+                controller.extractEventTime(picker);
             });
             picker.show(getParentFragmentManager(), "Event time picker");
         });
 
-        // Set up date picker
-        MaterialTextView dateTextView = dialog.findViewById(R.id.dateTextView);
-        dateTextView.setOnClickListener(v -> {
+        // Set up event date picker
+        MaterialTextView eventDateTextView = dialog.findViewById(R.id.eventDateTextView);
+        eventDateTextView.setOnClickListener(v -> {
             MaterialDatePicker<Long> picker =
                     MaterialDatePicker.Builder.datePicker()
                             .setTitleText("Select Event Date")
-                            .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                            .setSelection(MaterialDatePicker.todayInUtcMilliseconds() + 7 * 86400000L)
                             .build();
             picker.addOnPositiveButtonClickListener(selection -> {
-                controller.extractDate(selection);
+                controller.extractEventDate(selection);
             });
             picker.show(getParentFragmentManager(), "Event date picker");
         });
-        Log.d("TONY", event.getOrganizerDeviceId());
+
+        // Set up lottery time picker
+        MaterialTextView lotteryTimeTextView = dialog.findViewById(R.id.lotteryTimeTextView);
+        lotteryTimeTextView.setOnClickListener(v -> {
+            MaterialTimePicker picker =
+                    new MaterialTimePicker.Builder()
+                            .setTimeFormat(TimeFormat.CLOCK_12H)
+                            .setHour(19)
+                            .setMinute(00)
+                            .setTitleText("Select Lottery Time")
+                            .setInputMode(MaterialTimePicker.INPUT_MODE_KEYBOARD)
+                            .build();
+            picker.addOnPositiveButtonClickListener(p -> {
+                controller.extractLotteryTime(picker);
+            });
+            picker.show(getParentFragmentManager(), "Event time picker");
+        });
+
+        // Set up lottery date picker
+        MaterialTextView lotteryDateTextView = dialog.findViewById(R.id.lotteryDateTextView);
+        lotteryDateTextView.setOnClickListener(v -> {
+            MaterialDatePicker<Long> picker =
+                    MaterialDatePicker.Builder.datePicker()
+                            .setTitleText("Select Lottery Date")
+                            .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                            .build();
+            picker.addOnPositiveButtonClickListener(selection -> {
+                controller.extractLotteryDate(selection);
+            });
+            picker.show(getParentFragmentManager(), "Event date picker");
+        });
     }
 }

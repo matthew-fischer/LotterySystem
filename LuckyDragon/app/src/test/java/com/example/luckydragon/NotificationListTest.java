@@ -1,13 +1,13 @@
-package com.example.luckydragon.userStoryTest;
+/*
+ * Contains unit tests for the User model class.
+ * ISSUES:
+ *   NONE
+ */
 
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.CoreMatchers.not;
+package com.example.luckydragon;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -15,17 +15,8 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
-import android.content.Context;
-import android.content.Intent;
-
-import androidx.test.core.app.ActivityScenario;
-import androidx.test.espresso.intent.Intents;
-import androidx.test.espresso.matcher.ViewMatchers;
-import androidx.test.platform.app.InstrumentationRegistry;
-
-import com.example.luckydragon.Activities.SelectRoleActivity;
-import com.example.luckydragon.GlobalApp;
-import com.example.luckydragon.R;
+import com.example.luckydragon.Models.NotificationList;
+import com.example.luckydragon.Models.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -36,19 +27,23 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Contains tests for US 01.07.01
- * Entrant - be identified by my device, so that I don't have to use a username and password
+ * This is a collection of unit tests for NotificationList.
+ * Those methods that primarily use the database are not tested here, as they would essentially just test Firestore methods.
  */
-public class LogInByDeviceTest {
+@RunWith(MockitoJUnitRunner.class)
+public class NotificationListTest {
+    // Mock database
     @Mock
     private FirebaseFirestore mockFirestore;
     // User mocks
@@ -78,6 +73,8 @@ public class LogInByDeviceTest {
     @Mock
     private DocumentReference mockMessagesDocument;
 
+    Map<String, Object> capturedUserData;
+
     // Mock organizer with an existing facility
     private HashMap<String, Object> getMockData() {
         // Define test user
@@ -85,26 +82,29 @@ public class LogInByDeviceTest {
         // Personal info
         testUserData.put("name", "John Doe");
         testUserData.put("email", "jdoe@ualberta.ca");
+        testUserData.put("phoneNumber", "780-831-3291");
         // Roles
         testUserData.put("isEntrant", true);
         testUserData.put("isOrganizer", true);
         testUserData.put("isAdmin", false);
-        // Facility
-        testUserData.put("facility", "The Sports Centre");
 
         return testUserData;
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
-        Intents.init();
         openMocks(this);
 
         // Set up user mocking
         when(mockFirestore.collection("users")).thenReturn(mockUsersCollection);
         when(mockUsersCollection.document(anyString())).thenReturn(mockUserDocument);
         when(mockUserDocument.get()).thenReturn(mockUserTask);
-        when(mockUserDocument.set(any(Map.class))).thenReturn(mockVoidTask);
+        when(mockUserDocument.set(any(Map.class))).thenAnswer((invocation) -> {
+            System.out.println("CAUGHT SET");
+            capturedUserData = invocation.getArgument(0);
+            return mockVoidTask;
+        });
+        //when(mockUserDocument.set(any(Map.class))).thenReturn(mockVoidTask);
         when(mockUserTask.addOnFailureListener(any(OnFailureListener.class))).thenReturn(mockUserTask);
         doAnswer(invocation -> {
             OnSuccessListener<DocumentSnapshot> listener = invocation.getArgument(0);
@@ -112,7 +112,6 @@ public class LogInByDeviceTest {
             return mockUserTask;
         }).when(mockUserTask).addOnSuccessListener(any(OnSuccessListener.class));
         when(mockUserDocumentSnapshot.getData()).thenReturn(getMockData());
-
         // Set up event mocking
         // We don't want to save anything to the database, so we mock the methods that save an event to the db to do nothing
         // We also mock getId() to return "mockEventID" instead of going to the database for an id
@@ -120,7 +119,6 @@ public class LogInByDeviceTest {
         when(mockEventsCollection.document()).thenReturn(mockEventDocument);
         when(mockEventDocument.getId()).thenReturn("mockEventID");
 
-        when(mockEventsCollection.get()).thenReturn(mockEventQueryTask);
         when(mockEventsCollection.document(anyString())).thenReturn(mockEventDocument);
         when(mockEventDocument.get()).thenReturn(mockEventTask);
         // when set is called, we want to do nothing
@@ -138,7 +136,6 @@ public class LogInByDeviceTest {
                 .thenAnswer((invocation -> {
                     return null; // do nothing
                 }));
-        // In EventList.fetchData(), we don't want to pull events from db
 
         // mock notifications db stuff
         when(mockFirestore.collection("messages")).thenReturn(mockMessagesCollection);
@@ -149,46 +146,41 @@ public class LogInByDeviceTest {
         when(mockMessagesDocument.set(anyMap())).thenReturn(mockVoidTask);
     }
 
-    @After
-    public void tearDown() {
-        // Reset global app state
-        final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
-        globalApp.setDb(null);
-        globalApp.setUser(null);
+    /**
+     * Tests the addNotification method.
+     */
+    @Test
+    public void testAddNotifcation() {
+        User mockUser = new User("1234", mockFirestore);
+        NotificationList notificationList = new NotificationList(mockFirestore, mockUser);
 
-        Intents.release();
+        assertEquals(notificationList.getNotificationList().size(), 0);
+
+        notificationList.addNotification("New Message!", "Join the waitlist now!");
+
+        assertEquals(notificationList.getNotificationList().size(), 1);
+        assertEquals(notificationList.getNotificationList().get(0).title, "New Message!");
+        assertEquals(notificationList.getNotificationList().get(0).body, "Join the waitlist now!");
     }
 
     /**
-     * USER STORY TEST
-     * US 01.07.01 Entrant - be identified by my device, so that I don't have to use a username and password
-     * User opens app and selects 'entrant'.
-     * They are brought straight to their profile.
-     * There is no login page.
+     * Tests the clearNotifications() method.
      */
     @Test
-    public void loginByDeviceTest() {
-        final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
+    public void testClearNotifications() {
+        User mockUser = new User("1234", mockFirestore);
+        NotificationList notificationList = new NotificationList(mockFirestore, mockUser);
 
-        GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
-        globalApp.setDb(mockFirestore);
+        assertEquals(notificationList.getNotificationList().size(), 0);
 
-        try (final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
-            // User is not admin, so admin button should not show
-            onView(ViewMatchers.withId(R.id.entrantButton)).check(matches(isDisplayed()));
-            onView(withId(R.id.organizerButton)).check(matches(isDisplayed()));
-            onView(withId(R.id.adminButton)).check(matches(not(isDisplayed())));
+        notificationList.addNotification("New Message!", "Join the waitlist now!");
 
-            // User clicks "Entrant"
-            onView(withId(R.id.entrantButton)).perform(click());
+        assertEquals(notificationList.getNotificationList().size(), 1);
+        assertEquals(notificationList.getNotificationList().get(0).title, "New Message!");
+        assertEquals(notificationList.getNotificationList().get(0).body, "Join the waitlist now!");
 
-            // User is brought straight to their profile
-            onView(withId(R.id.nameTextView)).check(matches(withText("John Doe")));
-            onView(withId(R.id.emailTextView)).check(matches(withText("jdoe@ualberta.ca")));
-            // User has no phone number so phone number shouldn't show
-            onView(withId(R.id.phoneNumberTextView)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
-        }
+        notificationList.clearNotifications();
+
+        assertEquals(notificationList.getNotificationList().size(), 0);
     }
 }

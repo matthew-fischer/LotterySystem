@@ -25,10 +25,13 @@ import com.google.zxing.common.BitMatrix;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 
 /**
  * Represents an Event object.
@@ -87,10 +90,14 @@ public class Event extends Observable implements Serializable {
     private Integer waitListLimit = -1;
     private Integer attendeeLimit = -1;
     private Boolean hasGeolocation = false;
-    private String date = LocalDate.now().toString();
+    private String date = LocalDate.now().plusDays(7).toString();
     private Time time = new Time(19, 0);
+    private String lotteryDate = LocalDate.now().plusDays(3).toString();
+    private Time lotteryTime = new Time(8, 0);
     private BitMatrix qrHash;
     private Bitmap qrCode;
+
+    private Long createdTimeMillis = null;
 
     private List<String> waitList = new ArrayList<>();
     private List<String> inviteeList = new ArrayList<>();
@@ -105,6 +112,8 @@ public class Event extends Observable implements Serializable {
 
     private boolean isLoaded = false;
     private Bitmap eventPoster;
+
+    private boolean inviteesHaveBeenSelected = false;
 
     /**
      * Creates an event instance without a given id.
@@ -178,6 +187,10 @@ public class Event extends Observable implements Serializable {
         if(nonNull(date) && !date.isEmpty()) eventData.put("date", date);
         if(nonNull(time.hours)) eventData.put("hours", time.hours);
         if(nonNull(time.minutes)) eventData.put("minutes", time.minutes);
+        if(nonNull(lotteryDate) && !lotteryDate.isEmpty()) eventData.put("lotteryDate", lotteryDate);
+        System.out.println(lotteryTime == null ? "null" : "not null");
+        if(nonNull(lotteryTime.hours)) eventData.put("lotteryHours", lotteryTime.hours);
+        if(nonNull(lotteryTime.hours)) eventData.put("lotteryMinutes", lotteryTime.minutes);
         if(nonNull(qrHash)) eventData.put("hashedQR", qrHash.toString("1", "0"));
         eventData.put("poster", BitmapUtil.bitmapToString(eventPoster));
         eventData.put("waitList", waitList);
@@ -185,6 +198,14 @@ public class Event extends Observable implements Serializable {
         eventData.put("attendeeList", attendeeList);
         eventData.put("cancelledList", cancelledList);
         eventData.put("waitListLocations", waitlistLocations);
+
+        if(nonNull(createdTimeMillis)) eventData.put("createdTimeMillis", createdTimeMillis);
+        if(nonNull(inviteesHaveBeenSelected)) eventData.put("inviteesHaveBeenSelected", inviteesHaveBeenSelected);
+        // if event is loaded and createdTimeMillis is still null, then add the time stamp
+        if(createdTimeMillis == null && isLoaded) {
+            createdTimeMillis = System.currentTimeMillis();
+            eventData.put("createdTimeMillis", createdTimeMillis);
+        }
 
         if (id == null || id.isEmpty()) {
             throw new RuntimeException("Event id should not be empty!");
@@ -232,6 +253,7 @@ public class Event extends Observable implements Serializable {
      * @param eventData the raw event data from Firestore
      */
     public void parseEventDocument(Map<String, Object> eventData) {
+        if(eventData == null) return;
         if (nonNull(eventData.get("name"))) {
             name = (String) eventData.get("name");
         }
@@ -250,8 +272,17 @@ public class Event extends Observable implements Serializable {
         if (nonNull(eventData.get("hasGeolocation"))) {
             hasGeolocation = (boolean) eventData.get("hasGeolocation");
         }
-        if (nonNull(eventData.get("data"))) {
+        if (nonNull(eventData.get("date"))) {
             date = (String) eventData.get("date");
+        }
+        if (nonNull(eventData.get("lotteryDate"))) {
+            lotteryDate = (String) eventData.get("lotteryDate");
+        }
+        if(nonNull(eventData.get("createdTimeMillis"))) {
+            createdTimeMillis = (Long) eventData.get("createdTimeMillis");
+        }
+        if(nonNull(eventData.get("inviteesHaveBeenSelected"))) {
+            inviteesHaveBeenSelected = (boolean) eventData.get("inviteesHaveBeenSelected");
         }
 
         eventPoster = BitmapUtil.stringToBitmap((String)eventData.get("poster"));
@@ -260,9 +291,13 @@ public class Event extends Observable implements Serializable {
         int minutes = eventData.get("minutes") != null ? Math.toIntExact((Long) eventData.get("minutes")) : null;
         time = new Time(hours, minutes);
 
+        if(eventData.get("lotteryHours") != null && eventData.get("lotteryMinutes") != null) {
+            lotteryTime = new Time(Math.toIntExact((Long) eventData.get("lotteryHours")), Math.toIntExact((Long) eventData.get("lotteryMinutes")));
+        }
+
         if (eventData.get("waitList") != null) {
             if(!waitList.equals((List<String>) eventData.get("waitList"))) {
-                waitList = (List<String>) eventData.get("waitList");
+                waitList = new ArrayList<>((List<String>) eventData.get("waitList"));
 
                 // populate waitlist users
                 waitlistUsers = new ArrayList<>();
@@ -309,13 +344,13 @@ public class Event extends Observable implements Serializable {
             }
         }
         if (eventData.get("attendeeList") != null) {
-            attendeeList = (List<String>) eventData.get("attendeeList");
+            attendeeList = (ArrayList<String>) eventData.get("attendeeList");
         }
         if (eventData.get("inviteeList") != null) {
-            inviteeList = (List<String>) eventData.get("inviteeList");
+            inviteeList = (ArrayList<String>) eventData.get("inviteeList");
         }
         if (eventData.get("cancelledList") != null) {
-            cancelledList = (List<String>) eventData.get("cancelledList");
+            cancelledList = (ArrayList<String>) eventData.get("cancelledList");
         }
 
         setIsLoaded(true);
@@ -543,6 +578,8 @@ public class Event extends Observable implements Serializable {
         return time.toString12h();
     }
 
+    public String getLotteryTime12h() { return lotteryTime.toString12h(); }
+
     public String getDate() {
         return date;
     }
@@ -705,6 +742,71 @@ public class Event extends Observable implements Serializable {
 
     public List<Location> getWaitlistLocations() {
         return waitlistLocations;
+    }
+
+    public boolean haveInviteesBeenSelected() {
+        return inviteesHaveBeenSelected;
+    }
+
+    public void setInviteesHaveBeenSelected(boolean inviteesHaveBeenSelected) {
+        this.inviteesHaveBeenSelected = inviteesHaveBeenSelected;
+    }
+
+    /**
+     * Selects invitees from the waiting list for the first time.
+     * This is different from fillInvitees(), which is intended to fill spots freed by cancelled entrants after the initial selection.
+     */
+    public void selectInviteesFirstTime() {
+        assert(inviteeList.isEmpty()); // invitee list should start empty
+        assert(!inviteesHaveBeenSelected); // invitees should not have been selected yet
+
+        // Randomly select entrants from waiting list and move to invitee list
+        Random random = new Random();
+        while(waitList.size() > 0 && inviteeList.size() <= attendeeLimit) {
+            int randomIndex = random.nextInt(waitList.size());
+            // Move id from waitlist to invitee list
+            String selectedId = waitList.get(randomIndex);
+            inviteeList.add(selectedId);
+            // Remove id from waitlist
+            waitList.remove(randomIndex);
+            waitlistUsers.remove(randomIndex);
+            if(hasGeolocation) {
+                waitlistLocations.remove(randomIndex);
+            }
+        }
+
+        inviteesHaveBeenSelected = true; // invitees have now been selected
+    }
+
+    public Long getCreatedTimeMillis() {
+        return createdTimeMillis;
+    }
+
+    public String getLotteryDate() {
+        return lotteryDate;
+    }
+
+    public void setLotteryDate(String lotteryDate) {
+        this.lotteryDate = lotteryDate;
+        notifyObservers();
+    }
+
+    public Time getLotteryTime() {
+        return lotteryTime;
+    }
+
+    public void setLotteryTime(int hours, int minutes) {
+        Time lotteryTime = new Time(hours, minutes);
+        this.lotteryTime = lotteryTime;
+        notifyObservers();
+    }
+
+    public int getLotteryHours() {
+        return lotteryTime.hours;
+    }
+
+    public int getLotteryMinutes() {
+        return lotteryTime.minutes;
     }
 
     public void setEventPoster(Bitmap poster) {

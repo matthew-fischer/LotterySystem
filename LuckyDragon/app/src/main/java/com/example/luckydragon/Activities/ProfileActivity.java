@@ -16,6 +16,7 @@ package com.example.luckydragon.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -91,15 +92,22 @@ public class ProfileActivity extends AppBarActivity {
             throw new RuntimeException("User role not set!");
         }
 
-        // Initialize edit profile button on click
+        // Initialize edit profile button only if user is the current user, otherwise hide it.
+        // Admin uses this activity for browsing users, but we don't want them to edit other peoples
+        // profiles.
         ImageButton edit_profile_button = findViewById(R.id.edit_profile_button);
-        edit_profile_button.setOnClickListener(view -> {
-            Intent goToSignup = new Intent(this, SignupActivity.class);
-            goToSignup.putExtra("title", getString(R.string.ProfileEditTitle));
-            goToSignup.putExtra("subtitle", getString(R.string.ProfileEditSubtitle));
-            goToSignup.putExtra("navbar", getString(R.string.ProfileEditNavbar));
-            startActivity(goToSignup);
-        });
+        if (user.getDeviceId().equals(((GlobalApp) getApplication()).getUser().getDeviceId())) {
+            edit_profile_button.setOnClickListener(view -> {
+                Intent goToSignup = new Intent(this, SignupActivity.class);
+                goToSignup.putExtra("title", getString(R.string.ProfileEditTitle));
+                goToSignup.putExtra("subtitle", getString(R.string.ProfileEditSubtitle));
+                goToSignup.putExtra("navbar", getString(R.string.ProfileEditNavbar));
+                startActivity(goToSignup);
+            });
+        } else {
+            edit_profile_button.setVisibility(View.GONE);
+        }
+
     }
 
     /**

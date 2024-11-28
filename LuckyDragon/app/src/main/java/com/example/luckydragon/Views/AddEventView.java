@@ -16,6 +16,8 @@ public class AddEventView extends Observer {
     private AddEventDialogFragment fragment;
     private TextView timeTextView;
     private TextView dateTextView;
+    private TextView lotteryTimeTextView;
+    private TextView lotteryDateTextView;
 
     private String deviceId;
 
@@ -27,8 +29,10 @@ public class AddEventView extends Observer {
     public AddEventView(Event event, AddEventDialogFragment fragment) {
         this.fragment = fragment;
         Objects.requireNonNull(fragment.getDialog());
-        timeTextView = fragment.getDialog().findViewById(R.id.timeTextView);
-        dateTextView = fragment.getDialog().findViewById(R.id.dateTextView);
+        timeTextView = fragment.getDialog().findViewById(R.id.eventTimeTextView);
+        dateTextView = fragment.getDialog().findViewById(R.id.eventDateTextView);
+        lotteryTimeTextView = fragment.getDialog().findViewById(R.id.lotteryTimeTextView);
+        lotteryDateTextView = fragment.getDialog().findViewById(R.id.lotteryDateTextView);
         startObserving(event);
     }
 
@@ -47,10 +51,16 @@ public class AddEventView extends Observer {
      */
     @Override
     public void update(Observable whoUpdatedMe) {
-        String time = getObservable().getTime12h();
-        timeTextView.setText(time);
+        String eventTime = getObservable().getTime12h();
+        timeTextView.setText(eventTime);
 
-        String date = getObservable().getDate();
-        dateTextView.setText(date);
+        String eventDate = getObservable().getDate();
+        dateTextView.setText(eventDate);
+
+        String lotteryTime = getObservable().getLotteryTime12h();
+        lotteryTimeTextView.setText(lotteryTime);
+
+        String lotteryDate = getObservable().getLotteryDate().toString();
+        lotteryDateTextView.setText(lotteryDate);
     }
 }
