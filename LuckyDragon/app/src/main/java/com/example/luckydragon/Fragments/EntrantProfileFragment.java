@@ -57,42 +57,19 @@ public class EntrantProfileFragment extends Fragment {
 
     private ActivityResultLauncher<ScanOptions> barcodeLauncher =
             registerForActivityResult(new ScanContract(),
-                    new ActivityResultCallback<ScanIntentResult>() {
-                        @Override
-                        public void onActivityResult(ScanIntentResult o) {
-                            if(o.getContents() == null) {
-                                Toast.makeText(getActivity(), "Cancelled", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Intent intent = new Intent(getActivity(), EventActivity.class);
-                                // Pass in event eventId (from QR CODE SCANNER)
-                                String eventID = o.getContents();
-                                intent.putExtra("eventID", eventID);
+                    o -> {
+                        if (o.getContents() == null) {
+                            Toast.makeText(getActivity(), "Cancelled", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Intent intent = new Intent(getActivity(), EventActivity.class);
+                            // Pass in event eventId (from QR CODE SCANNER)
+                            String eventID = o.getContents();
+                            intent.putExtra("eventID", eventID);
 
-                                // start EventActivity
-                                startActivity(intent);
-                            }
+                            // start EventActivity
+                            startActivity(intent);
                         }
                     });
-
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data){
-//        super.onActivityResult(requestCode, resultCode, data);
-//        IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-//        if (intentResult != null) {
-//            if (intentResult.getContents() == null) {
-//                Toast.makeText(getActivity(), "Cancelled", Toast.LENGTH_SHORT).show();
-//            } else {
-//                Intent intent = new Intent(getActivity(), EventActivity.class);
-//                // Pass in event eventId (from QR CODE SCANNER)
-//                String eventID = intentResult.getContents();
-//                intent.putExtra("eventID", eventID);
-//
-//                // start EventActivity
-//                startActivity(intent);
-//            }
-//        }
-//    }
-
     /**
      * Creates an onClickListener for QR Scanning. Fetches all event data and connects to all event listviews.
      * @param view The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
