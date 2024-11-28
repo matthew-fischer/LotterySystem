@@ -25,7 +25,12 @@ import com.example.luckydragon.Views.AdminBrowseProfileView;
 public class AdminEventFragment extends Fragment {
     private Event event;
     private EventController eventController;
-
+    private Button removeQrButton;
+    private Button adminRemoveEventPoster;
+    private AdminBrowseEventView adminBrowseEventView;
+    private TextView currentlyJoinedMessageTextview;
+    private TextView waitlistSpotsMessageTextView;
+    private TextView attendeeSpotsTextview;
     /**
      * Creates an AdminEventFragment.
      */
@@ -41,53 +46,39 @@ public class AdminEventFragment extends Fragment {
         // Create controller
         eventController = new EventController(event);
 
+        // Set up Text views
+        currentlyJoinedMessageTextview = getView().findViewById(R.id.currentlyJoinedMessage);
+        waitlistSpotsMessageTextView = getView().findViewById(R.id.waitlistSpotsMessage);
+        attendeeSpotsTextview = getView().findViewById(R.id.attendeeSpotsMessage);
+
         // Set up delete event button on click listener
         Button deleteEventButton = view.findViewById(R.id.adminDeleteEventButton);
         deleteEventButton.setOnClickListener(v -> {
             eventController.deleteEvent();
-            Toast.makeText(getContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Event Deleted Successfully", Toast.LENGTH_SHORT).show();
             requireActivity().finish();
         });
         // Set up remove qr button on click listener
-        Button removeQrButton = view.findViewById(R.id.adminRemoveQRButton);
+        removeQrButton = view.findViewById(R.id.adminRemoveQRButton);
         removeQrButton.setOnClickListener(v -> {
-            if (event.getQrHash() == null) {
-                Toast.makeText(getContext(), "Event does not have a QR code", Toast.LENGTH_SHORT).show();
-                requireActivity().finish();
-            }
-            else {
-                eventController.removeQR();
-                Toast.makeText(getContext(), "QR code removed successfully", Toast.LENGTH_SHORT).show();
-                requireActivity().finish();
-            }
+            eventController.removeQR();
+            Toast.makeText(getContext(), "QR code removed successfully", Toast.LENGTH_SHORT).show();
         });
         // Set up remove event poster button on click listener
-        Button adminRemoveEventPoster = view.findViewById(R.id.adminRemoveEventPoster);
+        adminRemoveEventPoster = view.findViewById(R.id.adminRemoveEventPoster);
         adminRemoveEventPoster.setOnClickListener(v -> {
-            if (event.getEventPoster() == null) {
-                Toast.makeText(getContext(), "Event does not have a poster", Toast.LENGTH_SHORT).show();
-                requireActivity().finish();
-            }
-            else {
-                eventController.removeEventPoster();
-                Toast.makeText(getContext(), "Event poster removed successfully", Toast.LENGTH_SHORT).show();
-                requireActivity().finish();
-            }
+            eventController.removeEventPoster();
+            Toast.makeText(getContext(), "Event poster removed successfully", Toast.LENGTH_SHORT).show();
         });
-        // Hide remove QR button if event has no QR code
-        if(event.getQrHash() == null) {
-            removeQrButton.setVisibility(View.GONE);
-        }
 
         // Now start observing event
-        new AdminBrowseEventView(event, this);
+        adminBrowseEventView = new AdminBrowseEventView(event, this);
     }
 
     /**
      * Updates the currently joined message.
      */
     public void updateCurrentlyJoinedMessage() {
-        TextView currentlyJoinedMessageTextview = getView().findViewById(R.id.currentlyJoinedMessage);
         currentlyJoinedMessageTextview.setText(String.format("Currently Joined: %d", event.getWaitListSize()));
     }
 
@@ -95,7 +86,6 @@ public class AdminEventFragment extends Fragment {
      * Updates the waitlist spots message.
      */
     public void updateWaitlistSpotsMessage() {
-        TextView waitlistSpotsMessageTextView = getView().findViewById(R.id.waitlistSpotsMessage);
         String waitlistMessage = "Waitlist Spots: %s";
         if(event.getWaitListSpots() == -1) {
             waitlistSpotsMessageTextView.setText(String.format(waitlistMessage, "No Limit"));
@@ -108,7 +98,23 @@ public class AdminEventFragment extends Fragment {
      * Updates the attendee spots message.
      */
     public void updateAttendeeSpotsMessage() {
-        TextView currentlyJoinedMessageTextview = getView().findViewById(R.id.attendeeSpotsMessage);
-        currentlyJoinedMessageTextview.setText(String.format("Attendee Spots: %d", event.getAttendeeSpots()));
+        attendeeSpotsTextview.setText(String.format("Attendee Spots: %d", event.getAttendeeSpots()));
     }
+
+    /**
+     * Sets the visibility for the qr code button
+     * @param visibility the visibility to set the button to
+     */
+    public void setQrCodeButtonVisibility(int visibility) {
+        removeQrButton.setVisibility(visibility);
+    }
+
+    /**
+     * Sets the visibility for the remove poster button
+     * @param visibility the visibility to set the button to
+     */
+    public void setRemoveEventPosterButtonVisibility(int visibility) {
+        adminRemoveEventPoster.setVisibility(visibility);
+    }
+
 }
