@@ -99,10 +99,6 @@ public class Event extends Observable implements Serializable {
 
     private List<Location> waitlistLocations = new ArrayList<>();
 
-    private ArrayList<User> waitlistUsers = new ArrayList<>();
-    private ArrayList<User> inviteelistUsers = new ArrayList<>();
-    private ArrayList<User> cancelledlistUsers = new ArrayList<>();
-
     private boolean isLoaded = false;
     private Bitmap eventPoster;
 
@@ -260,53 +256,14 @@ public class Event extends Observable implements Serializable {
         int minutes = eventData.get("minutes") != null ? Math.toIntExact((Long) eventData.get("minutes")) : null;
         time = new Time(hours, minutes);
 
-        if (eventData.get("waitList") != null) {
-            if(!waitList.equals((List<String>) eventData.get("waitList"))) {
-                waitList = (List<String>) eventData.get("waitList");
-
-                // populate waitlist users
-                waitlistUsers = new ArrayList<>();
-                for(String userId : waitList) {
-                    User user = new User(userId, db);
-                    user.fetchData();
-                    waitlistUsers.add(user);
-                }
-            };
-        }
-
-        if (eventData.get("inviteeList") != null) {
-            if(!inviteeList.equals((List<String>) eventData.get("inviteeList"))) {
-                inviteeList = (List<String>) eventData.get("inviteeList");
-
-                // populate inviteeList users
-                inviteelistUsers = new ArrayList<>();
-                for (String userID : inviteeList) {
-                    User user = new User(userID, db);
-                    user.fetchData();
-                    inviteelistUsers.add(user);
-                }
-            }
-        }
-
-        if (eventData.get("cancelledList") != null) {
-            if (!cancelledList.equals((List<String>) eventData.get("cancelledList"))) {
-                cancelledList = (List<String>) eventData.get("cancelledList");
-
-                // populated cancelledList users
-                cancelledlistUsers = new ArrayList<>();
-                for (String userID : cancelledList) {
-                        User user = new User(userID, db);
-                        user.fetchData();
-                        cancelledlistUsers.add(user);
-                }
-            }
-        }
-
         if(eventData.get("waitListLocations") != null) {
             waitlistLocations = new ArrayList<>();
             for(HashMap<String, Object> oMap : (ArrayList<HashMap<String, Object>>) eventData.get("waitListLocations")) {
                 waitlistLocations.add(new Location((double) oMap.get("latitude"), (double) oMap.get("longitude")));
             }
+        }
+        if (eventData.get("waitList") != null) {
+            waitList = (List<String>) eventData.get("waitList");
         }
         if (eventData.get("attendeeList") != null) {
             attendeeList = (List<String>) eventData.get("attendeeList");
@@ -681,18 +638,6 @@ public class Event extends Observable implements Serializable {
 
     public List<String> getCancelledList() {
         return cancelledList;
-    }
-
-    public ArrayList<User> getWaitlistUsers() {
-        return waitlistUsers;
-    }
-
-    public ArrayList<User> getInviteelistUsers() {
-        return inviteelistUsers;
-    }
-
-    public ArrayList<User> getCancelledlistUsers() {
-        return cancelledlistUsers;
     }
 
     public void setIsLoaded(boolean newIsLoaded) {
