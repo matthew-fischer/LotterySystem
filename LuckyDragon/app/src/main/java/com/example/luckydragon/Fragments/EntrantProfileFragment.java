@@ -8,11 +8,16 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.luckydragon.Activities.EventActivity;
+import com.example.luckydragon.Activities.ProfileActivity;
 import com.example.luckydragon.Activities.ViewEventActivity;
 import com.example.luckydragon.Controllers.EventArrayAdapter;
 import com.example.luckydragon.GlobalApp;
@@ -20,6 +25,11 @@ import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.Models.EventList;
 import com.example.luckydragon.R;
 import com.example.luckydragon.Views.EntrantEventsView;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanIntentResult;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.ArrayList;
 
@@ -45,6 +55,44 @@ public class EntrantProfileFragment extends Fragment {
     private ListView invitedEventsListView;
     private ListView cancelledEventsListView;
 
+    private ActivityResultLauncher<ScanOptions> barcodeLauncher =
+            registerForActivityResult(new ScanContract(),
+                    new ActivityResultCallback<ScanIntentResult>() {
+                        @Override
+                        public void onActivityResult(ScanIntentResult o) {
+                            if(o.getContents() == null) {
+                                Toast.makeText(getActivity(), "Cancelled", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Intent intent = new Intent(getActivity(), EventActivity.class);
+                                // Pass in event eventId (from QR CODE SCANNER)
+                                String eventID = o.getContents();
+                                intent.putExtra("eventID", eventID);
+
+                                // start EventActivity
+                                startActivity(intent);
+                            }
+                        }
+                    });
+
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data){
+//        super.onActivityResult(requestCode, resultCode, data);
+//        IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+//        if (intentResult != null) {
+//            if (intentResult.getContents() == null) {
+//                Toast.makeText(getActivity(), "Cancelled", Toast.LENGTH_SHORT).show();
+//            } else {
+//                Intent intent = new Intent(getActivity(), EventActivity.class);
+//                // Pass in event eventId (from QR CODE SCANNER)
+//                String eventID = intentResult.getContents();
+//                intent.putExtra("eventID", eventID);
+//
+//                // start EventActivity
+//                startActivity(intent);
+//            }
+//        }
+//    }
+
     /**
      * Creates an onClickListener for QR Scanning. Fetches all event data and connects to all event listviews.
      * @param view The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
@@ -60,25 +108,13 @@ public class EntrantProfileFragment extends Fragment {
         // Reference: https://www.geeksforgeeks.org/how-to-read-qr-code-using-zxing-library-in-android/
         scanQRButton.setOnClickListener((View v) -> {
             // This is for starting up a test event
-            Event event = globalApp.getEvent("hB6LuZms93tj3OYisgxl");
-            globalApp.setEventToView(event);
-            startActivity(new Intent(getContext(), ViewEventActivity.class));
+//            Event event = globalApp.getEvent("hB6LuZms93tj3OYisgxl");
+//            globalApp.setEventToView(event);
+//            startActivity(new Intent(getContext(), ViewEventActivity.class));
 
-            /*
             // This is for testing without scanning QR Code:
-            Intent intent = new Intent(getActivity(), EventActivity.class);
-            String eventId = "rDvs0vS2WeRRwtN9N9L9";
-            intent.putExtra("eventID", eventId);
-            String deviceID = ((GlobalApp) getActivity().getApplication()).getUser().getDeviceId();
-            intent.putExtra("deviceID", deviceID);
-            startActivity(intent);
+            barcodeLauncher.launch(new ScanOptions());
 
-             */
-
-            // This is for actually scanning the QR Code.
-//            IntentIntegrator intentIntegrator = IntentIntegrator.forSupportFragment(EntrantProfileFragment.this);
-//            intentIntegrator.setPrompt("Scan QR Code");
-//            intentIntegrator.initiateScan();
         });
 
         // Set up list views for the entrant's attending, waitlisted,
