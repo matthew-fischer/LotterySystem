@@ -41,7 +41,7 @@ public class AdminBrowseProfileController extends Controller{
      * Removes the facility that is associated with the user.
      */
     public void removeFacility() {
-        getObservable().removeFacility();
+        getObservable().getOrganizer().removeFacility();  // Organizer will never be null
     }
 
 }

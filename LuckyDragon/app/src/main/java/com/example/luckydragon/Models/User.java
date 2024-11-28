@@ -163,18 +163,6 @@ public class User extends Observable {
         setUploadedProfilePicture(null);
     }
 
-    public void removeFacility() {
-        db.collection("events")
-                .whereEqualTo("organizerDeviceId", deviceId)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    for (DocumentSnapshot document: queryDocumentSnapshots) {
-                        document.getReference().delete();
-                    }
-                });
-        getOrganizer().setFacility(null);  // Organizer will never be null
-    }
-
     /**
      * Returns whether a user is valid.
      * A user is valid if their name is not empty.
