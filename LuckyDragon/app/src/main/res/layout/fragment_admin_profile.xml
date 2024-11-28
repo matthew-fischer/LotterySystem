@@ -35,16 +35,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="View Profiles"/>
-                <Button
-                    android:id="@+id/viewImagesButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="View Images"/>
-                <Button
-                    android:id="@+id/viewFacilitiesButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="View Facilities"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
