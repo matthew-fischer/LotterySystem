@@ -117,6 +117,11 @@ public class OrganizerViewCancelledListTest {
     @Mock
     private DocumentSnapshot mockEventDocumentSnapshot2;
 
+    @Mock
+    private CollectionReference mockMessagesCollection;
+    @Mock
+    private DocumentReference mockMessagesDocument;
+
     // Event Data
     private List<Map<String, Object>> eventData = new ArrayList<>();
 
@@ -312,6 +317,14 @@ public class OrganizerViewCancelledListTest {
         // mock UserList fetch data to do nothing
         Task<QuerySnapshot> mockQuerySnapshotVoidTask = Mockito.mock(Task.class);
         when(mockUsersCollection.get()).thenReturn(mockQuerySnapshotVoidTask);
+
+        // mock notifications db stuff
+        when(mockFirestore.collection("messages")).thenReturn(mockMessagesCollection);
+        when(mockMessagesCollection.document(any())).thenReturn(mockMessagesDocument);
+        when(mockMessagesDocument.addSnapshotListener(any())).thenAnswer((invocation) -> {
+            return null;
+        });
+        when(mockMessagesDocument.set(anyMap())).thenReturn(mockVoidTask);
     }
 
     @After
