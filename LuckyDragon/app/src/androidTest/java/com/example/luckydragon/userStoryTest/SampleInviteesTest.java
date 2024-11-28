@@ -6,30 +6,30 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
 import android.content.Context;
 import android.content.Intent;
-import android.view.View;
+import android.util.Log;
 
 import androidx.test.core.app.ActivityScenario;
-import androidx.test.espresso.UiController;
-import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.example.luckydragon.Activities.SelectRoleActivity;
 import com.example.luckydragon.GlobalApp;
+import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -43,13 +43,12 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,10 +56,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Contains tests for US 02.02.02 Organizer
- * See on a map where entrants joined my event waiting list from
+ * Contains tests for US 02.02.01.
+ * As an organizer I want to view the list of entrants who joined my event waiting list.
  */
-public class OrganizerViewMapTest {
+public class SampleInviteesTest {
     @Mock
     private FirebaseFirestore mockFirestore;
     // User mocks
@@ -185,24 +184,16 @@ public class OrganizerViewMapTest {
         eventData1.put("name", "Piano Lesson");
         eventData1.put("organizerDeviceId", "abcd1234");
         eventData1.put("facility", "Piano Place");
-        eventData1.put("waitlistLimit", new Long(10));
-        eventData1.put("attendeeLimit", new Long(1));
+        eventData1.put("waitlistLimit", 10L);
+        eventData1.put("attendeeLimit", 2L);
         eventData1.put("date", "2025-01-15");
-        eventData1.put("hours", new Long(18));
-        eventData1.put("minutes", new Long(15));
+        eventData1.put("hours", 18L);
+        eventData1.put("minutes", 15L);
+        eventData1.put("lotteryDate", "2024-09-01");
+        eventData1.put("lotteryHours", 8L);
+        eventData1.put("lotteryMinuts", 0L);
         eventData1.put("waitList", List.of("ts123", "mf456"));
-        eventData1.put("hasGeolocation", true);
-
-        ArrayList<HashMap<String, Object>> waitlistLocations = new ArrayList<>();
-        HashMap<String, Object> location1 = new HashMap<>();
-        location1.put("latitude", new Double(100));
-        location1.put("longitude", new Double(400));
-        waitlistLocations.add(location1);
-        HashMap<String, Object> location2 = new HashMap<>();
-        location2.put("latitude", new Double(250));
-        location2.put("longitude", new Double(10));
-        waitlistLocations.add(location2);
-        eventData1.put("waitListLocations", waitlistLocations);
+        eventData1.put("createdTimeMillis", 1731294000000L); // event created Nov 10 2024 8:00:00 PM
         eventData.add(eventData1);
 
         HashMap<String, Object> eventData2 = new HashMap<>();
@@ -330,18 +321,14 @@ public class OrganizerViewMapTest {
 
     /**
      * USER STORY TEST
-     * US 02.02.02 Organizer - see on a map where entrants joined my event waiting list from
+     * US 02.02.01 -- As an organizer I want to view the list of entrants who joined my event waiting list.
      * User opens app and selects Organizer.
      * User's events are displayed.
      * User clicks on one of these events.
      * User sees the names of the entrants on the waitlist.
-     * User sees "See Map" button since geolocation is enabled
-     * User clicks "See Map" button
-     * Map opens
-     * Map shows the correct points for the two users on the waitlist
      */
     @Test
-    public void testMapDisplaysCorrectly() {
+    public void testSampleInvitees() {
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
 
@@ -367,6 +354,12 @@ public class OrganizerViewMapTest {
             onView(withText("Piano Lesson")).check(matches(isDisplayed()));
             onView(withText("Group Piano Lesson")).check(matches(isDisplayed()));
 
+            // Check that users are on the waitlist for "Piano Lesson" event
+            Event event = globalApp.getUser().getOrganizer().getEvents().get(0);
+            assertTrue(event.getWaitList().size() == 2);
+            assertTrue(event.getWaitList().contains("ts123"));
+            assertTrue(event.getWaitList().contains("mf456"));
+
             // Organizer clicks on "Piano Lesson"
             onView(withText("Piano Lesson")).perform(click());
 
@@ -378,44 +371,15 @@ public class OrganizerViewMapTest {
             // Waitlist capacity is displayed correctly
             onView(withId(R.id.waitlistCapacityTextView)).check(matches(withText("Capacity: 10")));
 
-            // Waitlist members are shown correctly
-            onView(withText("Tony Sun")).check(matches(isDisplayed()));
-            onView(withText("Matthew Fischer")).check(matches(isDisplayed()));
+            // Check that users are now in inviteeList
+            assertTrue(event.getInviteeList().contains("ts123"));
+            assertTrue(event.getInviteeList().contains("mf456"));
+            assertTrue(event.getWaitList().isEmpty());
+            assertEquals(event.getInviteeList().size(), 2);
 
-            // See map button is displayed
-            onView(withId(R.id.seeMapButton)).check(matches(isDisplayed()));
-
-            // Click see map button
-            onView(withId(R.id.seeMapButton)).perform(click());
-
-            // Map is displayed
-            onView(withId(R.id.map)).check(matches(isDisplayed()));
-
-            // Check that map is showing correct points
-            // This is a hacky solution: the perform() method here will run and we can then check that the map has the right points
-            // Not sure if there is a way to create a custom matcher but this works
-            onView(withId(R.id.map)).perform(new ViewAction() {
-                @Override
-                public Matcher<View> getConstraints() {
-                    return allOf(isDisplayed());
-                }
-
-                @Override
-                public String getDescription() {
-                    return "";
-                }
-
-                @Override
-                public void perform(UiController uiController, View view) {
-                    // Mapview has the correct overlay points
-                    MapView map = (MapView) view;
-                    ItemizedIconOverlay myOverlay = (ItemizedIconOverlay) map.getOverlays().get(0);
-                    assertEquals(Double.compare(myOverlay.getItem(0).getPoint().getLatitude(), 100), 0);
-                    assertEquals(Double.compare(myOverlay.getItem(0).getPoint().getLongitude(), 400), 0);
-                    assertEquals(Double.compare(myOverlay.getItem(1).getPoint().getLatitude(), 250), 0);
-                    assertEquals(Double.compare(myOverlay.getItem(1).getPoint().getLongitude(), 10), 0);
-                }
-            });
+            // TODO could check that invited users are displayed -- invitee display isn't implemented yet
+            //onView(withText("Tony Sun")).check(matches(isDisplayed()));
+            //onView(withText("Matthew Fischer")).check(matches(isDisplayed()));
         }
     }
 }
