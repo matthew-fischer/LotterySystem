@@ -106,14 +106,11 @@ public class Event extends Observable implements Serializable {
 
     private List<Location> waitlistLocations = new ArrayList<>();
 
-<<<<<<< HEAD
     private ArrayList<User> waitlistUsers = new ArrayList<>();
     private ArrayList<User> inviteelistUsers = new ArrayList<>();
     private ArrayList<User> attendeelistUsers = new ArrayList<>();
     private ArrayList<User> cancelledlistUsers = new ArrayList<>();
 
-=======
->>>>>>> main
     private boolean isLoaded = false;
     private Bitmap eventPoster;
 
