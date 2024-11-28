@@ -18,6 +18,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.example.luckydragon.GlobalApp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -149,6 +150,18 @@ public class User extends Observable {
      */
     public void removeProfilePicture() {
         setUploadedProfilePicture(null);
+    }
+
+    public void removeFacility() {
+        db.collection("events")
+                .whereEqualTo("organizerDeviceId", deviceId)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot document: queryDocumentSnapshots) {
+                        document.getReference().delete();
+                    }
+                });
+        getOrganizer().setFacility(null);  // Organizer will never be null
     }
 
     /**
