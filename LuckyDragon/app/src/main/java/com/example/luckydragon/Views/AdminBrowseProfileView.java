@@ -53,5 +53,11 @@ public class AdminBrowseProfileView extends Observer {
             adminBrowseProfileFragment.setFacilityContainerVisibility(View.GONE);
             adminBrowseProfileFragment.setRemoveFacilityButtonVisiblity(View.GONE);
         }
+        if (getObservable().getUploadedProfilePicture() != null) {
+            adminBrowseProfileFragment.setAdminRemoveProfilePictureButton(View.VISIBLE);
+        }
+        else {
+            adminBrowseProfileFragment.setAdminRemoveProfilePictureButton(View.GONE);
+        }
     }
 }
