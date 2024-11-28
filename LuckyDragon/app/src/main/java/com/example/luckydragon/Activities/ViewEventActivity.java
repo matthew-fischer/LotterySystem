@@ -57,11 +57,11 @@ public class ViewEventActivity extends AppBarActivity {
         viewEventView = new ViewEventView(event, this);
 
         // Hide buttons for entrant or if event does not have QR Code
-        if(globalApp.getRole() == GlobalApp.ROLE.ENTRANT) {
+        if (globalApp.getRole() == GlobalApp.ROLE.ENTRANT) {
             hideQrCodeButton();
         }
         if (event.getQRBitMatrix() == null) {
-            hideEditButton();
+            hideQrCodeButton();
         }
 
         // Start child fragment
