@@ -16,6 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
@@ -28,8 +29,6 @@ public class Organizer {
     private FirebaseFirestore db;
     private String deviceId;
     private String facility;
-//    private final ArrayList<Event> events;
-    private EventList eventList;
     private final Runnable notifyObservers;
 
     /**
@@ -43,7 +42,6 @@ public class Organizer {
         this.deviceId = deviceId;
         this.facility = facility;
         this.notifyObservers = notifyObservers;
-//        this.events = new ArrayList<>();
         this.db = db;
     }
 
@@ -56,40 +54,11 @@ public class Organizer {
     }
 
     /**
-     * Sets the facility name for the organizer.
-     * @param facility: the new facility name
-     */
-    public void setFacility(String facility) {
-        this.facility = facility;
-
-        // Set all of the organizers events to use this facility
-        for(Event e : events) {
-            e.setFacility(facility);
-        }
-
-        notifyObservers.run();
-    }
-
-    /**
-     * Gets the organizer's events list.
-     * @return list of the organizer's events
-     */
-    public ArrayList<Event> getEvents() {
-        return events;
-    }
-
-    /**
      * Adds an event to the organizer's list.
      * @param event the event to be added
      */
     public void addEvent(Event event) {
-        if(event.getName().isEmpty() || event.getFacility().isEmpty() || event.getAttendeeSpots() == -1) {
-            Log.e("EVENT", "Did not add event because some mandatory fields were empty!");
-            event.deleteEventFromDb(); // make sure event is not in db
-            return;
-        }
-        events.add(event);
-        notifyObservers.run();
+        return;
     }
 
     /**
@@ -97,14 +66,14 @@ public class Organizer {
      * @param event the event to be removed
      */
     public void removeEvent(Event event) {
-        events.remove(event);
-        notifyObservers.run();
+        return;
     }
 
     /**
      * Removes all events associated with the organizer and set facility to null.
      */
     public void removeFacility() {
+        this.facility = null;
         db.collection("events")
                 .whereEqualTo("organizerDeviceId", deviceId)
                 .get()
@@ -113,7 +82,24 @@ public class Organizer {
                         document.getReference().delete();
                     }
                 });
-        setFacility(null);
+        notifyObservers.run();
+    }
+
+    /**
+     * Sets the facility name for the organizer and updates organizers events in the database
+     * to the facility name.
+     * @param facility: the new facility name
+     */
+    public void setFacility(String facility) {
+        this.facility = facility;
+        db.collection("events")
+                .whereEqualTo("organizerDeviceId", deviceId)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot document: queryDocumentSnapshots) {
+                        document.getReference().update("facility", facility);
+                    }
+                });
         notifyObservers.run();
     }
 }
