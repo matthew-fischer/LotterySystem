@@ -54,15 +54,12 @@ public class ViewEventActivity extends AppBarActivity {
         GlobalApp globalApp = (GlobalApp) getApplication();
         event = globalApp.getEventToView();
         event.fetchData(); // get all event data
-        viewEventView = new ViewEventView(event, this);
 
-        // Hide buttons for entrant or if event does not have QR Code
-        if (globalApp.getRole() == GlobalApp.ROLE.ENTRANT) {
-            hideQrCodeButton();
-        }
-        if (event.getQRBitMatrix() == null) {
-            hideQrCodeButton();
-        }
+        // Normally visibility of QR code is based on whether or not QR code exists
+        // For entrants, we always want to QR code button to be hidden
+        boolean forceHideQR = globalApp.getRole() == GlobalApp.ROLE.ENTRANT;
+        viewEventView = new ViewEventView(event, this, forceHideQR);
+
 
         // Start child fragment
         loadChildFragment();
@@ -128,9 +125,17 @@ public class ViewEventActivity extends AppBarActivity {
     /**
      * Hides the QR code button.
      */
-    private void hideQrCodeButton() {
+    public void hideQrCodeButton() {
         ImageButton viewQrCodeButton = findViewById(R.id.viewQrCodeButton);
         viewQrCodeButton.setVisibility(View.GONE);
+    }
+
+    /**
+     * Shows the QR code button.
+     */
+    public void showQrCodeButton() {
+        ImageButton viewQrCodeButton = findViewById(R.id.viewQrCodeButton);
+        viewQrCodeButton.setVisibility(View.VISIBLE);
     }
 
     public void loadChildFragment() {
