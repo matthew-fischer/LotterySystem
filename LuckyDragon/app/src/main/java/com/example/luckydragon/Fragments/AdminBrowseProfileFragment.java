@@ -74,6 +74,13 @@ public class AdminBrowseProfileFragment extends Fragment {
                 }
             }
         });
+        // Set up remove facility button on click listener
+        Button adminRemoveFacility = view.findViewById(R.id.adminRemoveFacilityButton);
+        adminRemoveFacility.setOnClickListener(v -> {
+            userController.removeFacility();
+            Toast.makeText(getContext(), "Facility removed and all events associated with it", Toast.LENGTH_SHORT).show();
+            requireActivity().finish();
+        });
     }
 
 }
