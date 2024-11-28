@@ -57,13 +57,5 @@ public class OrganizerProfileView extends Observer {
             name = getObservable().getOrganizer().getFacility();
         }
         organizerProfileFragment.setFacilityTextView(name);
-
-        organizerProfileFragment.updateEventsList();
-        if (getObservable().getOrganizer().getEvents().isEmpty()) {
-            // Show "No events" textview if no events and hide otherwise
-            organizerProfileFragment.setNoEventsVisibility(View.VISIBLE);
-        } else {
-            organizerProfileFragment.setNoEventsVisibility(View.GONE);
-        }
     }
 }
