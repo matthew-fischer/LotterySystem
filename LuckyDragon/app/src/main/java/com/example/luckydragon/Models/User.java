@@ -372,7 +372,7 @@ public class User extends Observable {
      */
     public void setOrganizer(Boolean organizer) {
         if (organizer) {
-            this.organizer = new Organizer(deviceId, this::notifyObservers, db);
+            this.organizer = new Organizer(deviceId, null, this::notifyObservers, db);
         } else {
             this.organizer = null;
         }

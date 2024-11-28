@@ -64,7 +64,6 @@ public class ViewEventActivity extends AppBarActivity {
         // Initialize on click listener for qr button
         ImageButton viewQrCodeButton = findViewById(R.id.viewQrCodeButton);
         viewQrCodeButton.setOnClickListener((view) -> {
-
             Bundle args = new Bundle();
             args.putParcelable("image", event.createBitMap(event.getQRBitMatrix()));
             args.putString("title", event.getQRBitMatrix() == null ? "No QR Code" :
@@ -77,9 +76,8 @@ public class ViewEventActivity extends AppBarActivity {
 
         ImageButton viewPosterButton = findViewById(R.id.viewPosterButton);
         viewPosterButton.setOnClickListener(v -> {
-            Bundle args = new Bundle();
-
             // Put together arguments for image fragment
+            Bundle args = new Bundle();
             args.putString("title",
                     event.getEventPoster() != null ? "Event Poster" : "No Event Poster");
             args.putString("negativeButton", "Close");

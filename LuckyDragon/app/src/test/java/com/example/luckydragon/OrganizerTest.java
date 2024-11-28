@@ -60,7 +60,7 @@ public class OrganizerTest {
     @Test
     public void testAddEventValid() {
         // notifyObservers() runnable does nothing. db is null since this test will not use it
-        Organizer testOrganizer = new Organizer("abcd1234", () -> {}, mockFirestore);
+        Organizer testOrganizer = new Organizer("abcd1234", null, () -> {}, mockFirestore);
 
         Assertions.assertEquals(testOrganizer.getEvents().size(), 0);
 
@@ -93,7 +93,7 @@ public class OrganizerTest {
     @Test
     public void testAddEventInValid() {
         // notifyObservers() runnable is just an empty function
-        Organizer testOrganizer = new Organizer("abcd1234", () -> {}, mockFirestore);
+        Organizer testOrganizer = new Organizer("abcd1234", null, () -> {}, mockFirestore);
 
         Assertions.assertEquals(testOrganizer.getEvents().size(), 0);
 
@@ -131,7 +131,7 @@ public class OrganizerTest {
     @Test
     public void testRemoveEvent() {
         // notifyObservers() runnable does nothing. db is null since this test will not use it
-        Organizer testOrganizer = new Organizer("abcd1234", () -> {
+        Organizer testOrganizer = new Organizer("abcd1234", null, () -> {
         }, mockFirestore);
 
         // Set up static mock for FirebaseFirestore

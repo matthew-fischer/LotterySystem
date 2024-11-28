@@ -33,7 +33,6 @@ public class EventList extends Observable {
      */
     public EventList(FirebaseFirestore firestore) {
         this.db = firestore;
-
         db.collection("events").addSnapshotListener((value, error) -> {
             if (error != null) {
                 Log.e("Firestore", error.toString());
@@ -53,7 +52,6 @@ public class EventList extends Observable {
      * Fetches the current events data from firestore and updates the events list.
      */
     public void fetchData() {
-
         db.collection("events")
                 .get()
                 .addOnCompleteListener(task -> {
