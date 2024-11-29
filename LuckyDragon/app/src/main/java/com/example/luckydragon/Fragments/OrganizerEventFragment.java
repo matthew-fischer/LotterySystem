@@ -9,6 +9,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.example.luckydragon.Activities.ViewEventActivity;
@@ -88,6 +89,13 @@ public class OrganizerEventFragment extends Fragment {
                 organizerMapFragment.show(getActivity().getSupportFragmentManager(), "OrganizerMapFragment");
             });
         }
+
+        // Add on click listener for "Send Notification" Button
+        Button sendNotifButton = view.findViewById(R.id.sendNotifButton);
+        sendNotifButton.setOnClickListener((View v) -> {
+            DialogFragment sendNotifDialog = new OrganizerNotificationDialogFragment();
+            sendNotifDialog.show(getChildFragmentManager(), "OrganizerNotificationDialogFragment");
+        });
 
         // Initialize view
         organizerEventView = new OrganizerEventView(userList, this);

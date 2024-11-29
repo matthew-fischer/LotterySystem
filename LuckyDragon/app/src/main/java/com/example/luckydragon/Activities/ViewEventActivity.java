@@ -24,11 +24,13 @@ import com.example.luckydragon.Fragments.EntrantEventWaitlistFragment;
 import com.example.luckydragon.Fragments.OrganizerEventFragment;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
+import com.example.luckydragon.Models.User;
 import com.example.luckydragon.R;
 import com.example.luckydragon.Views.ViewEventView;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 
 /**
  * This is the activity for the view event page.
@@ -53,6 +55,7 @@ public class ViewEventActivity extends AppBarActivity {
         // Create view
         GlobalApp globalApp = (GlobalApp) getApplication();
         event = globalApp.getEventToView();
+        event.setIsLoaded(false); // set isLoaded to false to wait until we fetch again
         event.fetchData(); // get all event data
         boolean forceHideQR = globalApp.getRole() == GlobalApp.ROLE.ENTRANT;
         viewEventView = new ViewEventView(event, this, forceHideQR);
@@ -191,6 +194,8 @@ public class ViewEventActivity extends AppBarActivity {
     public void sampleAttendeesIfNeccessary() {
         if(!event.isLoaded()) return;
         if(event == null || event.getCreatedTimeMillis() == null) return;
+
+        GlobalApp globalApp = (GlobalApp) getApplication();
         if(!event.haveInviteesBeenSelected()) {
             LocalDateTime currentDateTime = LocalDateTime.now();
             LocalDate lotteryDate = LocalDate.parse(event.getLotteryDate());
@@ -198,10 +203,37 @@ public class ViewEventActivity extends AppBarActivity {
             LocalDateTime lotteryDateTime = LocalDateTime.of(lotteryDate, lotteryTime);
             if(currentDateTime.isAfter(lotteryDateTime)) {
                 event.selectInviteesFirstTime();
+
+                String notSelectedTitle = "Update re - " + event.getName();
+                String notSelectedBody = "You have unfortunately not been selected to attend " +
+                        "the '" + event.getName() + "' event. You will remain on the waitlist " +
+                        "and may possibly be selected if another entrant declines to attend.";
+                for (String deviceId : event.getWaitList()) {
+                    User notSelectedUser = globalApp.getUserById(deviceId);
+                    notSelectedUser.addToNotificationList(notSelectedTitle, notSelectedBody);
+                }
+
+                String selectedTitle = "Congratulations!";
+                String selectedBody = "You have been selected to attend the '" + event.getName() +
+                        "' event! Please open the event in the app and accept the invitation " +
+                        "for the event if you would like to attend.";
+                for (String deviceId : event.getInviteeList()) {
+                    User selectedUser = globalApp.getUserById(deviceId);
+                    selectedUser.addToNotificationList(selectedTitle, selectedBody);
+                }
             }
         } else {
             // check to see if we can fill replacement invitees if there are spots left
-            event.fillInvitees();
+            ArrayList<String> replacementInvitees = event.fillInvitees();
+
+            String replacedTitle = "Congratulations!";
+            String replacedBody = "You have been selected to attend the '" + event.getName() +
+                    "' event as another entrant has declined their invitation. Please open the " +
+                    "event in the app and accept the invitation if you would like to attend.";
+            for (String deviceId : replacementInvitees) {
+                User replacedUser = globalApp.getUserById(deviceId);
+                replacedUser.addToNotificationList(replacedTitle, replacedBody);
+            }
         }
         // reload child fragment since we now want to show invitee fragment instead of waitlist fragment
         loadChildFragment();

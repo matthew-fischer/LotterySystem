@@ -700,8 +700,9 @@ public class Event extends Observable implements Serializable {
 
     /**
      * Samples an invitee from the wait list to be added to the invitee list.
+     * Returns the deviceId of the user who was selected.
      */
-    public void sampleInvitee() {
+    public String sampleInvitee() {
         assert(waitList.size() > 0);
 
         Random random = new Random();
@@ -714,6 +715,8 @@ public class Event extends Observable implements Serializable {
         if(hasGeolocation) {
             waitlistLocations.remove(randomIndex);
         }
+
+        return selectedId;
     }
 
     /**
@@ -735,13 +738,18 @@ public class Event extends Observable implements Serializable {
      * Fills the invitee list with replacement entrants from the wait list if there are still
      * some spots left. Only can be called after the initial sampling of invitees
      * has happened.
+     *
+     * @return a list of the deviceIds of the entrants who have been selected as replacements
      */
-    public void fillInvitees() {
+    public ArrayList<String> fillInvitees() {
         assert(inviteesHaveBeenSelected);
 
+        ArrayList<String> replacementInvitees = new ArrayList<>();
         while (!waitList.isEmpty() && inviteeList.size() + attendeeList.size() <= attendeeLimit) {
-            sampleInvitee();
+            replacementInvitees.add(sampleInvitee());
         }
+
+        return replacementInvitees;
     }
 
     public Long getCreatedTimeMillis() {
