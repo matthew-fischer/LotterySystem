@@ -1,6 +1,7 @@
 package com.example.luckydragon.Fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -86,6 +87,10 @@ public class AdminBrowseProfileFragment extends Fragment {
             }
         });
         adminRemoveFacility.setOnClickListener(v -> {
+            if (Objects.equals(user.getDeviceId(), globalApp.getUser().getDeviceId())) {
+                // edge case: we need to set the global app user facility as well here
+                globalApp.getUser().getOrganizer().setFacility(null);
+            }
             userController.removeFacility();
             Toast.makeText(getContext(), "Facility removed and all events associated with it", Toast.LENGTH_SHORT).show();
             requireActivity().finish();
