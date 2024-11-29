@@ -106,11 +106,6 @@ public class Event extends Observable implements Serializable {
 
     private List<Location> waitlistLocations = new ArrayList<>();
 
-    private ArrayList<User> waitlistUsers = new ArrayList<>();
-    private ArrayList<User> inviteelistUsers = new ArrayList<>();
-    private ArrayList<User> attendeelistUsers = new ArrayList<>();
-    private ArrayList<User> cancelledlistUsers = new ArrayList<>();
-
     private boolean isLoaded = false;
     private Bitmap eventPoster;
 
@@ -295,56 +290,24 @@ public class Event extends Observable implements Serializable {
         if (eventData.get("waitList") != null) {
             if(!waitList.equals((List<String>) eventData.get("waitList"))) {
                 waitList = new ArrayList<>((List<String>) eventData.get("waitList"));
-
-                // populate waitlist users
-                waitlistUsers = new ArrayList<>();
-                for(String userId : waitList) {
-                    User user = new User(userId, db);
-                    user.fetchData();
-                    waitlistUsers.add(user);
-                }
             };
         }
 
         if (eventData.get("inviteeList") != null) {
             if(!inviteeList.equals((List<String>) eventData.get("inviteeList"))) {
                 inviteeList = (List<String>) eventData.get("inviteeList");
-
-                // populate inviteeList users
-                inviteelistUsers = new ArrayList<>();
-                for (String userID : inviteeList) {
-                    User user = new User(userID, db);
-                    user.fetchData();
-                    inviteelistUsers.add(user);
-                }
             }
         }
 
         if (eventData.get("attendeeList") != null) {
             if(!attendeeList.equals((List<String>) eventData.get("attendeeList"))) {
                 attendeeList = (List<String>) eventData.get("attendeeList");
-
-                // populate inviteeList users
-                attendeelistUsers = new ArrayList<>();
-                for (String userID : attendeeList) {
-                    User user = new User(userID, db);
-                    user.fetchData();
-                    attendeelistUsers.add(user);
-                }
             }
         }
 
         if (eventData.get("cancelledList") != null) {
             if (!cancelledList.equals((List<String>) eventData.get("cancelledList"))) {
                 cancelledList = (List<String>) eventData.get("cancelledList");
-
-                // populated cancelledList users
-                cancelledlistUsers = new ArrayList<>();
-                for (String userID : cancelledList) {
-                        User user = new User(userID, db);
-                        user.fetchData();
-                        cancelledlistUsers.add(user);
-                }
             }
         }
         if(eventData.get("waitListLocations") != null) {
