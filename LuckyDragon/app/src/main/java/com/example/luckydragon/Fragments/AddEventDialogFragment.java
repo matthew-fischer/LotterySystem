@@ -126,9 +126,7 @@ public class AddEventDialogFragment extends DialogFragment {
                                         (200 * height)/width, false);
                                 posterFile.setText(file);
                                 controller.uploadEventPoster(eventPoster);
-                            } catch (Exception e) {
-                                Log.e("signup", e.getMessage());
-                                Log.e("signup", "error uploading event poster");
+                            } catch (Exception ignored) {
                             }
                         }
                     }
