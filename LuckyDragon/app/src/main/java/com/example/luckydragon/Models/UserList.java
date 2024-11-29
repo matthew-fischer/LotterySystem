@@ -37,12 +37,10 @@ public class UserList extends Observable {
         this.db = db;
 
         db.collection("users").addSnapshotListener((value, error) -> {
-            Log.e("TEST", "RUN SNAPSHOT LISTENER");
             if (error != null) {
                 Log.e("Firestore", error.toString());
             }
             if (value != null) {
-                Log.e("TEST", "RUN");
                 users.clear();
                 /*
                 for (QueryDocumentSnapshot doc: value) {
@@ -69,9 +67,7 @@ public class UserList extends Observable {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             users.add(createUser(document));
                         }
-
                         Log.d(TAG, "Users loaded successfully with initial get()");
-
                         notifyObservers();
                     } else {
                         Log.w(TAG, "Error getting initial documents.", task.getException());
@@ -85,9 +81,7 @@ public class UserList extends Observable {
      * @return An ArrayList of User objects.
      */
     public ArrayList<User> getUserList() {
-
         return users;
-
     }
 
     /**

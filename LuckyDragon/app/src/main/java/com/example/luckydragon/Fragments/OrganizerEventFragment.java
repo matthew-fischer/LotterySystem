@@ -123,24 +123,18 @@ public class OrganizerEventFragment extends Fragment {
      * @param listType the type of list, can be one of: <attendee|wait|invitee|cancelled>list
      */
     private void updateAdapter(EntrantArrayAdapter adapter, ListView listView, String listType) {
-        Log.e("TEST", "UPDATE ADAPTER");
         // if the fragment is not on an activity, we don't need to update the adapter
         if (!isAdded()) return;
 
-        Log.e("TEST", userList.getUserList().toString());
-        Log.e("TEST", listType);
         ArrayList<User> userData = new ArrayList<>();
         for (User user : userList.getUserList()) {
             if ((listType.equals("attendeeList") && event.onAttendeeList(user.getDeviceId()))
                     ||  (listType.equals("waitList") && event.onWaitList(user.getDeviceId()))
                     ||  (listType.equals("inviteeList") && event.onInviteeList(user.getDeviceId()))
                     ||  (listType.equals("cancelledList") && event.onCancelledList(user.getDeviceId()))) {
-                Log.e("TEST", "ADD");
                 userData.add(user);
             }
-            Log.e("TEST", "NO ADD");
         }
-        Log.e("TEST", ((Integer)userData.size()).toString());
         adapter.clear();
         adapter.addAll(userData);
         adapter.notifyDataSetChanged();
