@@ -727,7 +727,7 @@ public class Event extends Observable implements Serializable {
         assert(inviteeList.isEmpty()); // invitee list should start empty
         assert(!inviteesHaveBeenSelected); // invitees should not have been selected yet
 
-        while(!waitList.isEmpty() && inviteeList.size() <= attendeeLimit) {
+        while(!waitList.isEmpty() && inviteeList.size() < attendeeLimit) {
             sampleInvitee();
         }
 
@@ -745,7 +745,7 @@ public class Event extends Observable implements Serializable {
         assert(inviteesHaveBeenSelected);
 
         ArrayList<String> replacementInvitees = new ArrayList<>();
-        while (!waitList.isEmpty() && inviteeList.size() + attendeeList.size() <= attendeeLimit) {
+        while (!waitList.isEmpty() && inviteeList.size() + attendeeList.size() < attendeeLimit) {
             replacementInvitees.add(sampleInvitee());
         }
 

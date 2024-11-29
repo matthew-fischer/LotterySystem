@@ -49,25 +49,29 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Waitlist"
-            android:checked="true"/>
+            android:checked="true"
+            android:textSize="12sp"/>
 
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/optionInviteeList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Invitees" />
+            android:text="Invitees"
+            android:textSize="12sp"/>
 
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/optionAttendeeList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Attending" />
+            android:text="Attending"
+            android:textSize="12sp"/>
 
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/optionCancelledList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancelled" />
+            android:text="Cancelled"
+            android:textSize="12sp"/>
     </RadioGroup>
 
 </LinearLayout>
