@@ -1,8 +1,6 @@
 package com.example.luckydragon.Models;
 
 import static android.content.ContentValues.TAG;
-
-import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -33,7 +31,6 @@ public class UserList extends Observable {
      * @param db The firestore database instance
      */
     public UserList(FirebaseFirestore db) {
-        Log.e("TEST", "Create userlist");
         this.db = db;
 
         db.collection("users").addSnapshotListener((value, error) -> {
@@ -42,11 +39,6 @@ public class UserList extends Observable {
             }
             if (value != null) {
                 users.clear();
-                /*
-                for (QueryDocumentSnapshot doc: value) {
-                    users.add(createUser(doc));
-                }
-                */
                 for(int i = 0; i < value.size(); i++) {
                     users.add(createUser((QueryDocumentSnapshot) value.getDocuments().get(i)));
                 }
@@ -73,7 +65,6 @@ public class UserList extends Observable {
                         Log.w(TAG, "Error getting initial documents.", task.getException());
                     }
                 });
-
     }
 
     /**
@@ -94,5 +85,4 @@ public class UserList extends Observable {
         User user = new User(document.getId(), db, userData);
         return user;
     }
-
 }
