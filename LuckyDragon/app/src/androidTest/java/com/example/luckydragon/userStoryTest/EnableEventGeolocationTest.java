@@ -24,6 +24,7 @@ import com.example.luckydragon.Activities.SelectRoleActivity;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.MockedDb;
 import com.example.luckydragon.Models.Event;
+import com.example.luckydragon.Models.EventList;
 import com.example.luckydragon.R;
 
 import org.junit.Test;
@@ -100,7 +101,7 @@ public class EnableEventGeolocationTest extends MockedDb {
 
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
         globalApp.setDb(mockFirestore);
-
+        EventList eventList = globalApp.getEvents();
         try (final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
             // User is not admin, so admin button should not show
             onView(ViewMatchers.withId(R.id.entrantButton)).check(matches(isDisplayed()));
@@ -136,7 +137,7 @@ public class EnableEventGeolocationTest extends MockedDb {
 
             // Check that the event is in the organizer's list and that the qr code has been generated
             boolean eventIsPresent = false;
-            for(Event e : globalApp.getUser().getOrganizer().getEvents()) {
+            for(Event e : eventList.getEventList()) {
                 if(Objects.equals(e.getName(), testEventName) && (e.getAttendeeSpots() == Integer.parseInt(testAttendeeLimit))) {
                     eventIsPresent = true;
                     assertNotNull(e.getQrHash());

@@ -30,6 +30,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import com.example.luckydragon.Activities.SelectRoleActivity;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
+import com.example.luckydragon.Models.EventList;
 import com.example.luckydragon.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -334,7 +335,7 @@ public class SampleInviteesTest {
 
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
         globalApp.setDb(mockFirestore);
-
+        EventList eventList = globalApp.getEvents();
         try(final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
             // User is not admin, so admin button should not show
             onView(ViewMatchers.withId(R.id.entrantButton)).check(matches(isDisplayed()));
@@ -353,9 +354,16 @@ public class SampleInviteesTest {
             // The organizer's events should be displayed
             onView(withText("Piano Lesson")).check(matches(isDisplayed()));
             onView(withText("Group Piano Lesson")).check(matches(isDisplayed()));
-
+            
             // Check that users are on the waitlist for "Piano Lesson" event
-            Event event = globalApp.getUser().getOrganizer().getEvents().get(0);
+            String testEventName = "Group Piano Lesson";
+            Event event = null;
+            for (Event e: eventList.getEventList()) {
+                if (e.getName().equals(testEventName)) {
+                    event = e;
+                }
+            }
+
             assertTrue(event.getWaitList().size() == 2);
             assertTrue(event.getWaitList().contains("ts123"));
             assertTrue(event.getWaitList().contains("mf456"));

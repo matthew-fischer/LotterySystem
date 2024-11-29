@@ -8,6 +8,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -28,6 +29,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import com.example.luckydragon.Activities.SelectRoleActivity;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
+import com.example.luckydragon.Models.EventList;
 import com.example.luckydragon.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -327,7 +329,7 @@ public class ReplacementInviteesTest {
 
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
         globalApp.setDb(mockFirestore);
-
+        EventList eventList = globalApp.getEvents();
         try(final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
             // User is not admin, so admin button should not show
             onView(ViewMatchers.withId(R.id.entrantButton)).check(matches(isDisplayed()));
@@ -347,8 +349,15 @@ public class ReplacementInviteesTest {
             onView(withText("Piano Lesson")).check(matches(isDisplayed()));
             onView(withText("Group Piano Lesson")).check(matches(isDisplayed()));
 
+            String testEventName = "Piano Lesson";
             // Check that users are on the waitlist for "Piano Lesson" event
-            Event event = globalApp.getUser().getOrganizer().getEvents().get(0);
+            Event event = null;
+            for (Event e: eventList.getEventList()) {
+                if (e.getName().equals(testEventName)) {
+                    event = e;
+                }
+            }
+            assertNotNull(event);
             assertTrue(event.getWaitList().size() == 2);
             assertTrue(event.getWaitList().contains("ts123"));
             assertTrue(event.getWaitList().contains("mf456"));
