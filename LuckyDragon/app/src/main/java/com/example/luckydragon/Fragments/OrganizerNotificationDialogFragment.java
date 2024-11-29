@@ -1,13 +1,3 @@
-/*
- * DialogFragment allowing an organizer to edit their facility.
- * Outstanding Issues:
- *   - NONE
- */
-
-/**
- * Defines EditFacilityDialogFragment which allows an organizer to edit their facility.
- */
-
 package com.example.luckydragon.Fragments;
 
 import android.app.AlertDialog;

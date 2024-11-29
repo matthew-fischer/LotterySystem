@@ -55,7 +55,9 @@ public class ViewEventActivity extends AppBarActivity {
         // Create view
         GlobalApp globalApp = (GlobalApp) getApplication();
         event = globalApp.getEventToView();
-        event.setIsLoaded(false); // set isLoaded to false to wait until we fetch again
+
+        // we need to setIsloaded to false since we will fetch the event data again to refresh
+        event.setIsLoaded(false);
         event.fetchData(); // get all event data
         boolean forceHideQR = globalApp.getRole() == GlobalApp.ROLE.ENTRANT;
         viewEventView = new ViewEventView(event, this, forceHideQR);
