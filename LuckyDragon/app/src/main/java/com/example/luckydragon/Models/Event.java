@@ -287,23 +287,34 @@ public class Event extends Observable implements Serializable {
             lotteryTime = new Time(Math.toIntExact((Long) eventData.get("lotteryHours")), Math.toIntExact((Long) eventData.get("lotteryMinutes")));
         }
 
+        if (eventData.get("waitList") != null) {
+            if(!waitList.equals((List<String>) eventData.get("waitList"))) {
+                waitList = new ArrayList<>((List<String>) eventData.get("waitList"));
+            };
+        }
+
+        if (eventData.get("inviteeList") != null) {
+            if(!inviteeList.equals((List<String>) eventData.get("inviteeList"))) {
+                inviteeList = (List<String>) eventData.get("inviteeList");
+            }
+        }
+
+        if (eventData.get("attendeeList") != null) {
+            if(!attendeeList.equals((List<String>) eventData.get("attendeeList"))) {
+                attendeeList = (List<String>) eventData.get("attendeeList");
+            }
+        }
+
+        if (eventData.get("cancelledList") != null) {
+            if (!cancelledList.equals((List<String>) eventData.get("cancelledList"))) {
+                cancelledList = (List<String>) eventData.get("cancelledList");
+            }
+        }
         if(eventData.get("waitListLocations") != null) {
             waitlistLocations = new ArrayList<>();
             for(HashMap<String, Object> oMap : (ArrayList<HashMap<String, Object>>) eventData.get("waitListLocations")) {
                 waitlistLocations.add(new Location((double) oMap.get("latitude"), (double) oMap.get("longitude")));
             }
-        }
-        if (eventData.get("waitList") != null) {
-            waitList = (List<String>) eventData.get("waitList");
-        }
-        if (eventData.get("attendeeList") != null) {
-            attendeeList = (ArrayList<String>) eventData.get("attendeeList");
-        }
-        if (eventData.get("inviteeList") != null) {
-            inviteeList = (ArrayList<String>) eventData.get("inviteeList");
-        }
-        if (eventData.get("cancelledList") != null) {
-            cancelledList = (ArrayList<String>) eventData.get("cancelledList");
         }
 
         // stringToBitMatrix handles null values
