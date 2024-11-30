@@ -36,10 +36,12 @@ public class OrganizerEventFragment extends Fragment {
     public EntrantArrayAdapter waitListUsersAdapter;
     public EntrantArrayAdapter inviteeListUsersAdapter;
     public EntrantArrayAdapter cancelledListUsersAdapter;
+    public EntrantArrayAdapter attendeeListUsersAdapter;
 
     private ListView waitListUsersListView;
     private ListView inviteeListUsersListView;
     private ListView cancelledListUsersListView;
+    private ListView attendeeListUsersListView;
 
 
     /**
@@ -58,6 +60,7 @@ public class OrganizerEventFragment extends Fragment {
         waitListUsersListView = view.findViewById(R.id.eventWaitlistListView);
         inviteeListUsersListView = view.findViewById(R.id.eventInvitelistListView);
         cancelledListUsersListView = view.findViewById(R.id.eventCancelledlistListView);
+        attendeeListUsersListView = view.findViewById(R.id.eventAttendeelistListView);
 
         waitListUsersAdapter = new EntrantArrayAdapter(new ArrayList<>(), requireActivity().getApplicationContext(),
                 this);
@@ -65,10 +68,13 @@ public class OrganizerEventFragment extends Fragment {
                 this);
         cancelledListUsersAdapter = new EntrantArrayAdapter(new ArrayList<>(), requireActivity().getApplicationContext(),
                 this);
+        attendeeListUsersAdapter = new EntrantArrayAdapter(new ArrayList<>(), requireActivity().getApplicationContext().getApplicationContext(),
+                this);
 
         setupAdapter(waitListUsersAdapter, waitListUsersListView);
         setupAdapter(inviteeListUsersAdapter, inviteeListUsersListView);
         setupAdapter(cancelledListUsersAdapter, cancelledListUsersListView);
+        setupAdapter(attendeeListUsersAdapter, attendeeListUsersListView);
 
         // get all event data
         userList = ((GlobalApp) requireActivity().getApplication()).getUsers();
@@ -103,6 +109,7 @@ public class OrganizerEventFragment extends Fragment {
         updateAdapter(waitListUsersAdapter, waitListUsersListView, "waitList");
         updateAdapter(inviteeListUsersAdapter, inviteeListUsersListView, "inviteeList");
         updateAdapter(cancelledListUsersAdapter, cancelledListUsersListView, "cancelledList");
+        updateAdapter(attendeeListUsersAdapter, attendeeListUsersListView, "attendeeList");
     }
 
     /**
@@ -114,7 +121,7 @@ public class OrganizerEventFragment extends Fragment {
         // set the listview's adapter
         listView.setAdapter(adapter);
 
-        // TODO: Setup item click listener for cancelling entrants
+        // TODO: Setup item click listener for cancelling entrants --> can't cancel from attendeeList
     }
 
     /**
@@ -133,7 +140,8 @@ public class OrganizerEventFragment extends Fragment {
             if ((listType.equals("attendeeList") && event.onAttendeeList(user.getDeviceId()))
                     ||  (listType.equals("waitList") && event.onWaitList(user.getDeviceId()))
                     ||  (listType.equals("inviteeList") && event.onInviteeList(user.getDeviceId()))
-                    ||  (listType.equals("cancelledList") && event.onCancelledList(user.getDeviceId()))) {
+                    ||  (listType.equals("cancelledList") && event.onCancelledList(user.getDeviceId()))
+                    ||  (listType.equals("attendeeList") && event.onAttendeeList(user.getDeviceId()))) {
                 userData.add(user);
             }
         }
