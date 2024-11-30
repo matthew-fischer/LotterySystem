@@ -55,6 +55,7 @@ public class OrganizerProfileView extends Observer {
         } else {
             // Set facility text
             name = getObservable().getOrganizer().getFacility();
+            organizerProfileFragment.setFacilityButtonIcon(R.drawable.baseline_edit_24);
         }
         organizerProfileFragment.setFacilityTextView(name);
 
