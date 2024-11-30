@@ -15,6 +15,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -38,6 +39,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -47,6 +49,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -302,6 +305,29 @@ public class ReplacementInviteesTest {
             return null;
         });
         when(mockMessagesDocument.set(anyMap())).thenReturn(mockVoidTask);
+
+        // add userlist mocking
+        Task<QuerySnapshot> mockUserQuerySnapshotTask = mock(Task.class);
+        QuerySnapshot mockUserQuerySnapshot = mock(QuerySnapshot.class);
+        when(mockUsersCollection.addSnapshotListener(any())).thenAnswer(invocation -> {
+            EventListener listener = invocation.getArgument(0);
+            listener.onEvent(mockUserQuerySnapshot, null);
+            return null;
+        });
+        when(mockUserQuerySnapshot.size()).thenReturn(2);
+        List<DocumentSnapshot> mockDocumentSnapshots = mock(List.class);
+        when(mockUserQuerySnapshot.getDocuments()).thenReturn(mockDocumentSnapshots);
+        QueryDocumentSnapshot userDocumentSnapshot1 = Mockito.mock(QueryDocumentSnapshot.class);
+        when(mockDocumentSnapshots.get(0)).thenReturn(userDocumentSnapshot1);
+        QueryDocumentSnapshot userDocumentSnapshot2 = Mockito.mock(QueryDocumentSnapshot.class);
+        when(mockDocumentSnapshots.get(1)).thenReturn(userDocumentSnapshot2);
+        when(userDocumentSnapshot1.getData()).thenReturn(getMockWaitlistUser1());
+        when(userDocumentSnapshot2.getData()).thenReturn(getMockWaitlistUser2());
+        when(userDocumentSnapshot1.getId()).thenReturn("ts123");
+        when(userDocumentSnapshot2.getId()).thenReturn("mf456");
+        // mock UserList fetch data to do nothing
+        Task<QuerySnapshot> mockQuerySnapshotVoidTask = Mockito.mock(Task.class);
+        when(mockUsersCollection.get()).thenReturn(mockQuerySnapshotVoidTask);
     }
 
     @After

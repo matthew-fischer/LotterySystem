@@ -7,6 +7,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        <Button
+            android:id="@+id/sendNotifButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:text="Send Notifications"
+            android:layout_gravity="center"/>
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -116,6 +130,40 @@
             android:visibility="gone"/>
         <ListView
             android:id="@+id/eventCancelledlistListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="10dp">
+            <TextView
+                android:id="@+id/attendeeList_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Final List of Entrants:"
+                android:textStyle="bold"
+                android:textSize="25sp"/>
+            <android.widget.Space
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+        <TextView
+            android:id="@+id/noAttendeeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No entrant is part of the final entrant list for this event yet."
+            android:textSize="20sp"
+            android:paddingLeft="10dp"
+            android:visibility="gone"/>
+        <ListView
+            android:id="@+id/eventAttendeelistListView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </LinearLayout>

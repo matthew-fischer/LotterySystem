@@ -466,4 +466,8 @@ public class User extends Observable {
     public NotificationList getNotificationList() {
         return notificationList;
     }
+
+    public void addToNotificationList(String title, String body) {
+        notificationList.addNotification(title, body);
+    }
 }
