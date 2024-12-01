@@ -2,6 +2,7 @@ package com.example.luckydragon.userStoryTest;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -59,10 +60,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Contains tests for US 02.02.01.
- * As an organizer I want to view the list of entrants who joined my event waiting list.
+ * Contains tests for US 02.07.01, 02.07.042, 02.07.03, and 02.05.01.
+ * As an organizer I want to send notifications to all waiting/cancelled/selected/invited entrants.
  */
-public class SampleInviteesTest {
+public class OrganizerSendNotificationsTest {
     @Mock
     private FirebaseFirestore mockFirestore;
     // User mocks
@@ -125,11 +126,7 @@ public class SampleInviteesTest {
     @Mock
     private CollectionReference mockMessagesCollection;
     @Mock
-    private DocumentReference mockMessagesDocumentAny;
-    @Mock
-    private DocumentReference mockMessagesDocument1;
-    @Mock
-    private DocumentReference mockMessagesDocument2;
+    private DocumentReference mockMessagesDocument;
 
     // Event Data
     private List<Map<String, Object>> eventData = new ArrayList<>();
@@ -179,28 +176,6 @@ public class SampleInviteesTest {
         testUserData.put("isAdmin", false);
 
         return testUserData;
-    }
-
-    private HashMap<String, Object> getMockMessage1() {
-        HashMap<String, Object> testMessageData = new HashMap<>();
-        ArrayList<HashMap<String, Object>> testMessageList = new ArrayList<>();
-        HashMap<String, Object> testMessage = new HashMap<>();
-        testMessage.put("title", "Test Notification Title 1");
-        testMessage.put("body", "Test Notification Body 1");
-        testMessageList.add(testMessage);
-        testMessageData.put("notificationList", testMessageList);
-        return testMessageData;
-    }
-
-    private HashMap<String, Object> getMockMessage2() {
-        HashMap<String, Object> testMessageData = new HashMap<>();
-        ArrayList<HashMap<String, Object>> testMessageList = new ArrayList<>();
-        HashMap<String, Object> testMessage = new HashMap<>();
-        testMessage.put("title", "Test Notification Title 2");
-        testMessage.put("body", "Test Notification Body 2");
-        testMessageList.add(testMessage);
-        testMessageData.put("notificationList", testMessageList);
-        return testMessageData;
     }
 
     @Before
@@ -331,32 +306,11 @@ public class SampleInviteesTest {
 
         // mock notifications db stuff
         when(mockFirestore.collection("messages")).thenReturn(mockMessagesCollection);
-        when(mockMessagesCollection.document(any())).thenReturn(mockMessagesDocumentAny);
-        when(mockMessagesDocumentAny.addSnapshotListener(any())).thenAnswer((invocation) -> {
+        when(mockMessagesCollection.document(any())).thenReturn(mockMessagesDocument);
+        when(mockMessagesDocument.addSnapshotListener(any())).thenAnswer((invocation) -> {
             return null;
         });
-        when(mockMessagesDocumentAny.set(anyMap())).thenReturn(mockVoidTask);
-
-        DocumentSnapshot mockMessagesDocumentSnapshot1 = mock(DocumentSnapshot.class);
-        when(mockMessagesCollection.document("ts123")).thenReturn(mockMessagesDocument1);
-        when(mockMessagesDocument1.addSnapshotListener(any())).thenAnswer((invocation) -> {
-            EventListener listener = invocation.getArgument(0);
-            listener.onEvent(mockMessagesDocumentSnapshot1, null);
-            return null;
-        });
-        when(mockMessagesDocumentSnapshot1.getData()).thenReturn(getMockMessage1());
-        when(mockMessagesDocument1.set(anyMap())).thenReturn(mockVoidTask);
-
-        DocumentSnapshot mockMessagesDocumentSnapshot2 = mock(DocumentSnapshot.class);
-        when(mockMessagesCollection.document("mf456")).thenReturn(mockMessagesDocument2);
-        when(mockMessagesDocument2.addSnapshotListener(any())).thenAnswer((invocation) -> {
-            EventListener listener = invocation.getArgument(0);
-            listener.onEvent(mockMessagesDocumentSnapshot2, null);
-            return null;
-        });
-        when(mockMessagesDocumentSnapshot2.getData()).thenReturn(getMockMessage2());
-        when(mockMessagesDocument2.set(anyMap())).thenReturn(mockVoidTask);
-
+        when(mockMessagesDocument.set(anyMap())).thenReturn(mockVoidTask);
 
         // add userlist mocking
         Task<QuerySnapshot> mockUserQuerySnapshotTask = mock(Task.class);
@@ -394,17 +348,22 @@ public class SampleInviteesTest {
 
     /**
      * USER STORY TEST
-     * US 02.02.01 -- As an organizer I want to view the list of entrants who joined my event waiting list.
+     * US 02.05.01 -- As an organizer I want to send a notification to chosen entrants to sign up for events.
      * User opens app and selects Organizer.
      * User's events are displayed.
      * User clicks on one of these events.
-     * User sees the names of the entrants on the waitlist.
-     * Notifications were sent to the entrants selected/not selected.
+     * User clicks on "Send Notification" button.
+     * User writes a notification title and body.
+     * User chooses the attending users.
+     * User clicks submit.
      */
     @Test
-    public void testSampleInvitees() {
+    public void testSendNotifToInvitedEntrants() {
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
+
+        String testNotifTitle = "Notification Test";
+        String testNotifBody = "Testing Notifications...";
 
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
         globalApp.setDb(mockFirestore);
@@ -428,11 +387,7 @@ public class SampleInviteesTest {
             onView(withText("Piano Lesson")).check(matches(isDisplayed()));
             onView(withText("Group Piano Lesson")).check(matches(isDisplayed()));
 
-            // Check that users are on the waitlist for "Piano Lesson" event
             Event event = globalApp.getUser().getOrganizer().getEvents().get(0);
-            assertTrue(event.getWaitList().size() == 2);
-            assertTrue(event.getWaitList().contains("ts123"));
-            assertTrue(event.getWaitList().contains("mf456"));
 
             // Organizer clicks on "Piano Lesson"
             onView(withText("Piano Lesson")).perform(click());
@@ -442,33 +397,232 @@ public class SampleInviteesTest {
             onView(withId(R.id.eventFacilityTextView)).check(matches(withText("Piano Place")));
             onView(withId(R.id.eventDateAndTimeTextView)).check(matches(withText("6:15 PM -- 2025-01-15")));
 
-            // Waitlist capacity is displayed correctly
-            onView(withId(R.id.waitlistCapacityTextView)).check(matches(withText("Capacity: 10")));
+            // Organizer clicks on "Send Notification"
+            onView(withId(R.id.sendNotifButton)).perform(click());
 
-            // Check that users are now in inviteeList
-            assertTrue(event.getInviteeList().contains("ts123"));
-            assertTrue(event.getInviteeList().contains("mf456"));
-            assertTrue(event.getWaitList().isEmpty());
-            assertEquals(event.getInviteeList().size(), 2);
+            // Organizer writes a title and body for the notification
+            onView(withId(R.id.notifTitleEditText)).perform(typeText(testNotifTitle));
+            onView(withId(R.id.notifBodyEditText)).perform(typeText(testNotifBody));
 
-            // Check that notifications were receieved
-            for (User user : globalApp.getUsers().getUserList()) {
-                if (user.getDeviceId().equals("ts123")) {
-                    for (NotificationList.Notification notif : user.getNotificationList().getNotificationList()) {
-                        assertEquals(notif.title, "Test Notification Title 1");
-                        assertEquals(notif.body, "Test Notification Body 1");
-                    }
-                }
-                if (user.getDeviceId().equals("mf456")) {
-                    for (NotificationList.Notification notif : user.getNotificationList().getNotificationList()) {
-                        assertEquals(notif.title, "Test Notification Title 2");
-                        assertEquals(notif.body, "Test Notification Body 2");
-                    }
-                }
-            }
-            // TODO could check that invited users are displayed -- invitee display isn't implemented yet
-            //onView(withText("Tony Sun")).check(matches(isDisplayed()));
-            //onView(withText("Matthew Fischer")).check(matches(isDisplayed()));
+            // Attending option is available, and organizer clicks on it
+            onView(withId(R.id.optionInviteeList)).check(matches(withText("Invitees")));
+            onView(withId(R.id.optionInviteeList)).perform(click());
+
+            // Click SEND button
+            onView(withText("SEND")).perform(click());
+
+            // Check we are back on event page
+            onView(withId(R.id.eventNameTextView)).check(matches(withText("Piano Lesson")));
+        }
+    }
+
+    /**
+     * USER STORY TEST
+     * US 02.07.01 -- As an organizer I want to send a notification to waitlisted entrants
+     * User opens app and selects Organizer.
+     * User's events are displayed.
+     * User clicks on one of these events.
+     * User clicks on "Send Notification" button.
+     * User writes a notification title and body.
+     * User chooses the waitlisted users.
+     * User clicks submit.
+     */
+    @Test
+    public void testSendNotifToWaitlistedEntrants() {
+        final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
+
+        String testNotifTitle = "Notification Test";
+        String testNotifBody = "Testing Notifications...";
+
+        GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
+        globalApp.setDb(mockFirestore);
+
+        try(final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
+            // User is not admin, so admin button should not show
+            onView(ViewMatchers.withId(R.id.entrantButton)).check(matches(isDisplayed()));
+            onView(withId(R.id.organizerButton)).check(matches(isDisplayed()));
+            onView(withId(R.id.adminButton)).check(matches(not(isDisplayed())));
+
+            // User clicks "Organizer"
+            onView(withId(R.id.organizerButton)).perform(click());
+
+            // Profile activity should open and organizer profile should be displayed
+            onView(withId(R.id.organizerProfileLayout)).check(matches(isDisplayed()));
+
+            // The organizer's facility is displayed
+            onView(withId(R.id.facilityTextView)).check(matches(withText("The Sports Centre")));
+
+            // The organizer's events should be displayed
+            onView(withText("Piano Lesson")).check(matches(isDisplayed()));
+            onView(withText("Group Piano Lesson")).check(matches(isDisplayed()));
+
+            Event event = globalApp.getUser().getOrganizer().getEvents().get(0);
+
+            // Organizer clicks on "Piano Lesson"
+            onView(withText("Piano Lesson")).perform(click());
+
+            // Event info is displayed
+            onView(withId(R.id.eventNameTextView)).check(matches(withText("Piano Lesson")));
+            onView(withId(R.id.eventFacilityTextView)).check(matches(withText("Piano Place")));
+            onView(withId(R.id.eventDateAndTimeTextView)).check(matches(withText("6:15 PM -- 2025-01-15")));
+
+            // Organizer clicks on "Send Notification"
+            onView(withId(R.id.sendNotifButton)).perform(click());
+
+            // Organizer writes a title and body for the notification
+            onView(withId(R.id.notifTitleEditText)).perform(typeText(testNotifTitle));
+            onView(withId(R.id.notifBodyEditText)).perform(typeText(testNotifBody));
+
+            // Attending option is available, and organizer clicks on it
+            onView(withId(R.id.optionWaitList)).check(matches(withText("Waitlist")));
+            onView(withId(R.id.optionWaitList)).perform(click());
+
+            // Click SEND button
+            onView(withText("SEND")).perform(click());
+
+            // Check we are back on event page
+            onView(withId(R.id.eventNameTextView)).check(matches(withText("Piano Lesson")));
+        }
+    }
+
+    /**
+     * USER STORY TEST
+     * US 02.07.02 -- As an organizer I want to send a notification to all selected entrants
+     * User opens app and selects Organizer.
+     * User's events are displayed.
+     * User clicks on one of these events.
+     * User clicks on "Send Notification" button.
+     * User writes a notification title and body.
+     * User chooses the waitlisted users.
+     * User clicks submit.
+     */
+    @Test
+    public void testSendNotifToAttendingEntrants() {
+        final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
+
+        String testNotifTitle = "Notification Test";
+        String testNotifBody = "Testing Notifications...";
+
+        GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
+        globalApp.setDb(mockFirestore);
+
+        try(final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
+            // User is not admin, so admin button should not show
+            onView(ViewMatchers.withId(R.id.entrantButton)).check(matches(isDisplayed()));
+            onView(withId(R.id.organizerButton)).check(matches(isDisplayed()));
+            onView(withId(R.id.adminButton)).check(matches(not(isDisplayed())));
+
+            // User clicks "Organizer"
+            onView(withId(R.id.organizerButton)).perform(click());
+
+            // Profile activity should open and organizer profile should be displayed
+            onView(withId(R.id.organizerProfileLayout)).check(matches(isDisplayed()));
+
+            // The organizer's facility is displayed
+            onView(withId(R.id.facilityTextView)).check(matches(withText("The Sports Centre")));
+
+            // The organizer's events should be displayed
+            onView(withText("Piano Lesson")).check(matches(isDisplayed()));
+            onView(withText("Group Piano Lesson")).check(matches(isDisplayed()));
+
+            Event event = globalApp.getUser().getOrganizer().getEvents().get(0);
+
+            // Organizer clicks on "Piano Lesson"
+            onView(withText("Piano Lesson")).perform(click());
+
+            // Event info is displayed
+            onView(withId(R.id.eventNameTextView)).check(matches(withText("Piano Lesson")));
+            onView(withId(R.id.eventFacilityTextView)).check(matches(withText("Piano Place")));
+            onView(withId(R.id.eventDateAndTimeTextView)).check(matches(withText("6:15 PM -- 2025-01-15")));
+
+            // Organizer clicks on "Send Notification"
+            onView(withId(R.id.sendNotifButton)).perform(click());
+
+            // Organizer writes a title and body for the notification
+            onView(withId(R.id.notifTitleEditText)).perform(typeText(testNotifTitle));
+            onView(withId(R.id.notifBodyEditText)).perform(typeText(testNotifBody));
+
+            // Attending option is available, and organizer clicks on it
+            onView(withId(R.id.optionAttendeeList)).check(matches(withText("Attending")));
+            onView(withId(R.id.optionAttendeeList)).perform(click());
+
+            // Click SEND button
+            onView(withText("SEND")).perform(click());
+
+            // Check we are back on event page
+            onView(withId(R.id.eventNameTextView)).check(matches(withText("Piano Lesson")));
+        }
+    }
+
+    /**
+     * USER STORY TEST
+     * US 02.07.03 -- As an organizer I want to send a notification to all cancelled entrants
+     * User opens app and selects Organizer.
+     * User's events are displayed.
+     * User clicks on one of these events.
+     * User clicks on "Send Notification" button.
+     * User writes a notification title and body.
+     * User chooses the waitlisted users.
+     * User clicks submit.
+     */
+    @Test
+    public void testSendNotifToCancelledEntrants() {
+        final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
+
+        String testNotifTitle = "Notification Test";
+        String testNotifBody = "Testing Notifications...";
+
+        GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
+        globalApp.setDb(mockFirestore);
+
+        try(final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
+            // User is not admin, so admin button should not show
+            onView(ViewMatchers.withId(R.id.entrantButton)).check(matches(isDisplayed()));
+            onView(withId(R.id.organizerButton)).check(matches(isDisplayed()));
+            onView(withId(R.id.adminButton)).check(matches(not(isDisplayed())));
+
+            // User clicks "Organizer"
+            onView(withId(R.id.organizerButton)).perform(click());
+
+            // Profile activity should open and organizer profile should be displayed
+            onView(withId(R.id.organizerProfileLayout)).check(matches(isDisplayed()));
+
+            // The organizer's facility is displayed
+            onView(withId(R.id.facilityTextView)).check(matches(withText("The Sports Centre")));
+
+            // The organizer's events should be displayed
+            onView(withText("Piano Lesson")).check(matches(isDisplayed()));
+            onView(withText("Group Piano Lesson")).check(matches(isDisplayed()));
+
+            Event event = globalApp.getUser().getOrganizer().getEvents().get(0);
+
+            // Organizer clicks on "Piano Lesson"
+            onView(withText("Piano Lesson")).perform(click());
+
+            // Event info is displayed
+            onView(withId(R.id.eventNameTextView)).check(matches(withText("Piano Lesson")));
+            onView(withId(R.id.eventFacilityTextView)).check(matches(withText("Piano Place")));
+            onView(withId(R.id.eventDateAndTimeTextView)).check(matches(withText("6:15 PM -- 2025-01-15")));
+
+            // Organizer clicks on "Send Notification"
+            onView(withId(R.id.sendNotifButton)).perform(click());
+
+            // Organizer writes a title and body for the notification
+            onView(withId(R.id.notifTitleEditText)).perform(typeText(testNotifTitle));
+            onView(withId(R.id.notifBodyEditText)).perform(typeText(testNotifBody));
+
+            // Attending option is available, and organizer clicks on it
+            onView(withId(R.id.optionCancelledList)).check(matches(withText("Cancelled")));
+            onView(withId(R.id.optionCancelledList)).perform(click());
+
+            // Click SEND button
+            onView(withText("SEND")).perform(click());
+
+            // Check we are back on event page
+            onView(withId(R.id.eventNameTextView)).check(matches(withText("Piano Lesson")));
         }
     }
 }

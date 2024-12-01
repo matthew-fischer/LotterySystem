@@ -13,10 +13,19 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="testCancelledlistDisplayedEventData1()">
+      <SelectionState runConfigName="SampleInviteesTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testCancelledlistDisplayedEventData2()">
+      <SelectionState runConfigName="testSampleInvitees() (1)">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="OrganizerSendNotificationsTest">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="testSendNotifToWaitlistedEntrants()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="testSampleInvitees()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
