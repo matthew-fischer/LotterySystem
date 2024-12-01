@@ -106,8 +106,6 @@ public class Event extends Observable implements Serializable {
 
     private List<Location> waitlistLocations = new ArrayList<>();
 
-    private ArrayList<User> waitlistUsers = new ArrayList<>();
-
     private boolean isLoaded = false;
     private Bitmap eventPoster;
 
@@ -132,7 +130,6 @@ public class Event extends Observable implements Serializable {
         super();
         this.db = db;
         this.id = id;
-        qrHash = generateQRCode();  // TODO: load from db
     }
 
     /**
@@ -148,7 +145,7 @@ public class Event extends Observable implements Serializable {
      * @param timeHours: the hour time e.g. "8" for 8:30
      * @param timeMinutes: the minute time e.g. "30" for 8:30
      */
-    public Event(String id, String name, String organizerDeviceId, String facility, Integer waitListLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes, FirebaseFirestore db)  {
+    public Event(String id, String name, String organizerDeviceId, String facility, Integer waitListLimit, Integer attendeeLimit, String date, Integer timeHours, Integer timeMinutes, String bitMatrixString, FirebaseFirestore db)  {
         this.id = id;
         this.name = name;
         this.organizerDeviceId = organizerDeviceId;
@@ -157,7 +154,7 @@ public class Event extends Observable implements Serializable {
         this.attendeeLimit = attendeeLimit;
         this.date = date;
         this.time = new Time(timeHours, timeMinutes);
-        this.qrHash = generateQRCode();
+        this.qrHash = stringToBitMatrix(bitMatrixString);
         this.qrCode = createBitMap(this.qrHash);
         this.db = db;
     }
@@ -236,9 +233,6 @@ public class Event extends Observable implements Serializable {
                 }
 
                 parseEventDocument(eventData);
-//                TODO: Decode qrHash
-//                qrHash
-
                 notifyObservers();
             }
         });
@@ -296,15 +290,25 @@ public class Event extends Observable implements Serializable {
         if (eventData.get("waitList") != null) {
             if(!waitList.equals((List<String>) eventData.get("waitList"))) {
                 waitList = new ArrayList<>((List<String>) eventData.get("waitList"));
-
-                // populate waitlist users
-                waitlistUsers = new ArrayList<>();
-                for(String userId : waitList) {
-                    User user = new User(userId, db);
-                    user.fetchData();
-                    waitlistUsers.add(user);
-                }
             };
+        }
+
+        if (eventData.get("inviteeList") != null) {
+            if(!inviteeList.equals((List<String>) eventData.get("inviteeList"))) {
+                inviteeList = (List<String>) eventData.get("inviteeList");
+            }
+        }
+
+        if (eventData.get("attendeeList") != null) {
+            if(!attendeeList.equals((List<String>) eventData.get("attendeeList"))) {
+                attendeeList = (List<String>) eventData.get("attendeeList");
+            }
+        }
+
+        if (eventData.get("cancelledList") != null) {
+            if (!cancelledList.equals((List<String>) eventData.get("cancelledList"))) {
+                cancelledList = (List<String>) eventData.get("cancelledList");
+            }
         }
         if(eventData.get("waitListLocations") != null) {
             waitlistLocations = new ArrayList<>();
@@ -312,15 +316,10 @@ public class Event extends Observable implements Serializable {
                 waitlistLocations.add(new Location((double) oMap.get("latitude"), (double) oMap.get("longitude")));
             }
         }
-        if (eventData.get("attendeeList") != null) {
-            attendeeList = (ArrayList<String>) eventData.get("attendeeList");
-        }
-        if (eventData.get("inviteeList") != null) {
-            inviteeList = (ArrayList<String>) eventData.get("inviteeList");
-        }
-        if (eventData.get("cancelledList") != null) {
-            cancelledList = (ArrayList<String>) eventData.get("cancelledList");
-        }
+
+        // stringToBitMatrix handles null values
+        this.qrHash = stringToBitMatrix((String) eventData.get("hashedQR"));
+        this.qrCode = createBitMap(this.qrHash);
 
         setIsLoaded(true);
     }
@@ -410,6 +409,7 @@ public class Event extends Observable implements Serializable {
      * @return bitMap based on bitMatrix
      */
     public Bitmap createBitMap(BitMatrix bitMatrix) {
+        if (bitMatrix == null) return null;
         int height = bitMatrix.getHeight();
         int width = bitMatrix.getWidth();
         Bitmap bitMap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
@@ -689,10 +689,6 @@ public class Event extends Observable implements Serializable {
         return cancelledList;
     }
 
-    public ArrayList<User> getWaitlistUsers() {
-        return waitlistUsers;
-    }
-
     public void setIsLoaded(boolean newIsLoaded) {
         this.isLoaded = newIsLoaded;
     }
@@ -714,6 +710,27 @@ public class Event extends Observable implements Serializable {
     }
 
     /**
+     * Samples an invitee from the wait list to be added to the invitee list.
+     * Returns the deviceId of the user who was selected.
+     */
+    public String sampleInvitee() {
+        assert(waitList.size() > 0);
+
+        Random random = new Random();
+        int randomIndex = random.nextInt(waitList.size());
+        // Move id from waitlist to invitee list
+        String selectedId = waitList.get(randomIndex);
+        inviteeList.add(selectedId);
+        // Remove id from waitlist
+        waitList.remove(randomIndex);
+        if(hasGeolocation) {
+            waitlistLocations.remove(randomIndex);
+        }
+
+        return selectedId;
+    }
+
+    /**
      * Selects invitees from the waiting list for the first time.
      * This is different from fillInvitees(), which is intended to fill spots freed by cancelled entrants after the initial selection.
      */
@@ -721,22 +738,29 @@ public class Event extends Observable implements Serializable {
         assert(inviteeList.isEmpty()); // invitee list should start empty
         assert(!inviteesHaveBeenSelected); // invitees should not have been selected yet
 
-        // Randomly select entrants from waiting list and move to invitee list
-        Random random = new Random();
-        while(waitList.size() > 0 && inviteeList.size() <= attendeeLimit) {
-            int randomIndex = random.nextInt(waitList.size());
-            // Move id from waitlist to invitee list
-            String selectedId = waitList.get(randomIndex);
-            inviteeList.add(selectedId);
-            // Remove id from waitlist
-            waitList.remove(randomIndex);
-            waitlistUsers.remove(randomIndex);
-            if(hasGeolocation) {
-                waitlistLocations.remove(randomIndex);
-            }
+        while(!waitList.isEmpty() && inviteeList.size() < attendeeLimit) {
+            sampleInvitee();
         }
 
         inviteesHaveBeenSelected = true; // invitees have now been selected
+    }
+
+    /**
+     * Fills the invitee list with replacement entrants from the wait list if there are still
+     * some spots left. Only can be called after the initial sampling of invitees
+     * has happened.
+     *
+     * @return a list of the deviceIds of the entrants who have been selected as replacements
+     */
+    public ArrayList<String> fillInvitees() {
+        assert(inviteesHaveBeenSelected);
+
+        ArrayList<String> replacementInvitees = new ArrayList<>();
+        while (!waitList.isEmpty() && inviteeList.size() + attendeeList.size() < attendeeLimit) {
+            replacementInvitees.add(sampleInvitee());
+        }
+
+        return replacementInvitees;
     }
 
     public Long getCreatedTimeMillis() {
@@ -771,9 +795,6 @@ public class Event extends Observable implements Serializable {
     }
 
     public void setEventPoster(Bitmap poster) {
-        if (poster != null) {
-            Log.e("JXU", "poster is good");
-        }
         this.eventPoster = poster;
         notifyObservers();
     }
@@ -785,4 +806,28 @@ public class Event extends Observable implements Serializable {
     public int getEventHours() { return time.hours; }
 
     public int getEventMinutes() { return time.minutes; }
+
+    public static BitMatrix stringToBitMatrix(String s) {
+        if (s == null || s.isEmpty()) return null;
+
+        String[] grid = s.split("\n");
+
+        int n = grid.length;
+        int m = grid[0].length();
+        BitMatrix matrix = new BitMatrix(n, m);
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (grid[i].charAt(j) == '1') {
+                    matrix.set(i, j);
+                }
+            }
+        }
+
+        return matrix;
+    }
+
+    public BitMatrix getQRBitMatrix() {
+        return this.qrHash;
+    }
 }

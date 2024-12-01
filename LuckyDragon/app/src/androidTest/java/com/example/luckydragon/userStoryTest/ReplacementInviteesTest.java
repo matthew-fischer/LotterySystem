@@ -14,13 +14,12 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.intent.Intents;
@@ -48,7 +47,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
@@ -56,11 +54,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Contains tests for US 02.02.01.
- * As an organizer I want to view the list of entrants who joined my event waiting list.
- */
-public class SampleInviteesTest {
+public class ReplacementInviteesTest {
     @Mock
     private FirebaseFirestore mockFirestore;
     // User mocks
@@ -195,6 +189,7 @@ public class SampleInviteesTest {
         eventData1.put("lotteryMinuts", 0L);
         eventData1.put("waitList", List.of("ts123", "mf456"));
         eventData1.put("createdTimeMillis", 1731294000000L); // event created Nov 10 2024 8:00:00 PM
+        eventData1.put("inviteesHaveBeenSelected", true);
         eventData.add(eventData1);
 
         HashMap<String, Object> eventData2 = new HashMap<>();
@@ -352,7 +347,7 @@ public class SampleInviteesTest {
      * User sees the names of the entrants on the waitlist.
      */
     @Test
-    public void testSampleInvitees() {
+    public void testReplacementInvitees() {
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
 

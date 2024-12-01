@@ -7,6 +7,7 @@
 package com.example.luckydragon;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -14,6 +15,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
+import com.example.luckydragon.Models.NotificationList;
 import com.example.luckydragon.Models.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -36,20 +38,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This is a collection of unit tests for the User class.
- * These tests should not use the database. The database is mocked using Mockito.
- * The User class is closely linked to the database and uses the Android framework so not all methods are practical for unit testing.
- * We test what we can here. Database and android methods must be mocked out. See the comment just below for more details.
+ * This is a collection of unit tests for NotificationList.
+ * Those methods that primarily use the database are not tested here, as they would essentially just test Firestore methods.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class UserTest {
-    /*
-     * Profile pictures use android.graphics.Bitmap which is android specific and can't be used for these local unit tests.
-     * For that reason, generateProfilePicture(String), bitmapToString(Bitmap), stringToBitmap(String) are not tested here
-     * Since User uses the database, database mocking is required.
-     * Since notifyObservers() uses android, it must be mocked in tests where it is called. See testFetchData() for an example
-     */
-
+public class NotificationListTest {
     // Mock database
     @Mock
     private FirebaseFirestore mockFirestore;
@@ -154,67 +147,40 @@ public class UserTest {
     }
 
     /**
-     * Tests that fetchData() correctly sets user fields.
+     * Tests the addNotification method.
      */
     @Test
-    public void testFetchData() {
-        User testUser = Mockito.spy(new User("abcd1234", mockFirestore));
+    public void testAddNotifcation() {
+        User mockUser = new User("1234", mockFirestore);
+        NotificationList notificationList = new NotificationList(mockFirestore, mockUser);
 
-        // Mock notify observers since it relies on android
-        doAnswer((invocation -> {
-            return null;
-        })).when(testUser).notifyObservers();
+        assertEquals(notificationList.getNotificationList().size(), 0);
 
-        // Call fetchData
-        testUser.fetchData();
+        notificationList.addNotification("New Message!", "Join the waitlist now!");
 
-        // Check that user fields were set correctly
-        Map<String, Object> mockData = getMockData();
-        assertEquals(testUser.getName(), mockData.get("name"));
-        assertEquals(testUser.getEmail(), mockData.get("email"));
-        assertEquals(testUser.getPhoneNumber(), mockData.get("phoneNumber"));
-        assertEquals(testUser.isEntrant(), mockData.get("isEntrant"));
-        assertEquals(testUser.isOrganizer(), mockData.get("isOrganizer"));
-        assertEquals(testUser.isAdmin(), mockData.get("isAdmin"));
+        assertEquals(notificationList.getNotificationList().size(), 1);
+        assertEquals(notificationList.getNotificationList().get(0).title, "New Message!");
+        assertEquals(notificationList.getNotificationList().get(0).body, "Join the waitlist now!");
     }
 
     /**
-     * Tests the buildUserFromMap correctly sets user fields.
+     * Tests the clearNotifications() method.
      */
     @Test
-    public void testBuildUserFromMap() {
-        User testUser = new User("abcd1234", mockFirestore);
-        testUser.buildUserFromMap(getMockData());
+    public void testClearNotifications() {
+        User mockUser = new User("1234", mockFirestore);
+        NotificationList notificationList = new NotificationList(mockFirestore, mockUser);
 
-        // Check that user fields set correctly
-        Map<String, Object> mockData = getMockData();
-        assertEquals(testUser.getName(), mockData.get("name"));
-        assertEquals(testUser.getEmail(), mockData.get("email"));
-        assertEquals(testUser.getPhoneNumber(), mockData.get("phoneNumber"));
-        assertEquals(testUser.isEntrant(), mockData.get("isEntrant"));
-        assertEquals(testUser.isOrganizer(), mockData.get("isOrganizer"));
-        assertEquals(testUser.isAdmin(), mockData.get("isAdmin"));
-    }
+        assertEquals(notificationList.getNotificationList().size(), 0);
 
-    /**
-     * Tests that save() feeds the correct map to firestore set().
-     * Firestore set() is mocked out, so nothing is actually saved to the database in this test.
-     */
-    @Test
-    public void testSave() {
-        User testUser = new User("abcd1234", mockFirestore);
-        testUser.buildUserFromMap(getMockData());
-        testUser.save();
+        notificationList.addNotification("New Message!", "Join the waitlist now!");
 
-        // Our mock of firestore set() above sets capturedUserData to the map that is passed into set()
-        // So we can test here that capturedUserData is the correct map of user info to save
+        assertEquals(notificationList.getNotificationList().size(), 1);
+        assertEquals(notificationList.getNotificationList().get(0).title, "New Message!");
+        assertEquals(notificationList.getNotificationList().get(0).body, "Join the waitlist now!");
 
-        Map<String, Object> mockData = getMockData();
-        assertEquals(capturedUserData.get("name"), mockData.get("name"));
-        assertEquals(capturedUserData.get("email"), mockData.get("email"));
-        assertEquals(capturedUserData.get("phoneNumber"), mockData.get("phoneNumber"));
-        assertEquals(capturedUserData.get("isEntrant"), mockData.get("isEntrant"));
-        assertEquals(capturedUserData.get("isOrganizer"), mockData.get("isOrganizer"));
-        assertEquals(capturedUserData.get("isAdministrator"), mockData.get("isAdministrator"));
+        notificationList.clearNotifications();
+
+        assertEquals(notificationList.getNotificationList().size(), 0);
     }
 }

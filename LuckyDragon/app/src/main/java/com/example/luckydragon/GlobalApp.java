@@ -25,6 +25,7 @@ import com.example.luckydragon.Models.UserList;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Objects;
+import java.util.Random;
 
 /**
  * The GlobalApp class stores global information of the app including the
@@ -71,6 +72,20 @@ public class GlobalApp extends Application {
             // start notification service
             notificationService = new NotificationService(this, user.getNotificationList());
         }
+        return user;
+    }
+
+    /**
+     * Get's a user object by the user's deviceId, fetching the DB if needed.
+     * @param deviceId
+     * @return the user object with the specified deviceId
+     */
+    public User getUserById(String deviceId) {
+        if (db == null) {
+            setDb(FirebaseFirestore.getInstance());
+        }
+        User user = new User(deviceId, db);
+        user.fetchData();
         return user;
     }
 
@@ -121,13 +136,12 @@ public class GlobalApp extends Application {
      * @return the event after it has been created
      */
     public Event makeEvent() {
-        // create an eventId
         if (db == null) {
             setDb(FirebaseFirestore.getInstance());
         }
         Event event = new Event(db);
 
-        return getEvent(event.getId());
+        return event;
     }
 
     /**
@@ -213,7 +227,9 @@ public class GlobalApp extends Application {
 //                        .addExtras(extras)
                         .setAutoCancel(true)
                         .setSound(defaultSoundUri)
-                        .setContentIntent(pendingIntent);
+                        .setContentIntent(pendingIntent)
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(messageBody));
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -222,11 +238,13 @@ public class GlobalApp extends Application {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(channelId,
                     "Channel human readable title",
-                    NotificationManager.IMPORTANCE_DEFAULT);
+                    NotificationManager.IMPORTANCE_HIGH);
             notificationManager.createNotificationChannel(channel);
         }
 
         Log.d("TONY", "sendNotification: ");
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+        Random random = new Random();
+        int notifId = random.nextInt(Integer.MAX_VALUE);
+        notificationManager.notify(notifId /* ID of notification */, notificationBuilder.build());
     }
 }

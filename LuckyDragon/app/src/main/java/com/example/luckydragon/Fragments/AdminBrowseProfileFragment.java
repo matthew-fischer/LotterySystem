@@ -1,8 +1,11 @@
 package com.example.luckydragon.Fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -12,6 +15,9 @@ import com.example.luckydragon.Controllers.AdminBrowseProfileController;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.User;
 import com.example.luckydragon.R;
+import com.example.luckydragon.Views.BrowseProfileView;
+import com.example.luckydragon.Views.ViewProfilesView;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.util.Objects;
 
@@ -25,6 +31,9 @@ public class AdminBrowseProfileFragment extends Fragment {
 
     private User user;
     private AdminBrowseProfileController userController;
+    private Button adminRemoveFacility;
+    private LinearLayout adminBrowseFacilityContainer;
+    private MaterialTextView adminFacilityTextView;
 
     public AdminBrowseProfileFragment() {
         super(R.layout.fragment_admin_browse_profile);
@@ -35,9 +44,12 @@ public class AdminBrowseProfileFragment extends Fragment {
         GlobalApp globalApp = ((GlobalApp) requireActivity().getApplication());
         user = globalApp.getUserToView();
 
+        adminRemoveFacility = view.findViewById(R.id.adminRemoveFacilityButton);
+        adminFacilityTextView = view.findViewById(R.id.adminFacilityTextView);
+        adminBrowseFacilityContainer = view.findViewById(R.id.adminBrowseFacilityContainer);
+
         // Create controller
         userController = new AdminBrowseProfileController(user);
-
         // Set up delete profile button on click listener
         Button adminDeleteProfileButton = view.findViewById(R.id.adminDeleteProfileButton);
         adminDeleteProfileButton.setOnClickListener(v -> {
@@ -74,6 +86,42 @@ public class AdminBrowseProfileFragment extends Fragment {
                 }
             }
         });
+        adminRemoveFacility.setOnClickListener(v -> {
+            if (Objects.equals(user.getDeviceId(), globalApp.getUser().getDeviceId())) {
+                // edge case: we need to set the global app user facility as well here
+                globalApp.getUser().getOrganizer().setFacility(null);
+            }
+            userController.removeFacility();
+            Toast.makeText(getContext(), "Facility removed and all events associated with it", Toast.LENGTH_SHORT).show();
+            requireActivity().finish();
+
+        });
+
+        // Now start observing user
+        new BrowseProfileView(user, this);
     }
 
+    /**
+     * Sets the visibility of the facility info
+     * @param visibility the visibility state
+     */
+    public void setFacilityContainerVisibility(int visibility) {
+        adminBrowseFacilityContainer.setVisibility(visibility);
+    }
+
+    /**
+     * Sets the visibility of the facility remove button
+     * @param visibility the visibility state
+     */
+    public void setRemoveFacilityButtonVisiblity(int visibility) {
+        adminRemoveFacility.setVisibility(visibility);
+    }
+
+    /**
+     * Sets the admin facility text view to the facility name.
+     * @param facilityName The name of the facility.
+     */
+    public void setFacilityName(String facilityName) {
+        adminFacilityTextView.setText(facilityName);
+    }
 }

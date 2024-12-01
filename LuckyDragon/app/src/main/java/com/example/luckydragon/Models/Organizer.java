@@ -11,6 +11,7 @@ import static android.content.ContentValues.TAG;
 
 import android.util.Log;
 
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -83,6 +84,7 @@ public class Organizer {
                                     eventData.get("date") == null ? null : String.format("%s", eventData.get("date")),
                                     eventData.get("hours") == null ? null : Integer.valueOf(String.format("%s", eventData.get("hours"))),
                                     eventData.get("minutes") == null ? null : Integer.valueOf(String.format("%s", eventData.get("minutes"))),
+                                    (String)eventData.get("hashedQR"),
                                     db
                             );
                             // Check for duplicate events (could switch this to a set for performance, but event counts should be low)
@@ -149,6 +151,22 @@ public class Organizer {
      */
     public void removeEvent(Event event) {
         events.remove(event);
+        notifyObservers.run();
+    }
+
+    /**
+     * Removes all events associated with the organizer and set facility to null.
+     */
+    public void removeFacility() {
+        db.collection("events")
+                .whereEqualTo("organizerDeviceId", deviceId)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot document: queryDocumentSnapshots) {
+                        document.getReference().delete();
+                    }
+                });
+        setFacility(null);
         notifyObservers.run();
     }
 }
