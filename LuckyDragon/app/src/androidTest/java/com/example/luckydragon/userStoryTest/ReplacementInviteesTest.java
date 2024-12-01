@@ -170,6 +170,7 @@ public class ReplacementInviteesTest extends MockedEventList {
     }
     @Override
     protected void extraSetup() {
+        // Set up mockito mocking for waitlist user 1
         when(mockUsersCollection.document("ts123")).thenReturn(mockWaitlistEntrant1Document);
         when(mockWaitlistEntrant1Document.get()).thenReturn(mockWaitlistEntrant1Task);
         when(mockWaitlistEntrant1Document.set(any(Map.class))).thenReturn(mockVoidTask);
