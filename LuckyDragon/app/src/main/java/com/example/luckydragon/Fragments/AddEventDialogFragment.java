@@ -127,7 +127,6 @@ public class AddEventDialogFragment extends DialogFragment {
                                 posterFile.setText(file);
                                 controller.uploadEventPoster(eventPoster);
                             } catch (Exception ignored) {
-                                // TODO: add toast to say it was unsuccessful
                             }
                         }
                     }
@@ -161,7 +160,7 @@ public class AddEventDialogFragment extends DialogFragment {
                     controller.extractWaitLimit(waitlistLimitEditText);
                     controller.extractAttendeeLimit(attendeeLimitEditText);
                     controller.extractHasGeolocation(hasGeolocationSwitch);
-
+                    controller.extractCreatedTimeMillis();
                     // TODO: Make view reply if event with same info has been created upon save attempt
 
                     Log.e("TIME", event.getTime12h());

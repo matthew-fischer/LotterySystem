@@ -120,6 +120,13 @@ public class AddEventController extends Controller {
         getObservable().setHasGeolocation(toggle.isChecked());
     }
 
+    /**
+     * Extracts the creation time of the event.
+     */
+    public void extractCreatedTimeMillis() {
+        getObservable().setCreatedTimeMillis(System.currentTimeMillis());
+    }
+
     public void uploadEventPoster(Bitmap bitmap) {
         getObservable().setEventPoster(bitmap);
     }

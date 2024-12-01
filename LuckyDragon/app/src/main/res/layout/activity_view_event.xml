@@ -48,6 +48,12 @@
                 android:layout_gravity="end"
                 android:src="@drawable/baseline_image_24" />
             <ImageButton
+                android:id="@+id/editPosterButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:src="@drawable/baseline_edit_24" />
+            <ImageButton
                 android:id="@+id/viewQrCodeButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
