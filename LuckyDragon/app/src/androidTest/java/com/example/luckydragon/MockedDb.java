@@ -117,7 +117,6 @@ public abstract class MockedDb {
                     listener.onComplete(mockEventQueryTask);
                     return mockEventQueryTask;
                 });
-
         QuerySnapshot mockEventQuerySnapshot = mock(QuerySnapshot.class);  // list of QueryDocumentSnapshots
         when(mockEventQueryTask.getResult()).thenReturn(mockEventQuerySnapshot);
         Iterator<QueryDocumentSnapshot> mockEventQueryDocumentSnapshotIter = mock(Iterator.class);
