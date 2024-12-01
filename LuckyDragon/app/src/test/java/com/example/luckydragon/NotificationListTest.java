@@ -150,9 +150,10 @@ public class NotificationListTest {
      * Tests the addNotification method.
      */
     @Test
-    public void testAddNotifcation() {
+    public void testAddNotification() {
         User mockUser = new User("1234", mockFirestore);
         NotificationList notificationList = new NotificationList(mockFirestore, mockUser);
+        notificationList.setIsLoaded(true);
 
         assertEquals(notificationList.getNotificationList().size(), 0);
 
@@ -170,6 +171,7 @@ public class NotificationListTest {
     public void testClearNotifications() {
         User mockUser = new User("1234", mockFirestore);
         NotificationList notificationList = new NotificationList(mockFirestore, mockUser);
+        notificationList.setIsLoaded(true);
 
         assertEquals(notificationList.getNotificationList().size(), 0);
 
