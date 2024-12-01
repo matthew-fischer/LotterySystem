@@ -35,7 +35,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
-import java.util.function.Consumer;
 
 public abstract class MockedDb {
     @Mock
@@ -76,7 +75,7 @@ public abstract class MockedDb {
 
     protected String eventId = "fakeEventId";
     protected abstract Map<String, Object> getMockUserData();
-    protected abstract Map<String, Object> getMockEventData();
+    protected abstract void loadMockEventData(Map<String, Map<String, Object>> events);
 
     protected DocumentReference makeEventDocumentSnapshot(String id) {
         Map<String, Object> data = events.get(id);
@@ -135,6 +134,10 @@ public abstract class MockedDb {
     public void setup() {
         Intents.init();
         openMocks(this);
+
+        // Call hook for adding events to db
+        loadMockEventData(events);
+
         // Set up user mocking
         when(mockFirestore.collection("users")).thenReturn(mockUsersCollection);
         when(mockUsersCollection.document(anyString())).thenReturn(mockUserDocument);

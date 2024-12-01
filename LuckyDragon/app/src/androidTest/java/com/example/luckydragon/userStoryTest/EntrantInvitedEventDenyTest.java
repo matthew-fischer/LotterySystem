@@ -9,12 +9,10 @@ import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.example.luckydragon.Activities.EventActivity;
 import com.example.luckydragon.Activities.ViewEventActivity;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.MockedDb;
@@ -26,6 +24,8 @@ import org.junit.Test;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 public class EntrantInvitedEventDenyTest extends MockedDb {
     private String deviceId = "fakeDeviceId";
@@ -48,7 +48,14 @@ public class EntrantInvitedEventDenyTest extends MockedDb {
     }
 
     @Override
-    protected HashMap<String, Object> getMockEventData() {
+    protected void loadMockEventData(Map<String, Map<String, Object>> events) {
+        HashMap<String, Object> eventData = getMockEventData();
+
+        String id = String.valueOf(new Random().nextInt());
+        events.put(id, eventData);
+    }
+
+    private HashMap<String, Object> getMockEventData() {
         HashMap<String, Object> eventData = new HashMap<>();
         eventData.put("name", "C301 Standup");
         eventData.put("organizerDeviceId", "mockOrgId");

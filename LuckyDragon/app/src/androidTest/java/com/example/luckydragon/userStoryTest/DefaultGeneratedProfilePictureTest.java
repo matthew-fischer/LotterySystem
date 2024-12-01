@@ -27,6 +27,7 @@ import com.example.luckydragon.R;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class DefaultGeneratedProfilePictureTest extends MockedDb {
     @Override
@@ -34,9 +35,7 @@ public class DefaultGeneratedProfilePictureTest extends MockedDb {
         return null;  // New user
     }
     @Override
-    protected HashMap<String, Object> getMockEventData() {
-        return null;
-    }
+    protected void loadMockEventData(Map<String, Map<String, Object>> events) {}
 
     /**
      * USER STORY TEST
