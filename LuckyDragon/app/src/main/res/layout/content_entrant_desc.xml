@@ -11,7 +11,19 @@
     <TextView
         android:id="@+id/entrantNameTextView"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:textSize="24sp"
         android:text="Entrant Name" />
+
+    <ImageButton
+        android:layout_weight="0"
+        android:id="@+id/cancelIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/baseline_clear_24"
+        android:background="@null"
+        android:visibility="visible"
+        android:layout_gravity="center"
+        android:focusable="false"/>
 </LinearLayout>
