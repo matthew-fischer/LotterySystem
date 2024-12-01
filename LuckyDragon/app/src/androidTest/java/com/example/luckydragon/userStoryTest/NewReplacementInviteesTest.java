@@ -224,16 +224,6 @@ public class NewReplacementInviteesTest extends MockedEventList {
         when(mockUsersCollection.get()).thenReturn(mockQuerySnapshotVoidTask);
     }
 
-    @Override
-    protected ArrayList<Map<String, Object>> getBefore() {
-        return null;
-    }
-    @Override
-    protected ArrayList<Map<String, Object>> getAfter() {
-        return null;
-    }
-
-
     /**
      * USER STORY TEST
      * US 02.02.01 -- As an organizer I want to view the list of entrants who joined my event waiting list.

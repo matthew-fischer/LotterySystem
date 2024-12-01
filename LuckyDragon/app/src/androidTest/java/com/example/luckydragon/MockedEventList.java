@@ -62,8 +62,7 @@ public abstract class MockedEventList {
     // Event mocks
     @Mock
     private CollectionReference mockEventsCollection;
-//    @Mock
-//    private DocumentReference mockEventDocument;
+
 
     @Mock
     private Query mockEventQuery;
@@ -77,8 +76,7 @@ public abstract class MockedEventList {
     protected abstract Map<String, Object> getMockData();
     protected abstract void extraSetup();
     protected abstract String getUserID();
-    protected abstract ArrayList<Map<String, Object>> getBefore();
-    protected abstract ArrayList<Map<String, Object>> getAfter();
+
     private ArrayList<Map<String, Object>> before;
     private ArrayList<Map<String, Object>> after;
     private ArrayList<Task<DocumentSnapshot>> eventListTasks;
