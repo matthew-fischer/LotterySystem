@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import com.example.luckydragon.Controllers.EntrantArrayAdapter;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
+import com.example.luckydragon.Models.Observable;
 import com.example.luckydragon.Models.User;
 import com.example.luckydragon.Models.UserList;
 import com.example.luckydragon.R;
@@ -63,13 +64,13 @@ public class OrganizerEventFragment extends Fragment {
         attendeeListUsersListView = view.findViewById(R.id.eventAttendeelistListView);
 
         waitListUsersAdapter = new EntrantArrayAdapter(new ArrayList<>(), requireActivity().getApplicationContext(),
-                this);
+                this, "waitList");
         inviteeListUsersAdapter = new EntrantArrayAdapter(new ArrayList<>(), requireActivity().getApplicationContext(),
-                this);
+                this, "inviteeList");
         cancelledListUsersAdapter = new EntrantArrayAdapter(new ArrayList<>(), requireActivity().getApplicationContext(),
-                this);
+                this, "cancelledList");
         attendeeListUsersAdapter = new EntrantArrayAdapter(new ArrayList<>(), requireActivity().getApplicationContext().getApplicationContext(),
-                this);
+                this, "attendeeList");
 
         setupAdapter(waitListUsersAdapter, waitListUsersListView);
         setupAdapter(inviteeListUsersAdapter, inviteeListUsersListView);
@@ -122,6 +123,7 @@ public class OrganizerEventFragment extends Fragment {
         listView.setAdapter(adapter);
 
         // TODO: Setup item click listener for cancelling entrants --> can't cancel from attendeeList
+
     }
 
     /**
@@ -160,6 +162,24 @@ public class OrganizerEventFragment extends Fragment {
             waitlistLimit = String.format("%s", event.getWaitListSpots());
         }
         waitlistCapacityTextView.setText(String.format("Capacity: %s", waitlistLimit));
+    }
+
+    public void leaveWaitlist(String deviceId) {
+        if (event.hasGeolocation()) {
+            event.leaveWaitlistWithLocation(deviceId);
+        } else {
+            event.leaveWaitList(deviceId);
+        }
+        event.joinCancelledList(deviceId);
+        event.save();
+        organizerEventView.update(userList);
+    }
+
+    public void leaveInviteelist(String deviceId) {
+        event.leaveInviteeList(deviceId);
+        event.joinCancelledList(deviceId);
+        event.save();
+        organizerEventView.update(userList);
     }
 
     @Override
