@@ -1,18 +1,20 @@
 package com.example.luckydragon.userStoryTest;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.SystemClock;
 
 import androidx.test.core.app.ActivityScenario;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.example.luckydragon.Activities.ViewEventsActivity;
+import com.example.luckydragon.Activities.SelectRoleActivity;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.MockedDb;
 import com.example.luckydragon.R;
@@ -23,9 +25,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
-public class BrowseEventsAdminTest extends MockedDb{
+/**
+ * Contains test for US 03.04.01.
+ * As an administrator, I want to be able to browse events.
+ */
+public class BrowseEventsAdminTest extends MockedDb {
 
     @Override
     protected HashMap<String, Object> getMockUserData() {
@@ -63,29 +68,36 @@ public class BrowseEventsAdminTest extends MockedDb{
         eventData.put("attendeeList", new ArrayList<>());
         eventData.put("cancelledList", new ArrayList<>());
 
-        String id = String.valueOf(new Random().nextInt());
+        String id = "event123";
         events.put(id, eventData);
     }
 
-    /**
-     * ADMIN STORY TEST
-     * >
-     * US 03.04.01 As an administrator, I want to be able to browse events.
-     * Launch activity directly on ViewEvents activity
-     * Checks if listview with user profiles is being displayed
-     */
     @Test
     public void testBrowseEvents() {
 
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        final Intent intent = new Intent(targetContext, ViewEventsActivity.class);
+        final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
 
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
         globalApp.setDb(mockFirestore);
-        // Launch event activity directly
-        try (final ActivityScenario<ViewEventsActivity> scenario = ActivityScenario.launch(intent)) {
-            SystemClock.sleep(5000);
-            onView(withId(R.id.adminProfileEventsListview)).check(matches(isDisplayed()));
+
+        try (final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
+            // User is admin, so admin button should show
+            onView(ViewMatchers.withId(R.id.entrantButton)).check(matches(isDisplayed()));
+            onView(withId(R.id.organizerButton)).check(matches(isDisplayed()));
+            onView(withId(R.id.adminButton)).check(matches(isDisplayed()));
+
+            // Admin clicks "Administrator"
+            onView(withId(R.id.adminButton)).perform(click());
+
+            // Admin profile fragment should open and view events button should be displayed
+            onView(withId(R.id.viewEventsButton)).check(matches(isDisplayed()));
+
+            // Admin clicks "View Events"
+            onView(withId(R.id.viewEventsButton)).perform(click());
+
+            // Check if the event "C301 Standup" is displayed
+            onView(withText("C301 Standup")).check(matches(isDisplayed()));
         }
     }
 
