@@ -287,23 +287,34 @@ public class Event extends Observable implements Serializable {
             lotteryTime = new Time(Math.toIntExact((Long) eventData.get("lotteryHours")), Math.toIntExact((Long) eventData.get("lotteryMinutes")));
         }
 
+        if (eventData.get("waitList") != null) {
+            if(!waitList.equals((List<String>) eventData.get("waitList"))) {
+                waitList = new ArrayList<>((List<String>) eventData.get("waitList"));
+            };
+        }
+
+        if (eventData.get("inviteeList") != null) {
+            if(!inviteeList.equals((List<String>) eventData.get("inviteeList"))) {
+                inviteeList = (List<String>) eventData.get("inviteeList");
+            }
+        }
+
+        if (eventData.get("attendeeList") != null) {
+            if(!attendeeList.equals((List<String>) eventData.get("attendeeList"))) {
+                attendeeList = (List<String>) eventData.get("attendeeList");
+            }
+        }
+
+        if (eventData.get("cancelledList") != null) {
+            if (!cancelledList.equals((List<String>) eventData.get("cancelledList"))) {
+                cancelledList = (List<String>) eventData.get("cancelledList");
+            }
+        }
         if(eventData.get("waitListLocations") != null) {
             waitlistLocations = new ArrayList<>();
             for(HashMap<String, Object> oMap : (ArrayList<HashMap<String, Object>>) eventData.get("waitListLocations")) {
                 waitlistLocations.add(new Location((double) oMap.get("latitude"), (double) oMap.get("longitude")));
             }
-        }
-        if (eventData.get("waitList") != null) {
-            waitList = (List<String>) eventData.get("waitList");
-        }
-        if (eventData.get("attendeeList") != null) {
-            attendeeList = (ArrayList<String>) eventData.get("attendeeList");
-        }
-        if (eventData.get("inviteeList") != null) {
-            inviteeList = (ArrayList<String>) eventData.get("inviteeList");
-        }
-        if (eventData.get("cancelledList") != null) {
-            cancelledList = (ArrayList<String>) eventData.get("cancelledList");
         }
 
         // stringToBitMatrix handles null values
@@ -700,8 +711,9 @@ public class Event extends Observable implements Serializable {
 
     /**
      * Samples an invitee from the wait list to be added to the invitee list.
+     * Returns the deviceId of the user who was selected.
      */
-    public void sampleInvitee() {
+    public String sampleInvitee() {
         assert(waitList.size() > 0);
 
         Random random = new Random();
@@ -714,6 +726,8 @@ public class Event extends Observable implements Serializable {
         if(hasGeolocation) {
             waitlistLocations.remove(randomIndex);
         }
+
+        return selectedId;
     }
 
     /**
@@ -724,7 +738,7 @@ public class Event extends Observable implements Serializable {
         assert(inviteeList.isEmpty()); // invitee list should start empty
         assert(!inviteesHaveBeenSelected); // invitees should not have been selected yet
 
-        while(!waitList.isEmpty() && inviteeList.size() <= attendeeLimit) {
+        while(!waitList.isEmpty() && inviteeList.size() < attendeeLimit) {
             sampleInvitee();
         }
 
@@ -735,13 +749,18 @@ public class Event extends Observable implements Serializable {
      * Fills the invitee list with replacement entrants from the wait list if there are still
      * some spots left. Only can be called after the initial sampling of invitees
      * has happened.
+     *
+     * @return a list of the deviceIds of the entrants who have been selected as replacements
      */
-    public void fillInvitees() {
+    public ArrayList<String> fillInvitees() {
         assert(inviteesHaveBeenSelected);
 
-        while (!waitList.isEmpty() && inviteeList.size() + attendeeList.size() <= attendeeLimit) {
-            sampleInvitee();
+        ArrayList<String> replacementInvitees = new ArrayList<>();
+        while (!waitList.isEmpty() && inviteeList.size() + attendeeList.size() < attendeeLimit) {
+            replacementInvitees.add(sampleInvitee());
         }
+
+        return replacementInvitees;
     }
 
     public Long getCreatedTimeMillis() {

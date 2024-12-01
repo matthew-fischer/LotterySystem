@@ -21,6 +21,7 @@ import static org.mockito.MockitoAnnotations.openMocks;
 
 import android.content.Context;
 import android.content.Intent;
+import android.provider.Settings;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.intent.Intents;
@@ -30,6 +31,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import com.example.luckydragon.Activities.SelectRoleActivity;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
+import com.example.luckydragon.Models.EventList;
 import com.example.luckydragon.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -227,7 +229,9 @@ public class CreateEventTest {
 
             // Check that the event is in the organizer's list and that the qr code has been generated
             boolean eventIsPresent = false;
-            for(Event e : globalApp.getUser().getOrganizer().getEvents()) {
+
+            EventList eventList = globalApp.getEvents();
+            for(Event e : eventList.getEventList()) {
                 if(Objects.equals(e.getName(), testEventName) && (e.getAttendeeSpots() == Integer.parseInt(testAttendeeLimit))) {
                     eventIsPresent = true;
                     assertNotNull(e.getQrHash());

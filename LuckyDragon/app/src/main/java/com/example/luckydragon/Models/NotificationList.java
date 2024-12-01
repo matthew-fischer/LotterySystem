@@ -17,7 +17,9 @@ import java.util.Objects;
 public class NotificationList extends Observable {
     private User user;
     private ArrayList<Notification> notificationList = new ArrayList<>();
+    private ArrayList<Notification> toBeAddedNotifications = new ArrayList<>();
     private FirebaseFirestore db;
+    private boolean isLoaded = false;
 
     /**
      * A small class to represent a single notification
@@ -79,6 +81,8 @@ public class NotificationList extends Observable {
                         return;
                     }
                     updateFromPayload(value.getData());
+                    isLoaded = true;
+                    addToBeAddedNotifications();
                 });
     }
 
@@ -156,13 +160,20 @@ public class NotificationList extends Observable {
     }
 
     /**
-     * Add a notification to the list and save to db
+     * Add a notification to the list and save to db if list is loaded. If the user
+     * has not been loaded, cache the notification to be saved to the db later.
      * @param title the title of the notification
      * @param body the body of the notification
      */
     public void addNotification(String title, String body) {
-        notificationList.add(new Notification(title, body));
-        save();
+        // we only save if the list has been loaded to avoid overwriting the db
+        // with a new notification before the old notifs are loaded
+        if (isLoaded) {
+            notificationList.add(new Notification(title, body));
+            save();
+        } else {
+            toBeAddedNotifications.add(new Notification(title, body));
+        }
     }
 
     /**
@@ -171,5 +182,19 @@ public class NotificationList extends Observable {
     public void clearNotifications() {
         this.notificationList.clear();
         save();
+    }
+
+    /**
+     * Adds notifications that were added before the user was fully loaded to the
+     * list and db now that it is safe to do so.
+     */
+    private void addToBeAddedNotifications() {
+        // we need to create a local copy to avoid an infinite loop
+        // with the snapshot listener
+        ArrayList<Notification> localCopy = new ArrayList<>(toBeAddedNotifications);
+        toBeAddedNotifications.clear();
+        for (Notification notif : localCopy) {
+            addNotification(notif.title, notif.body);
+        }
     }
 }

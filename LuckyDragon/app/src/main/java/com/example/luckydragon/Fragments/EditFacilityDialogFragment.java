@@ -65,7 +65,6 @@ public class EditFacilityDialogFragment extends DialogFragment {
                     Dialog dialog = requireDialog();
                     final TextInputEditText facilityEditText = dialog.findViewById(R.id.edit_facility_FacilityEditText);
                     editFacilityDialogController.extractFacility(facilityEditText);
-
                 })
                 .setNegativeButton("Cancel", (dialogInterface, i) -> {
                     // cancel

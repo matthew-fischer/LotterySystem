@@ -56,6 +56,12 @@ public class OrganizerEventView extends Observer {
         } else {
             noCancelledisteesTextView.setVisibility(View.GONE);
         }
+        TextView noAttendeeListeesTextView = organizerEventFragment.getView().findViewById(R.id.noAttendeeTextView);
+        if (organizerEventFragment.attendeeListUsersAdapter.getCount() == 0) {
+            noAttendeeListeesTextView.setVisibility(View.VISIBLE);
+        } else {
+            noAttendeeListeesTextView.setVisibility(View.GONE);
+        }
     }
 
     @Override

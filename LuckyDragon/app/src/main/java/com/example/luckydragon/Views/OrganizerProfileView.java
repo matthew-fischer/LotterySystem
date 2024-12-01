@@ -58,13 +58,5 @@ public class OrganizerProfileView extends Observer {
             organizerProfileFragment.setFacilityButtonIcon(R.drawable.baseline_edit_24);
         }
         organizerProfileFragment.setFacilityTextView(name);
-
-        organizerProfileFragment.updateEventsList();
-        if (getObservable().getOrganizer().getEvents().isEmpty()) {
-            // Show "No events" textview if no events and hide otherwise
-            organizerProfileFragment.setNoEventsVisibility(View.VISIBLE);
-        } else {
-            organizerProfileFragment.setNoEventsVisibility(View.GONE);
-        }
     }
 }

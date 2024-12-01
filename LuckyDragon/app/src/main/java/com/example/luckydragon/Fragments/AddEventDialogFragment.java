@@ -164,8 +164,6 @@ public class AddEventDialogFragment extends DialogFragment {
                     // TODO: Make view reply if event with same info has been created upon save attempt
 
                     Log.e("TIME", event.getTime12h());
-
-                    user.getOrganizer().addEvent(event);
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override

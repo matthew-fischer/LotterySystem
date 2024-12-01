@@ -30,6 +30,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import com.example.luckydragon.Activities.SelectRoleActivity;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
+import com.example.luckydragon.Models.EventList;
 import com.example.luckydragon.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -190,6 +191,7 @@ public class CreateEventWithWaitlistLimitTest {
 
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
         globalApp.setDb(mockFirestore);
+        EventList eventList = globalApp.getEvents();
 
         try (final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
             // User is not admin, so admin button should not show
@@ -224,7 +226,7 @@ public class CreateEventWithWaitlistLimitTest {
 
             // Check that the event is in the organizer's list and that the qr code has been generated
             boolean eventIsPresent = false;
-            for(Event e : globalApp.getUser().getOrganizer().getEvents()) {
+            for(Event e: eventList.getEventList()) {
                 if(Objects.equals(e.getName(), testEventName) && (e.getAttendeeSpots() == Integer.parseInt(testAttendeeLimit))
                     && e.getWaitListSpots() == Integer.parseInt(testWaitlistLimit)) {
                     eventIsPresent = true;
