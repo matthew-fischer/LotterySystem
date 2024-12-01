@@ -1,5 +1,6 @@
 package com.example.luckydragon.Controllers;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.example.luckydragon.Models.Event;
@@ -113,6 +114,12 @@ public class EventController extends Controller {
      */
     public void removeEventPoster() {
         getObservable().removeEventPoster();
+    }    /**
+     /*
+     * Updates the Event model after organizer edits the event poster.
+     */
+    public void setEventPoster (Bitmap bitmap) {
+        getObservable().setEventPoster(bitmap);
     }
 
 }

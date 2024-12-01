@@ -767,6 +767,11 @@ public class Event extends Observable implements Serializable {
         return createdTimeMillis;
     }
 
+    public void setCreatedTimeMillis(Long createdTimeMillis) {
+        this.createdTimeMillis = createdTimeMillis;
+        notifyObservers();
+    }
+
     public String getLotteryDate() {
         return lotteryDate;
     }

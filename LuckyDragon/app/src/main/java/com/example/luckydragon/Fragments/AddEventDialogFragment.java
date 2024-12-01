@@ -131,7 +131,6 @@ public class AddEventDialogFragment extends DialogFragment {
                                 posterFile.setText(file);
                                 controller.uploadEventPoster(eventPoster);
                             } catch (Exception ignored) {
-                                // TODO: add toast to say it was unsuccessful
                             }
                         }
                     }
@@ -165,6 +164,8 @@ public class AddEventDialogFragment extends DialogFragment {
                     controller.extractWaitLimit(waitlistLimitEditText);
                     controller.extractAttendeeLimit(attendeeLimitEditText);
                     controller.extractHasGeolocation(hasGeolocationSwitch);
+                    controller.extractCreatedTimeMillis();
+
 
                     // check that event date is not in the past
                     LocalDate eventDate = LocalDate.parse(event.getDate());
