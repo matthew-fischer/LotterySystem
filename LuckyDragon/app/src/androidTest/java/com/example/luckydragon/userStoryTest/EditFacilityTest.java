@@ -31,6 +31,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.example.luckydragon.Activities.SelectRoleActivity;
 import com.example.luckydragon.GlobalApp;
+import com.example.luckydragon.MockedDb;
 import com.example.luckydragon.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -55,38 +56,10 @@ import java.util.Map;
  * Contains tests for US 02.01.03
  * Organizer - create and manage my facility profile
  */
-public class EditFacilityTest {
-    @Mock
-    private FirebaseFirestore mockFirestore;
-    // User mocks
-    @Mock
-    private CollectionReference mockUsersCollection;
-    @Mock
-    private DocumentReference mockUserDocument;
-    @Mock
-    private DocumentSnapshot mockUserDocumentSnapshot;
-    @Mock
-    private Task<DocumentSnapshot> mockUserTask;
-    @Mock
-    private Task<Void> mockVoidTask;
-    // Event mocks
-    @Mock
-    private CollectionReference mockEventsCollection;
-    @Mock
-    private DocumentReference mockEventDocument;
-    @Mock
-    private Task<DocumentSnapshot> mockEventTask;
-    @Mock
-    private Query mockEventQuery;
-    @Mock
-    private Task<QuerySnapshot> mockEventQueryTask;
-    @Mock
-    private CollectionReference mockMessagesCollection;
-    @Mock
-    private DocumentReference mockMessagesDocument;
-
+public class EditFacilityTest extends MockedDb {
     // Mock organizer with an existing facility
-    private HashMap<String, Object> getMockData() {
+    @Override
+    protected HashMap<String, Object> getMockUserData() {
         // Define test user
         HashMap<String, Object> testUserData = new HashMap<>();
         // Personal info
@@ -103,68 +76,8 @@ public class EditFacilityTest {
         return testUserData;
     }
 
-    @Before
-    public void setup() {
-        Intents.init();
-        openMocks(this);
-
-        // Set up user mocking
-        when(mockFirestore.collection("users")).thenReturn(mockUsersCollection);
-        when(mockUsersCollection.document(anyString())).thenReturn(mockUserDocument);
-        when(mockUserDocument.get()).thenReturn(mockUserTask);
-        when(mockUserDocument.set(any(Map.class))).thenReturn(mockVoidTask);
-        when(mockUserTask.addOnFailureListener(any(OnFailureListener.class))).thenReturn(mockUserTask);
-        doAnswer(invocation -> {
-            OnSuccessListener<DocumentSnapshot> listener = invocation.getArgument(0);
-            listener.onSuccess(mockUserDocumentSnapshot);
-            return mockUserTask;
-        }).when(mockUserTask).addOnSuccessListener(any(OnSuccessListener.class));
-        when(mockUserDocumentSnapshot.getData()).thenReturn(getMockData());
-
-        // Set up event mocking
-        // We don't want to save anything to the database, so we mock the methods that save an event to the db to do nothing
-        // We also mock getId() to return "mockEventID" instead of going to the database for an id
-        when(mockFirestore.collection("events")).thenReturn(mockEventsCollection);
-        when(mockEventsCollection.document()).thenReturn(mockEventDocument);
-        when(mockEventDocument.getId()).thenReturn("mockEventID");
-
-        when(mockEventsCollection.document(anyString())).thenReturn(mockEventDocument);
-        when(mockEventDocument.get()).thenReturn(mockEventTask);
-        // when set is called, we want to do nothing
-        when(mockEventDocument.set(anyMap())).thenReturn(mockVoidTask);
-        // in the on complete listener, we want to do nothing
-        when(mockEventTask.addOnCompleteListener(any())).thenAnswer((invocation) -> {
-            return null; // do nothing
-        });
-        // in Organizer.fetchData(), we don't want to pull events from db
-        when(mockEventsCollection
-                .whereEqualTo(anyString(), any()))
-                .thenReturn(mockEventQuery);
-        when(mockEventQuery.get()).thenReturn(mockEventQueryTask);
-        when(mockEventQueryTask.addOnCompleteListener(any()))
-                .thenAnswer((invocation -> {
-                    return null; // do nothing
-                }));
-
-        // mock notifications db stuff
-        when(mockFirestore.collection("messages")).thenReturn(mockMessagesCollection);
-        when(mockMessagesCollection.document(any())).thenReturn(mockMessagesDocument);
-        when(mockMessagesDocument.addSnapshotListener(any())).thenAnswer((invocation) -> {
-            return null;
-        });
-        when(mockMessagesDocument.set(anyMap())).thenReturn(mockVoidTask);
-    }
-
-    @After
-    public void tearDown() {
-        // Reset global app state
-        final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
-        globalApp.setDb(null);
-        globalApp.setUser(null);
-
-        Intents.release();
-    }
+    @Override
+    protected void loadMockEventData(Map<String, Map<String, Object>> events) {}
 
     /**
      * USER STORY TEST
