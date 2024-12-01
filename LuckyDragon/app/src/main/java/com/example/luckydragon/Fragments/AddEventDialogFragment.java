@@ -190,9 +190,12 @@ public class AddEventDialogFragment extends DialogFragment {
                         activity.sendToast("Lottery must be in the future!");
                         event.deleteEventFromDb();
                         return;
+                    } else if(event.getWaitListSpots() < event.getAttendeeSpots()) {
+                        activity.sendToast("The waitlist limit cannot be smaller than the attendee limit!");
+                        event.deleteEventFromDb();
+                        return;
                     }
 
-                    // TODO: Make view reply if event with same info has been created upon save attempt
                     user.getOrganizer().addEvent(event);
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
