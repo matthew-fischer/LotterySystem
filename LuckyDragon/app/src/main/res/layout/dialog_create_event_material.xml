@@ -116,17 +116,6 @@
     </LinearLayout>
 
     <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/notifications_switch"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:text="Notifications"
-        android:background="@drawable/frame"
-        android:paddingStart="15dp"
-        android:paddingVertical="17.5dp"
-        android:textSize="16sp"
-        android:layout_marginTop="10dp"
-        />
-    <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/geolocation_switch"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

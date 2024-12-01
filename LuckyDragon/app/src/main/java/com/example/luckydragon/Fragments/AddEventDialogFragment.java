@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -46,6 +47,9 @@ import com.google.android.material.textview.MaterialTextView;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Objects;
 
 /**
@@ -161,9 +165,38 @@ public class AddEventDialogFragment extends DialogFragment {
                     controller.extractAttendeeLimit(attendeeLimitEditText);
                     controller.extractHasGeolocation(hasGeolocationSwitch);
                     controller.extractCreatedTimeMillis();
-                    // TODO: Make view reply if event with same info has been created upon save attempt
 
-                    Log.e("TIME", event.getTime12h());
+
+                    // check that event date is not in the past
+                    LocalDate eventDate = LocalDate.parse(event.getDate());
+                    LocalTime eventTime = LocalTime.of(event.getEventHours(), event.getEventMinutes());
+                    LocalDateTime eventDateTime = LocalDateTime.of(eventDate, eventTime);
+
+                    LocalDate lotteryDate = LocalDate.parse(event.getLotteryDate());
+                    LocalTime lotteryTime = LocalTime.of(event.getLotteryHours(), event.getLotteryMinutes());
+                    LocalDateTime lotteryDateTime = LocalDateTime.of(lotteryDate, lotteryTime);
+
+                    LocalDateTime now = LocalDateTime.now();
+
+                    if(!eventDateTime.isAfter(now)) {
+                        activity.sendToast("Event must be in the future!");
+                        event.deleteEventFromDb();
+                        return;
+                    } else if(!lotteryDateTime.isBefore(eventDateTime)) {
+                        activity.sendToast("Lottery must be before the event!");
+                        event.deleteEventFromDb();
+                        return;
+                    } else if(!lotteryDateTime.isAfter(now)) {
+                        activity.sendToast("Lottery must be in the future!");
+                        event.deleteEventFromDb();
+                        return;
+                    } else if(event.getWaitListSpots() != -1 && event.getWaitListSpots() < event.getAttendeeSpots()) {
+                        activity.sendToast("The waitlist limit cannot be smaller than the attendee limit!");
+                        event.deleteEventFromDb();
+                        return;
+                    }
+
+                    user.getOrganizer().addEvent(event);
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override

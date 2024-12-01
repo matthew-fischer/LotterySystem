@@ -808,6 +808,10 @@ public class Event extends Observable implements Serializable {
         return this.eventPoster;
     }
 
+    public int getEventHours() { return time.hours; }
+
+    public int getEventMinutes() { return time.minutes; }
+
     public static BitMatrix stringToBitMatrix(String s) {
         if (s == null || s.isEmpty()) return null;
 
