@@ -39,8 +39,12 @@ public class EntrantArrayAdapter extends ArrayAdapter<User> {
         // Set name
         TextView eventNameTextView = rowView.findViewById(R.id.entrantNameTextView);
         ImageButton cancelButton = rowView.findViewById(R.id.cancelIcon);
-        cancelButton.setVisibility(listType.equals("attendeeList") ? View.GONE : View.VISIBLE);
-        cancelButton.setVisibility(listType.equals("cancelledList") ? View.GONE : View.VISIBLE);
+
+        if (listType.equals("attendeeList") || listType.equals("cancelledList")) {
+            cancelButton.setVisibility(View.GONE);
+        } else {
+            cancelButton.setVisibility(View.VISIBLE);
+        }
 
         eventNameTextView.setText(entrant.getName());
 
