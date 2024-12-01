@@ -189,7 +189,7 @@ public class AddEventDialogFragment extends DialogFragment {
                         activity.sendToast("Lottery must be in the future!");
                         event.deleteEventFromDb();
                         return;
-                    } else if(event.getWaitListSpots() < event.getAttendeeSpots()) {
+                    } else if(event.getWaitListSpots() != -1 && event.getWaitListSpots() < event.getAttendeeSpots()) {
                         activity.sendToast("The waitlist limit cannot be smaller than the attendee limit!");
                         event.deleteEventFromDb();
                         return;
