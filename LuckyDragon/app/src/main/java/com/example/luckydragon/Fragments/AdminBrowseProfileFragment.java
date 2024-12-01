@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -15,8 +14,7 @@ import com.example.luckydragon.Controllers.AdminBrowseProfileController;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.User;
 import com.example.luckydragon.R;
-import com.example.luckydragon.Views.BrowseProfileView;
-import com.example.luckydragon.Views.ViewProfilesView;
+import com.example.luckydragon.Views.AdminBrowseProfileView;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.util.Objects;
@@ -32,6 +30,7 @@ public class AdminBrowseProfileFragment extends Fragment {
     private User user;
     private AdminBrowseProfileController userController;
     private Button adminRemoveFacility;
+    Button adminRemoveProfilePictureButton;
     private LinearLayout adminBrowseFacilityContainer;
     private MaterialTextView adminFacilityTextView;
 
@@ -55,7 +54,6 @@ public class AdminBrowseProfileFragment extends Fragment {
         adminDeleteProfileButton.setOnClickListener(v -> {
             if (Objects.equals(user.getDeviceId(), globalApp.getUser().getDeviceId())) {
                 Toast.makeText(getContext(), "Cannot delete your own profile", Toast.LENGTH_SHORT).show();
-                requireActivity().finish();
             }
             else {
                 userController.deleteUser();
@@ -65,26 +63,14 @@ public class AdminBrowseProfileFragment extends Fragment {
         });
 
         // Set up remove profile picture button on click listener
-        Button adminRemoveProfilePictureButton = view.findViewById(R.id.adminRemoveProfilePictureButton);
+        adminRemoveProfilePictureButton = view.findViewById(R.id.adminRemoveProfilePictureButton);
         adminRemoveProfilePictureButton.setOnClickListener(v -> {
-            // Check if the user being viewed is the current logged in user
+            // Remove profile picture
             if (Objects.equals(user.getDeviceId(), globalApp.getUser().getDeviceId())) {
-                Toast.makeText(getContext(), "Cannot remove your own picture, go to edit profile to remove picture", Toast.LENGTH_SHORT).show();
-                requireActivity().finish();
+                globalApp.getUser().setUploadedProfilePicture(null);
             }
-            else {
-                // Cannot remove profile picture when there is no uploaded profile picture
-                if (user.getUploadedProfilePicture() == null) {
-                    Toast.makeText(getContext(), "User has default profile picture, cannot remove default picture", Toast.LENGTH_SHORT).show();
-                    requireActivity().finish();
-                }
-                else {
-                    // Remove profile picture
-                    userController.removeProfilePicture();
-                    Toast.makeText(getContext(), "Profile picture removed successfully", Toast.LENGTH_SHORT).show();
-                    requireActivity().finish();
-                }
-            }
+            userController.removeProfilePicture();
+            Toast.makeText(getContext(), "Profile picture removed successfully", Toast.LENGTH_SHORT).show();
         });
         adminRemoveFacility.setOnClickListener(v -> {
             if (Objects.equals(user.getDeviceId(), globalApp.getUser().getDeviceId())) {
@@ -93,12 +79,10 @@ public class AdminBrowseProfileFragment extends Fragment {
             }
             userController.removeFacility();
             Toast.makeText(getContext(), "Facility removed and all events associated with it", Toast.LENGTH_SHORT).show();
-            requireActivity().finish();
-
         });
 
         // Now start observing user
-        new BrowseProfileView(user, this);
+        new AdminBrowseProfileView(user, this);
     }
 
     /**
@@ -124,4 +108,9 @@ public class AdminBrowseProfileFragment extends Fragment {
     public void setFacilityName(String facilityName) {
         adminFacilityTextView.setText(facilityName);
     }
+
+    public void setAdminRemoveProfilePictureButton(int visibility) {
+        adminRemoveProfilePictureButton.setVisibility(visibility);
+    }
+
 }

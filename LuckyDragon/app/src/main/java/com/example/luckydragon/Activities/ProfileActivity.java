@@ -29,6 +29,8 @@ import com.example.luckydragon.Models.User;
 import com.example.luckydragon.R;
 import com.example.luckydragon.Views.ProfileView;
 
+import java.util.Objects;
+
 /**
  * This is the activity for the profile page.
  * It shows general user information like name, email, and phone number.
@@ -107,7 +109,10 @@ public class ProfileActivity extends AppBarActivity {
         } else {
             edit_profile_button.setVisibility(View.GONE);
         }
-
+        // If an admin is viewing themselves still hide the edit button
+        if (((GlobalApp) getApplication()).getUserToView() != null && Objects.equals(((GlobalApp) getApplication()).getUserToView().getDeviceId(), ((GlobalApp) getApplication()).getUser().getDeviceId())) {
+            edit_profile_button.setVisibility(View.GONE);
+        }
     }
 
     /**
