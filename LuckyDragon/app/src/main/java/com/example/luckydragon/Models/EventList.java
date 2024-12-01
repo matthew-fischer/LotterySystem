@@ -33,7 +33,6 @@ public class EventList extends Observable {
      */
     public EventList(FirebaseFirestore firestore) {
         this.db = firestore;
-
         db.collection("events").addSnapshotListener((value, error) -> {
             if (error != null) {
                 Log.e("Firestore", error.toString());
@@ -41,8 +40,9 @@ public class EventList extends Observable {
             }
             if (value != null) {
                 events.clear();
-                for (QueryDocumentSnapshot doc: value) {
-                    events.add(createEvent(doc));
+                for(int i = 0; i < value.size(); i++) {
+                    QueryDocumentSnapshot q = (QueryDocumentSnapshot) value.getDocuments().get(i);
+                    events.add(createEvent((QueryDocumentSnapshot) value.getDocuments().get(i)));
                 }
                 notifyObservers();
             }
@@ -53,13 +53,11 @@ public class EventList extends Observable {
      * Fetches the current events data from firestore and updates the events list.
      */
     public void fetchData() {
-
         db.collection("events")
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
                         events.clear();
-
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             events.add(createEvent(document));
                         }
@@ -78,9 +76,7 @@ public class EventList extends Observable {
      * @return An ArrayList of Event objects.
      */
     public ArrayList<Event> getEventList() {
-
         return events;
-
     }
 
     /**

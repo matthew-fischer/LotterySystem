@@ -388,7 +388,7 @@ public class User extends Observable {
      */
     public void setOrganizer(Boolean organizer) {
         if (organizer) {
-            this.organizer = new Organizer(deviceId, this::notifyObservers, db);
+            this.organizer = new Organizer(deviceId, null, this::notifyObservers, db);
         } else {
             this.organizer = null;
         }
@@ -451,12 +451,7 @@ public class User extends Observable {
                 && userData.get("isOrganizer").toString().equals("true");
         if (isOrganizer) {
             String facility = userData.get("facility") != null ? Objects.requireNonNull(userData.get("facility")).toString() : null;
-
-            if (facility != null) {
-                organizer = new Organizer(deviceId, facility, this::notifyObservers, db);
-            } else {
-                organizer = new Organizer(deviceId, this::notifyObservers, db);
-            }
+            organizer = new Organizer(deviceId, facility, this::notifyObservers, db);
         }
         isAdmin = userData.get("isAdmin") != null
                 && userData.get("isAdmin").toString().equals("true");
