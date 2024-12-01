@@ -40,8 +40,8 @@ public class EventList extends Observable {
             }
             if (value != null) {
                 events.clear();
-                for (QueryDocumentSnapshot doc: value) {
-                    events.add(createEvent(doc));
+                for(int i = 0; i < value.size(); i++) {
+                    events.add(createEvent((QueryDocumentSnapshot) value.getDocuments().get(i)));
                 }
                 notifyObservers();
             }
