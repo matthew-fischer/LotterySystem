@@ -30,7 +30,7 @@ import java.util.HashMap;
 
 public class DefaultGeneratedProfilePictureTest extends MockedDb {
     @Override
-    protected HashMap<String, Object> getMockData() {
+    protected HashMap<String, Object> getMockUserData() {
         return null;  // New user
     }
     @Override

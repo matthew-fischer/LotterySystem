@@ -25,7 +25,7 @@ import java.util.HashMap;
 
 public class SignupTest extends MockedDb {
     @Override
-    protected HashMap<String, Object> getMockData() {
+    protected HashMap<String, Object> getMockUserData() {
         return null;  // User does not exist yet
     }
     @Override

@@ -31,7 +31,7 @@ import java.util.HashMap;
 public class EventGeolocationWarning extends MockedDb {
     private String deviceId = "fakeDeviceId";
     @Override
-    protected HashMap<String, Object> getMockData() {
+    protected HashMap<String, Object> getMockUserData() {
         // Define test user
         HashMap<String, Object> testUserData = new HashMap<>();
         // Personal info

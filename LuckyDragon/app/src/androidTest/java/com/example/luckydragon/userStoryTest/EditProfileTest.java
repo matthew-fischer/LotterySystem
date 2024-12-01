@@ -25,7 +25,7 @@ import java.util.HashMap;
 
 public class EditProfileTest extends MockedDb {
     @Override
-    protected HashMap<String, Object> getMockData() {
+    protected HashMap<String, Object> getMockUserData() {
         // Define test user
         HashMap<String, Object> testUserData = new HashMap<>();
         // Personal info

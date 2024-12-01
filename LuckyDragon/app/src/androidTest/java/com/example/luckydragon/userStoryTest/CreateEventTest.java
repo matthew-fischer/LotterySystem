@@ -16,12 +16,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
 import android.content.Context;
 import android.content.Intent;
-import android.provider.Settings;
 import android.util.Log;
 
 import androidx.test.core.app.ActivityScenario;
@@ -31,8 +31,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.example.luckydragon.Activities.SelectRoleActivity;
 import com.example.luckydragon.GlobalApp;
-import com.example.luckydragon.Models.Event;
-import com.example.luckydragon.Models.EventList;
+import com.example.luckydragon.MockedDb;
 import com.example.luckydragon.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -44,6 +43,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import org.junit.After;
@@ -51,53 +51,67 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Random;
 
 /**
  * Contains tests for US 02.01.01.
  * Organizer - create a new event and generate a unique promotional QR code that links to the event description and event poster in the app
  */
-public class CreateEventTest {
-    @Mock
-    protected FirebaseFirestore mockFirestore;
-    // User mocks
-    @Mock
-    private CollectionReference mockUsersCollection;
-    @Mock
-    private DocumentReference mockUserDocument;
-    @Mock
-    private DocumentSnapshot mockUserDocumentSnapshot;
-    @Mock
-    private Task<DocumentSnapshot> mockUserTask;
-    @Mock
-    private Task<Void> mockVoidTask;
-    // Event mocks
-    @Mock
-    private CollectionReference mockEventsCollection;
-    @Mock
-    private DocumentReference mockEventDocument;
-    @Mock
-    private Task<DocumentSnapshot> mockEventTask;
-    @Mock
-    private Query mockEventQuery;
-    @Mock
-    private Task<QuerySnapshot> mockEventQueryTask;
-    @Mock
-    private CollectionReference mockMessagesCollection;
-    @Mock
-    private DocumentReference mockMessagesDocument;
-    @Mock
-    private DocumentSnapshot mockMessagesSnapshot;
+public class CreateEventTest extends MockedDb {
+//    @Mock
+//    protected FirebaseFirestore mockFirestore;
+//    // User mocks
+//    @Mock
+//    private CollectionReference mockUsersCollection;
+//    @Mock
+//    private DocumentReference mockUserDocument;
+//    @Mock
+//    private DocumentSnapshot mockUserDocumentSnapshot;
+//    @Mock
+//    private Task<DocumentSnapshot> mockUserTask;
+//    @Mock
+//    private Task<Void> mockVoidTask;
+//    // Event mocks
+//    @Mock
+//    private CollectionReference mockEventsCollection;
+////    @Mock
+////    private DocumentReference mockEventDocument;
+////    @Mock
+////    private Task<DocumentSnapshot> mockEventTask;
+//    @Mock
+//    private Query mockEventQuery;
+//    @Mock
+//    private Task<QuerySnapshot> mockEventQueryTask;
+//    @Mock
+//    private CollectionReference mockMessagesCollection;
+//    @Mock
+//    private DocumentReference mockMessagesDocument;
+//    @Mock
+//    private DocumentSnapshot mockMessagesSnapshot;
+//    @Mock
+//    private QuerySnapshot mockEventQuerySnapshot;
 
-    private EventListener<QuerySnapshot> eventListener;
+//    private EventListener<QuerySnapshot> eventListener;
 
-    Map<String, Object> testUserData;
+//    private ArrayList<Map<String, Object>> events;
+//    private ArrayList<QueryDocumentSnapshot> mockEventsIter;
+
+    // need a map of id to data map
+//    private HashMap<String, Map<String, Object>> events;
+    // need to generate a single documentsnapshot
+
+    // need to generate an iterator of querydocumentshapshot
+
+    // need to update data map
 
     // Mock organizer with an existing facility
-    private HashMap<String, Object> getMockData() {
+    @Override
+    protected HashMap<String, Object> getMockUserData() {
         // Define test user
         HashMap<String, Object> testUserData = new HashMap<>();
         // Personal info
@@ -114,80 +128,142 @@ public class CreateEventTest {
         return testUserData;
     }
 
-    private ArrayList<Map<String, Object>> getMockEventList() {
-        // return a list of events
+    @Override
+    protected HashMap<String, Object> getMockEventData() {
+        HashMap<String, Object> eventData = new HashMap<>();
+        eventData.put("name", "C301 Standup");
+        eventData.put("organizerDeviceId", "397bbfd6781b7d4f");
+        eventData.put("facility", "UofA");
+        eventData.put("waitListLimit", 10L);
+        eventData.put("attendeeLimit", 10L);
+        eventData.put("hasGeolocation", true);
+        eventData.put("date", LocalDate.now().toString());
+        eventData.put("hours", 10L);
+        eventData.put("minutes", 30L);
+        eventData.put("hashedQR", "Fake QR");
+        eventData.put("waitList", new ArrayList<>());
+        eventData.put("inviteeList", new ArrayList<>());
+        eventData.put("attendeeList", new ArrayList<>());
+        eventData.put("cancelledList", new ArrayList<>());
+
+        return eventData;
     }
-    private void addEventData(Map<String, Object> eventData) {
-        // add to the list of events
-    }
 
-    @Before
-    public void setup() {
-        Intents.init();
-        openMocks(this);
+//    private DocumentReference makeEventDocumentSnapshot(String id) {
+//        Map<String, Object> data = events.get(id);
+//        if (data == null) {
+//            // generate a new event
+//            events.put(id, new HashMap<>());
+//        }
+//
+//        DocumentReference mockEventDocument = mock(DocumentReference.class);
+//        Task<DocumentSnapshot> mockEventTask = mock(Task.class);
+//        when(mockEventDocument.getId()).thenReturn(id);
+//        when(mockEventDocument.get()).thenReturn(mockEventTask);  // currently do not return the actual data
+//        when(mockEventDocument.set(anyMap())).thenAnswer((invocation) -> {
+//            Map<String, Object> eventData = invocation.getArgument(0);
+//            // cast ints to longs in the data
+//            for (Map.Entry<String, Object> entry : eventData.entrySet()) {
+//                if (entry.getValue() instanceof Integer) {
+//                    eventData.put(entry.getKey(), Long.valueOf((Integer) entry.getValue()));
+//                }
+//            }
+//
+//            events.put(id, eventData);
+////            Log.d("TONYAAA", "makeEventDocumentSnapshot: ");
+//            eventListener.onEvent(mockEventQuerySnapshot, null);
+//            return mockVoidTask;
+//        });
+//        // in the on complete listener, we want to do nothing
+//        when(mockEventTask.addOnCompleteListener(any())).thenAnswer((invocation) -> {
+//            return null; // do nothing
+//        });
+//
+//        return mockEventDocument;
+//
+//    }
+//    private Iterator<QueryDocumentSnapshot> makeEventsIter() {
+//        ArrayList<QueryDocumentSnapshot> list = new ArrayList<>();
+//        for (Map.Entry<String, Map<String, Object>> entry: events.entrySet()) {
+//            QueryDocumentSnapshot mockEventQueryDocumentSnapshot = mock(QueryDocumentSnapshot.class);
+//            when(mockEventQueryDocumentSnapshot.getData()).thenReturn(entry.getValue());
+//            when(mockEventQueryDocumentSnapshot.getId()).thenReturn(entry.getKey());
+//
+//            list.add(mockEventQueryDocumentSnapshot);
+//        }
+//
+//        return list.iterator();
+//    }
 
-        // Set up user mocking
-        when(mockFirestore.collection("users")).thenReturn(mockUsersCollection);
-        when(mockUsersCollection.document(anyString())).thenReturn(mockUserDocument);
-        when(mockUserDocument.get()).thenReturn(mockUserTask);
-        when(mockUserDocument.set(any(Map.class))).thenReturn(mockVoidTask);
-        when(mockUserTask.addOnFailureListener(any(OnFailureListener.class))).thenReturn(mockUserTask);
-        doAnswer(invocation -> {
-            OnSuccessListener<DocumentSnapshot> listener = invocation.getArgument(0);
-            listener.onSuccess(mockUserDocumentSnapshot);
-            return mockUserTask;
-        }).when(mockUserTask).addOnSuccessListener(any(OnSuccessListener.class));
-        when(mockUserDocumentSnapshot.getData()).thenReturn(getMockData());
-
-        // Set up event mocking
-        // We don't want to save anything to the database, so we mock the methods that save an event to the db to do nothing
-        // We also mock getId() to return "mockEventID" instead of going to the database for an id
-        when(mockFirestore.collection("events")).thenReturn(mockEventsCollection);
-        when(mockEventsCollection.document()).thenReturn(mockEventDocument);
-        when(mockEventDocument.getId()).thenReturn("mockEventID");
-
-        when(mockEventsCollection.document(anyString())).thenReturn(mockEventDocument);
-        when(mockEventDocument.get()).thenReturn(mockEventTask);
-
-        when(mockEventsCollection.addSnapshotListener(any(EventListener.class)))
-                .thenAnswer((invocation) -> {
-                    eventListener = invocation.getArgument(0);
-                    return null;
-                });
-        // when set is called, we want to do nothing
-        when(mockEventDocument.set(anyMap())).thenAnswer((invocation) -> {
-                    Map<String, Object> eventData = invocation.getArgument(0);
-                    addEventData(eventData);
-                    eventListener.onEvent(getMockData(), null);
-                    return mockVoidTask;
-                });
-
-        // in the on complete listener, we want to do nothing
-        when(mockEventTask.addOnCompleteListener(any())).thenAnswer((invocation) -> {
-            return null; // do nothing
-        });
-        // in Organizer.fetchData(), we don't want to pull events from db
-        when(mockEventsCollection
-                .whereEqualTo(anyString(), any()))
-                .thenReturn(mockEventQuery);
-        when(mockEventQuery.get()).thenReturn(mockEventQueryTask);
-        when(mockEventQueryTask.addOnCompleteListener(any()))
-                .thenAnswer((invocation -> {
-
-                    // return the list of events here (see mockedDb)
-                    return null; // do nothing
-                }));
-
-        when(mockEventsCollection.get()).thenReturn(mockEventQueryTask);
-
-        // mock notifications db stuff
-        when(mockFirestore.collection("messages")).thenReturn(mockMessagesCollection);
-        when(mockMessagesCollection.document(any())).thenReturn(mockMessagesDocument);
-        when(mockMessagesDocument.addSnapshotListener(any())).thenAnswer((invocation) -> {
-            return null;
-        });
-        when(mockMessagesDocument.set(anyMap())).thenReturn(mockVoidTask);
-    }
+//    @Before
+//    @Override
+//    public void setup() {
+//        Intents.init();
+//        openMocks(this);
+//
+//        // Set up user mocking
+//        when(mockFirestore.collection("users")).thenReturn(mockUsersCollection);
+//        when(mockUsersCollection.document(anyString())).thenReturn(mockUserDocument);
+//        when(mockUserDocument.get()).thenReturn(mockUserTask);
+//        when(mockUserDocument.set(any(Map.class))).thenReturn(mockVoidTask);
+//        when(mockUserTask.addOnFailureListener(any(OnFailureListener.class))).thenReturn(mockUserTask);
+//        doAnswer(invocation -> {
+//            OnSuccessListener<DocumentSnapshot> listener = invocation.getArgument(0);
+//            listener.onSuccess(mockUserDocumentSnapshot);
+//            return mockUserTask;
+//        }).when(mockUserTask).addOnSuccessListener(any(OnSuccessListener.class));
+//        when(mockUserDocumentSnapshot.getData()).thenReturn(getMockUserData());
+//
+//        // ****BEGIN EVENTLIST MOCKING**** //
+//        // Set up event mocking
+//        // We don't want to save anything to the database, so we mock the methods that save an event to the db to do nothing
+//        // We also mock getId() to return "mockEventID" instead of going to the database for an id
+//        when(mockFirestore.collection("events")).thenReturn(mockEventsCollection);
+//
+//        when(mockEventsCollection.document()).thenAnswer((invocation) -> {
+//            Random random = new Random();
+//            return makeEventDocumentSnapshot(String.valueOf(random.nextInt()));
+//        });
+//        when(mockEventsCollection.document(anyString())).thenAnswer((invocation) -> {
+//            String id = invocation.getArgument(0);  // assuming id is valid
+//            return makeEventDocumentSnapshot(id);
+//        });
+//
+//        when(mockEventsCollection.addSnapshotListener(any(EventListener.class)))
+//                .thenAnswer((invocation) -> {
+//                    eventListener = invocation.getArgument(0);
+//                    return null;
+//                });
+//        // when set is called, we want to do nothing
+//        events = new HashMap<>();
+////        events.put("0", getMockEventData());
+////        events.put("1", getMockEventData());
+//
+////        when(mockEventsCollection.whereEqualTo(anyString(), any())).thenReturn(mockEventQuery);
+////        when(mockEventQuery.get())
+////                .thenReturn(mockEventQueryTask);
+//        when(mockEventsCollection.get())
+//                .thenReturn(mockEventQueryTask);
+//        when(mockEventQueryTask.addOnCompleteListener(any()))
+//                .thenAnswer((invocation -> {
+//                    OnCompleteListener<QuerySnapshot> listener = invocation.getArgument(0);
+//                    listener.onComplete(mockEventQueryTask);
+//                    return mockEventQueryTask;
+//                }));
+//
+//        when(mockEventQueryTask.isSuccessful()).thenReturn(true);
+//        when(mockEventQueryTask.getResult()).thenReturn(mockEventQuerySnapshot);
+//        when(mockEventQuerySnapshot.iterator()).thenAnswer((invocation) -> makeEventsIter());  // generate a new iterable every call
+//        // ****END EVENTLIST MOCKING**** //
+//
+//        // mock notifications db stuff
+//        when(mockFirestore.collection("messages")).thenReturn(mockMessagesCollection);
+//        when(mockMessagesCollection.document(any())).thenReturn(mockMessagesDocument);
+//        when(mockMessagesDocument.addSnapshotListener(any())).thenAnswer((invocation) -> {
+//            return null;
+//        });
+//        when(mockMessagesDocument.set(anyMap())).thenReturn(mockVoidTask);
+//    }
 
     @After
     public void tearDown() {
