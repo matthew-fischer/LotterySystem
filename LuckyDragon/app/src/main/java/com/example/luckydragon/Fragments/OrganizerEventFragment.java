@@ -25,8 +25,6 @@ import java.util.ArrayList;
  * This is the fragment containing the organizer-specific event info.
  * Displays the different lists of entrants (waiting list, attendees list, etc).
  * ISSUES:
- *   - Need to add a view to update this when changes are made (e.g. waitlist capacity is changed).
- *   - When view is added, should add an onDestroy() method telling the view to stop observing.
  */
 public class OrganizerEventFragment extends Fragment {
     private Event event;

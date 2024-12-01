@@ -23,6 +23,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Contains tests for US 03.05.01
+ * As an administrator, I want to be able to browse profiles.
+ */
 public class BrowseUsersAdminTest extends MockedDb{
 
     @Override

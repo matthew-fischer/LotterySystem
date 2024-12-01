@@ -49,6 +49,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Contains tests for US 02.02.01.
+ * As an organizer I want to view the list of entrants who joined my event waiting list.
+ */
 public class ReplacementInviteesTest extends MockedEventList {
     // Waitlist user mocks
     @Mock

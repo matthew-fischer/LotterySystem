@@ -27,6 +27,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Contains tests for US 01.05.03
+ * Entrant - be able to decline an invitation when chosen to participate in an event
+ */
 public class EntrantInvitedEventDenyTest extends MockedDb {
     private String deviceId = "fakeDeviceId";
     @Override

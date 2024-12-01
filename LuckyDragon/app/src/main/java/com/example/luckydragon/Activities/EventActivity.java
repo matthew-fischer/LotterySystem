@@ -26,8 +26,6 @@ public class EventActivity extends AppBarActivity {
     private EventController eventController;
     private String role;
 
-    Button signUp;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,10 +101,12 @@ public class EventActivity extends AppBarActivity {
         });
     }
 
+    /**
+     * Get role.
+     * @return the role
+     */
     public String getRole() {
-
         return role;
-
     }
 
 }

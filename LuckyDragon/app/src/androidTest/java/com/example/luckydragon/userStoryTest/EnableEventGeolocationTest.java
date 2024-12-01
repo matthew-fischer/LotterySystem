@@ -34,6 +34,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
+/**
+ * Contains tests for enabling event geolocation.
+ */
 public class EnableEventGeolocationTest extends MockedDb {
 
     // Mock organizer with an existing facility

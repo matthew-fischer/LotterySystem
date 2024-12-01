@@ -14,6 +14,9 @@ import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.R;
 
+/**
+ * Fragment showing information for an entrant who has been invited to an event.
+ */
 public class EntrantEventAttendingFragment extends Fragment {
     private Event event;
 

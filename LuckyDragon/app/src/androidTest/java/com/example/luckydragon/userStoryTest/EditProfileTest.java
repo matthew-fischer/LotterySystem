@@ -23,6 +23,10 @@ import org.junit.Test;
 
 import java.util.HashMap;
 
+/**
+ * Contains tests for US 01.02.02
+ * Entrant -- update information such as name, email and contact information on my profile
+ */
 public class EditProfileTest extends MockedDb {
     @Override
     protected HashMap<String, Object> getMockData() {

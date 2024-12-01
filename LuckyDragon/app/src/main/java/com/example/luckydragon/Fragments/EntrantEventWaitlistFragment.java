@@ -31,10 +31,7 @@ import com.google.android.gms.location.LocationServices;
  * Allows entrant to join or leave waitlist.
  * Allows entrant to view the event poster.
  * Displays a geolocation warning if it is enabled for the event.
- * ISSUES:
- *   - Once a entrant has been invited to attend an event, they will need to be shown new information and buttons.
- *      It might be best to use another fragment for that information, instead of adding complexity to this one.
- *   - Viewing the event poster has not been implemented yet.
+ * ISSUES: None
  */
 public class EntrantEventWaitlistFragment extends Fragment {
     private String deviceId;

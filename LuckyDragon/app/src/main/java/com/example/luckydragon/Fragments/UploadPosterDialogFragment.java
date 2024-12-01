@@ -31,13 +31,19 @@ import com.example.luckydragon.Controllers.EventController;
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.R;
 
-
+/**
+ * Fragment for a user to upload an event poster.
+ */
 public class UploadPosterDialogFragment extends DialogFragment{
     private Event event;
     private Bitmap uploadedPoster;
     private EventController eventController;
     private ActivityResultLauncher<Intent> uploadImageResultLauncher;
 
+    /**
+     * Creates an UploadPosterDialogFragment.
+     * @param event the event to upload poster for
+     */
     public UploadPosterDialogFragment(Event event) {
         this.event = event;
     }

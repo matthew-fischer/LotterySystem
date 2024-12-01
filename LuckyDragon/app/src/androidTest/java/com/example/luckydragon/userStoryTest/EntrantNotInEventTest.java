@@ -27,6 +27,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Contains tests for US 01.01.01.
+ * Entrant - join the waiting list for a specific event
+ */
 public class EntrantNotInEventTest extends MockedDb {
     private String deviceId = "fakeDeviceId";
     @Override

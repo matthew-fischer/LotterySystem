@@ -20,6 +20,10 @@ import com.example.luckydragon.R;
 
 import java.util.ArrayList;
 
+/**
+ * Adapter for an array of entrants.
+ * Shows the entrant name.
+ */
 public class EntrantArrayAdapter extends ArrayAdapter<User> {
     private Fragment fragment;
     private ArrayList<User> userData;

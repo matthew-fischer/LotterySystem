@@ -16,6 +16,9 @@ import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.R;
 import com.google.zxing.common.BitMatrix;
 
+/**
+ * Fragment to display an image.
+ */
 public class DisplayImageFragment extends DialogFragment {
     public DisplayImageFragment() {
         super();

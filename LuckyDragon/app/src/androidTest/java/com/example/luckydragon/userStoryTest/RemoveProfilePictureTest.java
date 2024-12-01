@@ -50,6 +50,10 @@ import org.mockito.Mock;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Contains tests for US 01.03.02
+ * Entrant - remove profile picture if need be
+ */
 public class RemoveProfilePictureTest {
     @Mock
     private FirebaseFirestore mockFirestore;

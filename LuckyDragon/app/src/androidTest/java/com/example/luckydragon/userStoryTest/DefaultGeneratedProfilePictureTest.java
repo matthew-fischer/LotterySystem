@@ -28,6 +28,10 @@ import org.junit.Test;
 
 import java.util.HashMap;
 
+/**
+ * Contains tests for US 01.03.03 Entrant.
+ * Profile picture to be deterministically generated from my profile name if I haven't uploaded a profile image yet.
+ */
 public class DefaultGeneratedProfilePictureTest extends MockedDb {
     @Override
     protected HashMap<String, Object> getMockData() {

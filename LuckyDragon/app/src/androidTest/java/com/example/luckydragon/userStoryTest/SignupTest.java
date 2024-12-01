@@ -23,6 +23,10 @@ import org.junit.Test;
 
 import java.util.HashMap;
 
+/**
+ * Contains tests for US 01.02.01
+ * Entrant - provide my personal information such as name, email and optional phone number in the app.
+ */
 public class SignupTest extends MockedDb {
     @Override
     protected HashMap<String, Object> getMockData() {

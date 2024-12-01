@@ -26,6 +26,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Contains tests for US 01.05.02
+ * Entrant - be able to accept the invitation to register/sign up when chosen to participate in an event
+ */
 public class EntrantInvitedEventTest extends MockedDb {
     private String deviceId = "fakeDeviceId";
     @Override

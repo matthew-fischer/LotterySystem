@@ -23,6 +23,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Contains tests for US 03.04.01
+ * As an administrator, I want to be able to browse events.
+ */
 public class BrowseEventsAdminTest extends MockedDb{
 
     @Override

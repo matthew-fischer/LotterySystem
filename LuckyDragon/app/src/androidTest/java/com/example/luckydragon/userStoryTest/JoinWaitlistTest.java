@@ -53,6 +53,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Contains tests for US 01.01.01.
+ * As an entrant, I want to join the waiting list for a specific event
+ */
 public class JoinWaitlistTest {
     @Mock
     private FirebaseFirestore mockFirestore;

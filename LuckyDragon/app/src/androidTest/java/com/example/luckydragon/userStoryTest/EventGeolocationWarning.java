@@ -28,6 +28,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Contains tests for US 01.08.01
+ * Entrant - be warned before joining a waitlist that requires geolocation
+ */
 public class EventGeolocationWarning extends MockedDb {
     private String deviceId = "fakeDeviceId";
     @Override

@@ -53,6 +53,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Contains tests for * US 01.01.02.
+ * As an entrant, I want to leave the waiting list for a specific event
+ */
 public class LeaveWaitlistTest {
     @Mock
     private FirebaseFirestore mockFirestore;
