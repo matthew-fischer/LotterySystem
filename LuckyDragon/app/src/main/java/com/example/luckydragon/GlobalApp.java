@@ -247,4 +247,6 @@ public class GlobalApp extends Application {
         int notifId = random.nextInt(Integer.MAX_VALUE);
         notificationManager.notify(notifId /* ID of notification */, notificationBuilder.build());
     }
+
+
 }
