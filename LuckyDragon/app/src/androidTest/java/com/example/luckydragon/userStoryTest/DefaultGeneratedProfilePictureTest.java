@@ -52,7 +52,6 @@ public class DefaultGeneratedProfilePictureTest extends MockedDb {
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
         globalApp.setDb(mockFirestore);
-        User user = globalApp.getUser();
         // Sign up information
         String name = "John Draco";
         String email = "draco@gmail.com";
@@ -76,6 +75,7 @@ public class DefaultGeneratedProfilePictureTest extends MockedDb {
             onView(withText("Submit")).perform(click());
 
             // Check that user has a default profile picture
+            User user = globalApp.getUser();
             assertNotNull(user.getDefaultProfilePicture());
 
             // Check that the default profile picture is the one being used
