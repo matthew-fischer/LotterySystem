@@ -43,16 +43,9 @@ public abstract class AppBarActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.nav_profile) {
-//            Toast.makeText(this, "Click Profile Icon.", Toast.LENGTH_SHORT).show();
             ((GlobalApp) getApplication()).setUserToView(null);
             Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
             startActivity(intent);
-//        } else if (item.getItemId() == R.id.nav_events) {
-//            Intent intent = new Intent(getApplicationContext(), EventActivity.class);
-//            startActivity(intent);
-//        } else if (item.getItemId() == R.id.nav_signup) {
-//            Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
-//            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
