@@ -16,6 +16,9 @@
       <SelectionState runConfigName="RemoveHashedQrAdminTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+      <SelectionState runConfigName="ImagesAdminTest">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>
