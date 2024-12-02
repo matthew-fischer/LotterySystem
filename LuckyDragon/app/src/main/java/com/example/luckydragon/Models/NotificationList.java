@@ -104,6 +104,20 @@ public class NotificationList extends Observable {
     }
 
     /**
+     * Initializes the list in firestore to make sure the user has
+     * a notification document that we can send notifs to.
+     */
+    public void initializeInFirestore() {
+        HashMap<String, Object> map = new HashMap<>();
+        ArrayList<HashMap<String, String>> payload = new ArrayList<>();
+        map.put("notificationList", payload);
+        db.collection("messages").document(user.getDeviceId())
+                .set(map).addOnFailureListener(e -> {
+                    Log.e("SAVE DB", "fail at notification");
+                });
+    }
+
+    /**
      * Get the representation of notification list for storage in firestore
      * @return the arraylist of notifications
      */
