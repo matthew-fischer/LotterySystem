@@ -17,6 +17,7 @@ import static org.mockito.Mockito.mock;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -25,6 +26,8 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import com.example.luckydragon.Activities.SelectRoleActivity;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.MockedDb;
+import com.example.luckydragon.Models.Event;
+import com.example.luckydragon.Models.EventList;
 import com.example.luckydragon.R;
 
 import org.junit.Test;
@@ -33,6 +36,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -59,26 +63,7 @@ public class CreateEventTest extends MockedDb {
     }
 
     @Override
-    protected void loadMockEventData(Map<String, Map<String, Object>> events) {
-        HashMap<String, Object> eventData = new HashMap<>();
-        eventData.put("name", "C301 Standup");
-        eventData.put("organizerDeviceId", "397bbfd6781b7d4f");
-        eventData.put("facility", "UofA");
-        eventData.put("waitListLimit", 10L);
-        eventData.put("attendeeLimit", 10L);
-        eventData.put("hasGeolocation", true);
-        eventData.put("date", LocalDate.now().toString());
-        eventData.put("hours", 10L);
-        eventData.put("minutes", 30L);
-        eventData.put("hashedQR", "Fake QR");
-        eventData.put("waitList", new ArrayList<>());
-        eventData.put("inviteeList", new ArrayList<>());
-        eventData.put("attendeeList", new ArrayList<>());
-        eventData.put("cancelledList", new ArrayList<>());
-
-        String id = String.valueOf(new Random().nextInt());
-        events.put(id, eventData);
-    }
+    protected void loadMockEventData(Map<String, Map<String, Object>> events) {}
 
     /**
      * USER STORY TEST
@@ -133,18 +118,18 @@ public class CreateEventTest extends MockedDb {
             // Check that the event shows on the organizer profile
             onData(anything()).inAdapterView(withId(R.id.organizerProfileEventsListview)).atPosition(0).
                     onChildView(withId(R.id.eventRowEventName)).check(matches(withText(testEventName)));
-//
-//            // Check that the event is in the organizer's list and that the qr code has been generated
-//            boolean eventIsPresent = false;
-//
-//            EventList eventList = globalApp.getEvents();
-//            for(Event e : eventList.getEventList()) {
-//                if(Objects.equals(e.getName(), testEventName) && (e.getAttendeeSpots() == Integer.parseInt(testAttendeeLimit))) {
-//                    eventIsPresent = true;
-//                    assertNotNull(e.getQrHash());
-//                }
-//            }
-//            assertTrue(eventIsPresent);
+
+            // Check that the event is in the organizer's list and that the qr code has been generated
+            boolean eventIsPresent = false;
+
+            EventList eventList = globalApp.getEvents();
+            for(Event e : eventList.getEventList()) {
+                if(Objects.equals(e.getName(), testEventName) && (e.getAttendeeSpots() == Integer.parseInt(testAttendeeLimit))) {
+                    eventIsPresent = true;
+                    assertNotNull(e.getQrHash());
+                }
+            }
+            assertTrue(eventIsPresent);
         }
     }
 }
