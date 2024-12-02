@@ -89,9 +89,6 @@ public class EntrantInvitedEventDenyTest extends MockedDb {
      * User clicks decline
      * User is now part of the cancelled list
      * User sees a message saying the waitlist is closed
-     * TODO below
-     *      User can see that they are part of the cancelled list
-     *      User can see on their profile they are on the cancelled list
      */
     @Test
     public void testDeclineInvite() {

@@ -39,7 +39,7 @@ import com.google.android.gms.location.LocationServices;
 public class EntrantEventWaitlistFragment extends Fragment {
     private String deviceId;
     private Event event;
-    private EntrantEventWaitlistView entrantEventWaitlistView; // TODO define view
+    private EntrantEventWaitlistView entrantEventWaitlistView;
     private EventController eventController;
     private FusedLocationProviderClient fusedLocationClient;
     private Double latitude;
@@ -64,7 +64,7 @@ public class EntrantEventWaitlistFragment extends Fragment {
      * Creates an EntrantEventFragment.
      */
     public EntrantEventWaitlistFragment() {
-        super(R.layout.fragment_entrant_waitlist_event); // TODO
+        super(R.layout.fragment_entrant_waitlist_event);
     }
 
     @Override
