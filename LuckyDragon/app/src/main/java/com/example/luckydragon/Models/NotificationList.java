@@ -197,4 +197,8 @@ public class NotificationList extends Observable {
             addNotification(notif.title, notif.body);
         }
     }
+
+    public void setIsLoaded(boolean isLoaded) {
+        this.isLoaded = isLoaded;
+    }
 }

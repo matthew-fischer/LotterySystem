@@ -10,6 +10,9 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.timepicker.MaterialTimePicker;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  * This class is a controller for the AddEventDialogFragment. Handles extracting
@@ -118,6 +121,13 @@ public class AddEventController extends Controller {
      */
     public void extractHasGeolocation(SwitchMaterial toggle) {
         getObservable().setHasGeolocation(toggle.isChecked());
+    }
+
+    /**
+     * Extracts the creation time of the event.
+     */
+    public void extractCreatedTimeMillis() {
+        getObservable().setCreatedTimeMillis(System.currentTimeMillis());
     }
 
     public void uploadEventPoster(Bitmap bitmap) {

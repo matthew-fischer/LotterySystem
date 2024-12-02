@@ -6,15 +6,19 @@ import android.graphics.Bitmap;
 import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
+import com.example.luckydragon.Controllers.AddEventController;
+import com.example.luckydragon.Controllers.EventController;
 import com.example.luckydragon.Fragments.AdminEventFragment;
 import com.example.luckydragon.Fragments.DisplayImageFragment;
 import com.example.luckydragon.Fragments.DisplayQRCodeFragment;
@@ -22,6 +26,7 @@ import com.example.luckydragon.Fragments.EntrantEventAttendingFragment;
 import com.example.luckydragon.Fragments.EntrantEventInvitedFragment;
 import com.example.luckydragon.Fragments.EntrantEventWaitlistFragment;
 import com.example.luckydragon.Fragments.OrganizerEventFragment;
+import com.example.luckydragon.Fragments.UploadPosterDialogFragment;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.Models.User;
@@ -62,6 +67,7 @@ public class ViewEventActivity extends AppBarActivity {
         boolean forceHideQR = globalApp.getRole() == GlobalApp.ROLE.ENTRANT;
         viewEventView = new ViewEventView(event, this, forceHideQR);
 
+        EventController controller = new EventController(event);
 
         // Start child fragment
         loadChildFragment();
@@ -92,6 +98,32 @@ public class ViewEventActivity extends AppBarActivity {
             displayPosterFragment.setArguments(args);
             displayPosterFragment.show(getSupportFragmentManager()  , "DisplayImageFragment");
         });
+
+        ImageButton editPosterButton = findViewById(R.id.editPosterButton);
+        if (globalApp.getRole() != GlobalApp.ROLE.ORGANIZER) {
+            editPosterButton.setVisibility(View.GONE);
+        }
+
+        editPosterButton.setOnClickListener(view -> {
+            PopupMenu profilePicturePopup = new PopupMenu(this, editPosterButton);
+            profilePicturePopup.getMenuInflater().inflate(R.menu.edit_poster_popup_menu,
+                    profilePicturePopup.getMenu());
+            profilePicturePopup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    int id = menuItem.getItemId();
+                    if (id == R.id.uploadPoster) {
+                        DialogFragment uploadPosterFragment = new UploadPosterDialogFragment(event);
+                        uploadPosterFragment.show(getSupportFragmentManager(), "EditPoster");
+                    } else {
+                        controller.setEventPoster(null);
+                    }
+                    return true;
+                }
+            });
+            profilePicturePopup.show();
+        });
+
     }
 
     @Override
@@ -130,14 +162,6 @@ public class ViewEventActivity extends AppBarActivity {
     public void hideQrCodeButton() {
         ImageButton viewQrCodeButton = findViewById(R.id.viewQrCodeButton);
         viewQrCodeButton.setVisibility(View.GONE);
-    }
-
-    /**
-     * Shows the QR code button.
-     */
-    public void showQrCodeButton() {
-        ImageButton viewQrCodeButton = findViewById(R.id.viewQrCodeButton);
-        viewQrCodeButton.setVisibility(View.VISIBLE);
     }
 
     public void loadChildFragment() {

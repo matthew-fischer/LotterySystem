@@ -767,6 +767,11 @@ public class Event extends Observable implements Serializable {
         return createdTimeMillis;
     }
 
+    public void setCreatedTimeMillis(Long createdTimeMillis) {
+        this.createdTimeMillis = createdTimeMillis;
+        notifyObservers();
+    }
+
     public String getLotteryDate() {
         return lotteryDate;
     }
@@ -802,6 +807,10 @@ public class Event extends Observable implements Serializable {
     public Bitmap getEventPoster() {
         return this.eventPoster;
     }
+
+    public int getEventHours() { return time.hours; }
+
+    public int getEventMinutes() { return time.minutes; }
 
     public static BitMatrix stringToBitMatrix(String s) {
         if (s == null || s.isEmpty()) return null;
