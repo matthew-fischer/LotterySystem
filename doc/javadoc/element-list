@@ -2,7 +2,6 @@ com.example.luckydragon
 com.example.luckydragon.Activities
 com.example.luckydragon.Controllers
 com.example.luckydragon.Fragments
-com.example.luckydragon.generalTest
 com.example.luckydragon.Models
 com.example.luckydragon.userStoryTest
 com.example.luckydragon.Views
