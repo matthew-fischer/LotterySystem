@@ -5,7 +5,9 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.ListView;
-
+/**
+ * A ListView that works with ScrollViews.
+ */
 public class NonScrollListView extends ListView {
 
     public NonScrollListView(Context context) {
