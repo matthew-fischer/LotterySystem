@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-public class BrowseUsersAdminTest extends MockedDb{
+public class BrowseUsersAdminTest extends MockedDb {
 
     @Override
     protected HashMap<String, Object> getMockUserData() {
