@@ -58,10 +58,6 @@ public class AddEventController extends Controller {
         if (!waitListLimitStr.isEmpty()) {
             waitListLimit = Integer.parseInt(waitListLimitStr);
         }
-        if (waitListLimit == 0) {
-            activity.sendToast("Waitlist limit cannot be zero!");
-            return;
-        }
         getObservable().setWaitListLimit(waitListLimit);
     }
 
@@ -76,10 +72,6 @@ public class AddEventController extends Controller {
             return;
         }
         Integer attendeeLimit = Integer.valueOf(attendeeLimitStr);
-        if (attendeeLimit == 0) {
-            activity.sendToast("Attendee limit cannot be zero!");
-            return;
-        }
         getObservable().setAttendeeLimit(attendeeLimit);
     }
 

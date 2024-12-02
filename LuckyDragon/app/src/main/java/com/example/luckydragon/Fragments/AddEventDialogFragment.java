@@ -177,10 +177,6 @@ public class AddEventDialogFragment extends DialogFragment {
                     LocalDateTime lotteryDateTime = LocalDateTime.of(lotteryDate, lotteryTime);
 
                     LocalDateTime now = LocalDateTime.now();
-                    if (event.getWaitListSpots() == 0 || event.getAttendeeSpots() == 0) {
-                        event.deleteEventFromDb();
-                        return;
-                    }
                     if(!eventDateTime.isAfter(now)) {
                         activity.sendToast("Event must be in the future!");
                         event.deleteEventFromDb();
