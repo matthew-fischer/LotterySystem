@@ -188,7 +188,7 @@ public class SampleInviteesTest extends MockedDb {
             // The organizer's events should be displayed
             onView(withText("Piano Lesson")).check(matches(isDisplayed()));
             onView(withText("Group Piano Lesson")).check(matches(isDisplayed()));
-            
+
             // Check that users are on the waitlist for "Piano Lesson" event
             String testEventName = "Piano Lesson";
             Event event = null;

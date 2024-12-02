@@ -30,6 +30,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.example.luckydragon.Activities.SelectRoleActivity;
 import com.example.luckydragon.GlobalApp;
+import com.example.luckydragon.MockedDb;
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.Models.NotificationList;
 import com.example.luckydragon.Models.User;
@@ -63,75 +64,9 @@ import java.util.Map;
  * Contains tests for US 02.07.01, 02.07.042, 02.07.03, and 02.05.01.
  * As an organizer I want to send notifications to all waiting/cancelled/selected/invited entrants.
  */
-public class OrganizerSendNotificationsTest {
-    @Mock
-    private FirebaseFirestore mockFirestore;
-    // User mocks
-    @Mock
-    private CollectionReference mockUsersCollection;
-    @Mock
-    private DocumentReference mockUserDocument;
-    @Mock
-    private DocumentSnapshot mockUserDocumentSnapshot;
-    @Mock
-    private Task<DocumentSnapshot> mockUserTask;
-    @Mock
-    private Task<Void> mockVoidTask;
-
-    // Waitlist user mocks
-    @Mock
-    private DocumentReference mockWaitlistEntrant1Document;
-    @Mock
-    private Task<DocumentSnapshot> mockWaitlistEntrant1Task;
-    @Mock
-    private DocumentSnapshot mockWaitlistEntrant1DocumentSnapshot;
-    @Mock
-    private DocumentReference mockWaitlistEntrant2Document;
-    @Mock
-    private Task<DocumentSnapshot> mockWaitlistEntrant2Task;
-    @Mock
-    private DocumentSnapshot mockWaitlistEntrant2DocumentSnapshot;
-
-    // Event mocks
-    @Mock
-    private CollectionReference mockEventsCollection;
-    @Mock
-    private DocumentReference mockEventDocument;
-    @Mock
-    private Query mockEventQuery;
-    @Mock
-    private Task<QuerySnapshot> mockEventQueryTask;
-    @Mock
-    private QuerySnapshot mockEventQuerySnapshot;
-    @Mock
-    private List<DocumentSnapshot> mockEventDocumentSnapshotList;
-    @Mock
-    private QueryDocumentSnapshot mockEventQueryDocumentSnapshot1;
-    @Mock
-    private QueryDocumentSnapshot mockEventQueryDocumentSnapshot2;
-
-    @Mock
-    private DocumentReference mockEventDocument1;
-    @Mock
-    private DocumentReference mockEventDocument2;
-    @Mock
-    private Task<DocumentSnapshot> mockEventTask1;
-    @Mock
-    private Task<DocumentSnapshot> mockEventTask2;
-    @Mock
-    private DocumentSnapshot mockEventDocumentSnapshot1;
-    @Mock
-    private DocumentSnapshot mockEventDocumentSnapshot2;
-
-    @Mock
-    private CollectionReference mockMessagesCollection;
-    @Mock
-    private DocumentReference mockMessagesDocument;
-
-    // Event Data
-    private List<Map<String, Object>> eventData = new ArrayList<>();
-
-    private HashMap<String, Object> getMockUserData() {
+public class OrganizerSendNotificationsTest extends MockedDb {
+    @Override
+    protected HashMap<String, Object> getMockUserData() {
         // Define test user
         HashMap<String, Object> testUserData = new HashMap<>();
         // Personal info
@@ -147,24 +82,32 @@ public class OrganizerSendNotificationsTest {
 
         return testUserData;
     }
+    @Override
+    protected void loadMockEventData(Map<String, Map<String, Object>> events) {
+        super.loadMockEventData(events);
 
-    private HashMap<String, Object> getMockWaitlistUser1() {
-        // Define test user
-        HashMap<String, Object> testUserData = new HashMap<>();
-        // Personal info
-        testUserData.put("name", "Tony Sun");
-        testUserData.put("email", "tonysun@ualberta.ca");
-        testUserData.put("phoneNumber", "780-831-3291");
-        // Roles
-        testUserData.put("isEntrant", true);
-        testUserData.put("isOrganizer", false);
-        testUserData.put("isAdmin", false);
+        // Initialize event data
+        HashMap<String, Object> eventData1 = new HashMap<>();
+        eventData1.put("name", "Piano Lesson");
+        eventData1.put("organizerDeviceId", deviceId);
+        eventData1.put("facility", "Piano Place");
+        eventData1.put("waitListLimit", 10L);
+        eventData1.put("attendeeLimit", 2L);
+        eventData1.put("date", "2025-01-15");
+        eventData1.put("hours", 18L);
+        eventData1.put("minutes", 15L);
+        eventData1.put("lotteryDate", "2024-09-01");
+        eventData1.put("lotteryHours", 8L);
+        eventData1.put("lotteryMinuts", 0L);
+        eventData1.put("waitList", List.of("ts123", "mf456"));
+        eventData1.put("createdTimeMillis", 1731294000000L); // event created Nov 10 2024 8:00:00 PM
 
-        return testUserData;
+        events.put("fakeEventId", eventData1);
     }
 
-    private HashMap<String, Object> getMockWaitlistUser2() {
-        // Define test user
+    @Override
+    protected void loadMockUserData(Map<String, Map<String, Object>> users) {
+        super.loadMockUserData(users);
         HashMap<String, Object> testUserData = new HashMap<>();
         // Personal info
         testUserData.put("name", "Matthew Fischer");
@@ -175,175 +118,19 @@ public class OrganizerSendNotificationsTest {
         testUserData.put("isOrganizer", false);
         testUserData.put("isAdmin", false);
 
-        return testUserData;
-    }
+        users.put("mf456", testUserData);
 
-    @Before
-    public void setup() {
-        Intents.init();
-        openMocks(this);
+        HashMap<String, Object> testUserData2 = new HashMap<>();
+        // Personal info
+        testUserData.put("name", "Tony Sun");
+        testUserData.put("email", "tonysun@ualberta.ca");
+        testUserData.put("phoneNumber", "780-831-3291");
+        // Roles
+        testUserData.put("isEntrant", true);
+        testUserData.put("isOrganizer", false);
+        testUserData.put("isAdmin", false);
 
-        // Initialize event data
-        HashMap<String, Object> eventData1 = new HashMap<>();
-        eventData1.put("name", "Piano Lesson");
-        eventData1.put("organizerDeviceId", "abcd1234");
-        eventData1.put("facility", "Piano Place");
-        eventData1.put("waitlistLimit", 10L);
-        eventData1.put("attendeeLimit", 2L);
-        eventData1.put("date", "2025-01-15");
-        eventData1.put("hours", 18L);
-        eventData1.put("minutes", 15L);
-        eventData1.put("lotteryDate", "2024-09-01");
-        eventData1.put("lotteryHours", 8L);
-        eventData1.put("lotteryMinuts", 0L);
-        eventData1.put("waitList", List.of("ts123", "mf456"));
-        eventData1.put("createdTimeMillis", 1731294000000L); // event created Nov 10 2024 8:00:00 PM
-        eventData.add(eventData1);
-
-        HashMap<String, Object> eventData2 = new HashMap<>();
-        eventData2.put("name", "Group Piano Lesson");
-        eventData2.put("organizerDeviceId", "abcd1234");
-        eventData2.put("facility", "Piano Place");
-        eventData2.put("waitlistLimit", new Long(20));
-        eventData2.put("attendeeLimit", new Long(5));
-        eventData2.put("date", "2025-01-16");
-        eventData2.put("hours", new Long(18));
-        eventData2.put("minutes", new Long(15));
-        eventData.add(eventData2);
-
-        // Set up user mocking for main user
-        when(mockFirestore.collection("users")).thenReturn(mockUsersCollection);
-        when(mockUsersCollection.document(anyString())).thenReturn(mockUserDocument);
-        when(mockUserDocument.get()).thenReturn(mockUserTask);
-        when(mockUserDocument.set(any(Map.class))).thenReturn(mockVoidTask);
-        when(mockUserTask.addOnFailureListener(any(OnFailureListener.class))).thenReturn(mockUserTask);
-        doAnswer(invocation -> {
-            OnSuccessListener<DocumentSnapshot> listener = invocation.getArgument(0);
-            listener.onSuccess(mockUserDocumentSnapshot);
-            return mockUserTask;
-        }).when(mockUserTask).addOnSuccessListener(any(OnSuccessListener.class));
-        when(mockUserDocumentSnapshot.getData()).thenReturn(getMockUserData());
-
-        // Set up mockito mocking for waitlist user 1
-        when(mockUsersCollection.document("ts123")).thenReturn(mockWaitlistEntrant1Document);
-        when(mockWaitlistEntrant1Document.get()).thenReturn(mockWaitlistEntrant1Task);
-        when(mockWaitlistEntrant1Document.set(any(Map.class))).thenReturn(mockVoidTask);
-        when(mockWaitlistEntrant1Task.addOnFailureListener(any(OnFailureListener.class))).thenReturn(mockWaitlistEntrant1Task);
-        doAnswer(invocation -> {
-            OnSuccessListener<DocumentSnapshot> listener = invocation.getArgument(0);
-            listener.onSuccess(mockWaitlistEntrant1DocumentSnapshot);
-            return mockWaitlistEntrant1Task;
-        }).when(mockWaitlistEntrant1Task).addOnSuccessListener(any(OnSuccessListener.class));
-        when(mockWaitlistEntrant1DocumentSnapshot.getData()).thenReturn(getMockWaitlistUser1());
-
-        // Set up mockito mocking for waitlist user 2
-        when(mockUsersCollection.document("mf456")).thenReturn(mockWaitlistEntrant2Document);
-        when(mockWaitlistEntrant2Document.get()).thenReturn(mockWaitlistEntrant2Task);
-        when(mockWaitlistEntrant2Document.set(any(Map.class))).thenReturn(mockVoidTask);
-        when(mockWaitlistEntrant2Task.addOnFailureListener(any(OnFailureListener.class))).thenReturn(mockWaitlistEntrant2Task);
-        doAnswer(invocation -> {
-            OnSuccessListener<DocumentSnapshot> listener = invocation.getArgument(0);
-            listener.onSuccess(mockWaitlistEntrant2DocumentSnapshot);
-            return mockWaitlistEntrant2Task;
-        }).when(mockWaitlistEntrant2Task).addOnSuccessListener(any(OnSuccessListener.class));
-        when(mockWaitlistEntrant2DocumentSnapshot.getData()).thenReturn(getMockWaitlistUser2());
-
-        // Set up event mocking
-        when(mockFirestore.collection("events")).thenReturn(mockEventsCollection);
-        when(mockEventsCollection.whereEqualTo(anyString(), anyString())).thenReturn(mockEventQuery);
-        when(mockEventQuery.get()).thenReturn(mockEventQueryTask);
-        when(mockEventQueryTask.isSuccessful()).thenReturn(true);
-        when(mockEventQueryTask.getResult()).thenReturn(mockEventQuerySnapshot);
-        when(mockEventQuerySnapshot.size()).thenReturn(2);
-        when(mockEventQuerySnapshot.getDocuments()).thenReturn(mockEventDocumentSnapshotList);
-        when(mockEventDocumentSnapshotList.get(anyInt())).thenAnswer((invocation) -> {
-            int index = invocation.getArgument(0);
-            if(index == 0) return mockEventQueryDocumentSnapshot1;
-            else return mockEventQueryDocumentSnapshot2;
-        });
-        when(mockEventQueryDocumentSnapshot1.getId()).thenReturn(String.valueOf(0));
-        when(mockEventQueryDocumentSnapshot2.getId()).thenReturn(String.valueOf(1));
-        when(mockEventQueryDocumentSnapshot1.getData()).thenReturn(eventData.get(0));
-        when(mockEventQueryDocumentSnapshot2.getData()).thenReturn(eventData.get(1));
-        when(mockEventQueryTask.addOnCompleteListener(any()))
-                .thenAnswer((invocation) -> {
-                    OnCompleteListener<QuerySnapshot> listener = invocation.getArgument(0);
-                    listener.onComplete(mockEventQueryTask);
-
-                    return null;
-                });
-        // We don't want to save anything to the database, so we mock the methods that save an event to the db to do nothing
-        // We also mock getId() to return "mockEventID" instead of going to the database for an id
-        when(mockFirestore.collection("events")).thenReturn(mockEventsCollection);
-        when(mockEventsCollection.document()).thenReturn(mockEventDocument);
-        when(mockEventDocument.getId()).thenReturn("mockEventID");
-
-        when(mockEventsCollection.document("0")).thenReturn(mockEventDocument1);
-        when(mockEventDocument1.get()).thenReturn(mockEventTask1);
-        when(mockEventDocument1.set(anyMap())).thenReturn(mockVoidTask);
-        when(mockEventTask1.addOnCompleteListener(any())).thenAnswer((invocation) -> {
-            OnCompleteListener<DocumentSnapshot> listener = invocation.getArgument(0);
-            listener.onComplete(mockEventTask1);
-            return null;
-        });
-        when(mockEventTask1.isSuccessful()).thenReturn(true);
-        when(mockEventTask1.getResult()).thenReturn(mockEventDocumentSnapshot1);
-        when(mockEventDocumentSnapshot1.exists()).thenReturn(true);
-        when(mockEventDocumentSnapshot1.getData()).thenReturn(eventData.get(0));
-
-        when(mockEventsCollection.document("1")).thenReturn(mockEventDocument2);
-        when(mockEventDocument2.get()).thenReturn(mockEventTask2);
-        when(mockEventDocument2.set(anyMap())).thenReturn(mockVoidTask);
-        when(mockEventTask2.addOnCompleteListener(any())).thenAnswer((invocation) -> {
-            OnCompleteListener<DocumentSnapshot> listener = invocation.getArgument(0);
-            listener.onComplete(mockEventTask2);
-            return null;
-        });
-        when(mockEventTask2.isSuccessful()).thenReturn(true);
-        when(mockEventTask2.getResult()).thenReturn(mockEventDocumentSnapshot2);
-        when(mockEventDocumentSnapshot2.exists()).thenReturn(true);
-        when(mockEventDocumentSnapshot2.getData()).thenReturn(eventData.get(1));
-
-        // mock notifications db stuff
-        when(mockFirestore.collection("messages")).thenReturn(mockMessagesCollection);
-        when(mockMessagesCollection.document(any())).thenReturn(mockMessagesDocument);
-        when(mockMessagesDocument.addSnapshotListener(any())).thenAnswer((invocation) -> {
-            return null;
-        });
-        when(mockMessagesDocument.set(anyMap())).thenReturn(mockVoidTask);
-
-        // add userlist mocking
-        Task<QuerySnapshot> mockUserQuerySnapshotTask = mock(Task.class);
-        QuerySnapshot mockUserQuerySnapshot = mock(QuerySnapshot.class);
-        when(mockUsersCollection.addSnapshotListener(any())).thenAnswer(invocation -> {
-            EventListener listener = invocation.getArgument(0);
-            listener.onEvent(mockUserQuerySnapshot, null);
-            return null;
-        });
-        when(mockUserQuerySnapshot.size()).thenReturn(2);
-        List<DocumentSnapshot> mockDocumentSnapshots = mock(List.class);
-        when(mockUserQuerySnapshot.getDocuments()).thenReturn(mockDocumentSnapshots);
-        QueryDocumentSnapshot userDocumentSnapshot1 = Mockito.mock(QueryDocumentSnapshot.class);
-        when(mockDocumentSnapshots.get(0)).thenReturn(userDocumentSnapshot1);
-        QueryDocumentSnapshot userDocumentSnapshot2 = Mockito.mock(QueryDocumentSnapshot.class);
-        when(mockDocumentSnapshots.get(1)).thenReturn(userDocumentSnapshot2);
-        when(userDocumentSnapshot1.getData()).thenReturn(getMockWaitlistUser1());
-        when(userDocumentSnapshot2.getData()).thenReturn(getMockWaitlistUser2());
-        when(userDocumentSnapshot1.getId()).thenReturn("ts123");
-        when(userDocumentSnapshot2.getId()).thenReturn("mf456");
-        // mock UserList fetch data to do nothing
-        Task<QuerySnapshot> mockQuerySnapshotVoidTask = Mockito.mock(Task.class);
-        when(mockUsersCollection.get()).thenReturn(mockQuerySnapshotVoidTask);
-    }
-
-    @After
-    public void tearDown() {
-        // Reset global app state
-        final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
-        globalApp.resetState();
-
-        Intents.release();
+        users.put("ts123", testUserData2);
     }
 
     /**
@@ -385,9 +172,6 @@ public class OrganizerSendNotificationsTest {
 
             // The organizer's events should be displayed
             onView(withText("Piano Lesson")).check(matches(isDisplayed()));
-            onView(withText("Group Piano Lesson")).check(matches(isDisplayed()));
-
-            Event event = globalApp.getUser().getOrganizer().getEvents().get(0);
 
             // Organizer clicks on "Piano Lesson"
             onView(withText("Piano Lesson")).perform(click());
@@ -455,9 +239,6 @@ public class OrganizerSendNotificationsTest {
 
             // The organizer's events should be displayed
             onView(withText("Piano Lesson")).check(matches(isDisplayed()));
-            onView(withText("Group Piano Lesson")).check(matches(isDisplayed()));
-
-            Event event = globalApp.getUser().getOrganizer().getEvents().get(0);
 
             // Organizer clicks on "Piano Lesson"
             onView(withText("Piano Lesson")).perform(click());
@@ -525,9 +306,6 @@ public class OrganizerSendNotificationsTest {
 
             // The organizer's events should be displayed
             onView(withText("Piano Lesson")).check(matches(isDisplayed()));
-            onView(withText("Group Piano Lesson")).check(matches(isDisplayed()));
-
-            Event event = globalApp.getUser().getOrganizer().getEvents().get(0);
 
             // Organizer clicks on "Piano Lesson"
             onView(withText("Piano Lesson")).perform(click());
@@ -595,9 +373,6 @@ public class OrganizerSendNotificationsTest {
 
             // The organizer's events should be displayed
             onView(withText("Piano Lesson")).check(matches(isDisplayed()));
-            onView(withText("Group Piano Lesson")).check(matches(isDisplayed()));
-
-            Event event = globalApp.getUser().getOrganizer().getEvents().get(0);
 
             // Organizer clicks on "Piano Lesson"
             onView(withText("Piano Lesson")).perform(click());

@@ -105,6 +105,13 @@ public abstract class MockedDb {
 
         when(mockEventDocument.getId()).thenReturn(id);
         when(mockEventDocument.get()).thenReturn(mockEventTask);
+        when(mockEventDocument.delete()).thenAnswer(invocation -> {
+            events.remove(id);
+            if (eventListener != null) {
+                eventListener.onEvent(mockEventQuerySnapshot, null);
+            }
+            return mockVoidTask;
+        });
         when(mockEventDocument.set(anyMap())).thenAnswer((invocation) -> {
             // Update the events map
             Map<String, Object> eventData = invocation.getArgument(0);
@@ -162,6 +169,13 @@ public abstract class MockedDb {
 
         when(mockUserDocument.getId()).thenReturn(id);
         when(mockUserDocument.get()).thenReturn(mockUserTask);
+        when(mockUserDocument.delete()).thenAnswer(invocation -> {
+            users.remove(id);
+            if (userListener != null) {
+                userListener.onEvent(mockUserQuerySnapshot, null);
+            }
+            return mockVoidTask;
+        });
         when(mockUserDocument.set(anyMap())).thenAnswer((invocation) -> {
             // Update the users map
             Map<String, Object> eventData = invocation.getArgument(0);
