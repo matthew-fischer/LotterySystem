@@ -22,10 +22,11 @@ import com.example.luckydragon.R;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class EditProfileTest extends MockedDb {
     @Override
-    protected HashMap<String, Object> getMockData() {
+    protected HashMap<String, Object> getMockUserData() {
         // Define test user
         HashMap<String, Object> testUserData = new HashMap<>();
         // Personal info
@@ -42,9 +43,7 @@ public class EditProfileTest extends MockedDb {
         return testUserData;
     }
     @Override
-    protected HashMap<String, Object> getMockEventData() {
-        return null;  // all events do not exist
-    }
+    protected void loadMockEventData(Map<String, Map<String, Object>> events) {}  // all events do not exist
 
     /**
      * USER STORY TEST

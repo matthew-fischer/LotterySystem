@@ -707,6 +707,7 @@ public class Event extends Observable implements Serializable {
 
     public void setInviteesHaveBeenSelected(boolean inviteesHaveBeenSelected) {
         this.inviteesHaveBeenSelected = inviteesHaveBeenSelected;
+        notifyObservers();
     }
 
     /**
@@ -742,7 +743,7 @@ public class Event extends Observable implements Serializable {
             sampleInvitee();
         }
 
-        inviteesHaveBeenSelected = true; // invitees have now been selected
+        setInviteesHaveBeenSelected(true);  // invitees have now been selected
     }
 
     /**

@@ -3,7 +3,6 @@ package com.example.luckydragon.userStoryTest;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.junit.Assert.assertTrue;
@@ -14,7 +13,6 @@ import android.content.Intent;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.example.luckydragon.Activities.EventActivity;
 import com.example.luckydragon.Activities.ViewEventActivity;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.MockedDb;
@@ -26,11 +24,13 @@ import org.junit.Test;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 public class EntrantNotInEventTest extends MockedDb {
     private String deviceId = "fakeDeviceId";
     @Override
-    protected HashMap<String, Object> getMockData() {
+    protected HashMap<String, Object> getMockUserData() {
         // Define test user
         HashMap<String, Object> testUserData = new HashMap<>();
         // Personal info
@@ -48,7 +48,14 @@ public class EntrantNotInEventTest extends MockedDb {
     }
 
     @Override
-    protected HashMap<String, Object> getMockEventData() {
+    protected void loadMockEventData(Map<String, Map<String, Object>> events) {
+        HashMap<String, Object> eventData = getMockEventData();
+
+        String id = String.valueOf(new Random().nextInt());
+        events.put(id, eventData);
+    }
+
+    private HashMap<String, Object> getMockEventData() {
         HashMap<String, Object> eventData = new HashMap<>();
         eventData.put("name", "C301 Standup");
         eventData.put("organizerDeviceId", "mockOrgId");
@@ -67,6 +74,8 @@ public class EntrantNotInEventTest extends MockedDb {
 
         return eventData;
     }
+
+
 
     /**
      * USER STORY TEST

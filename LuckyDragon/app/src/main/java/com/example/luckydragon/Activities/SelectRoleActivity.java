@@ -14,6 +14,7 @@ package com.example.luckydragon.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -50,6 +51,7 @@ public class SelectRoleActivity extends AppCompatActivity {
      * This runs once the user data has been fetched, so that admin button can be hidden if user is not an admin.
      */
     public void initializeView() {
+        Log.d("DEVICE ID", Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
         // Set up on entrant click listener
         Button entrantButton = findViewById(R.id.entrantButton);
         entrantButton.setVisibility(View.VISIBLE);

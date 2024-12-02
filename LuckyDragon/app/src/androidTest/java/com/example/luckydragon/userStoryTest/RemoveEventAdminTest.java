@@ -2,6 +2,7 @@ package com.example.luckydragon.userStoryTest;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -27,10 +28,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Contains test for US 03.04.01.
- * As an administrator, I want to be able to browse events.
+ * Contains test for US 03.01.01.
+ * As an administrator, I want to be able to remove events.
  */
-public class BrowseEventsAdminTest extends MockedDb {
+public class RemoveEventAdminTest extends MockedDb {
 
     @Override
     protected HashMap<String, Object> getMockUserData() {
@@ -68,12 +69,29 @@ public class BrowseEventsAdminTest extends MockedDb {
         eventData.put("attendeeList", new ArrayList<>());
         eventData.put("cancelledList", new ArrayList<>());
 
-        String id = "event123";
-        events.put(id, eventData);
+        events.put("asdf123", eventData);
+
+        HashMap<String, Object> eventData2 = new HashMap<>();
+        eventData2.put("name", "C401 Standup");
+        eventData2.put("organizerDeviceId", "mockOrgId");
+        eventData2.put("facility", "UofA");
+        eventData2.put("waitListLimit", 10L);
+        eventData2.put("attendeeLimit", 10L);
+        eventData2.put("hasGeolocation", true);
+        eventData2.put("date", LocalDate.now().toString());
+        eventData2.put("hours", 10L);
+        eventData2.put("minutes", 30L);
+        eventData2.put("hashedQR", "Fake QR");
+        eventData2.put("waitList", new ArrayList<>());
+        eventData2.put("inviteeList", new ArrayList<>());
+        eventData2.put("attendeeList", new ArrayList<>());
+        eventData2.put("cancelledList", new ArrayList<>());
+
+        events.put("asdf456", eventData2);
     }
 
     @Test
-    public void testBrowseEvents() {
+    public void testDeleteEvent() {
 
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
@@ -98,6 +116,22 @@ public class BrowseEventsAdminTest extends MockedDb {
 
             // Check if the event "C301 Standup" is displayed
             onView(withText("C301 Standup")).check(matches(isDisplayed()));
+
+            // Click on the event "C301 Standup"
+            onView(withText("C301 Standup")).perform(click());
+
+            // Admin event fragment should open and delete events button should be displayed
+            onView(withId(R.id.adminDeleteEventButton)).check(matches(isDisplayed()));
+
+            // Admin clicks "Delete Event" button
+            onView(withId(R.id.adminDeleteEventButton)).perform(click());
+
+            // Admin event fragment should close and the event list should be displayed
+            onView(withId(R.id.adminProfileEventsListview)).check(matches(isDisplayed()));
+
+            // Verify that "C301 Standup" is no longer displayed
+            onView(withText("C301 Standup")).check(doesNotExist());
+
         }
     }
 

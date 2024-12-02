@@ -32,13 +32,15 @@ import org.junit.Test;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 
 public class EnableEventGeolocationTest extends MockedDb {
 
     // Mock organizer with an existing facility
     @Override
-    protected HashMap<String, Object> getMockData() {
+    protected HashMap<String, Object> getMockUserData() {
         // Define test user
         HashMap<String, Object> testUserData = new HashMap<>();
         // Personal info
@@ -58,7 +60,7 @@ public class EnableEventGeolocationTest extends MockedDb {
     // Mock event data (this data does not matter since we are creating a new
     // event anyways)
     @Override
-    protected HashMap<String, Object> getMockEventData() {
+    protected void loadMockEventData(Map<String, Map<String, Object>> events) {
         HashMap<String, Object> eventData = new HashMap<>();
         eventData.put("name", "C301 Standup");
         eventData.put("organizerDeviceId", "mockOrgId");
@@ -75,7 +77,8 @@ public class EnableEventGeolocationTest extends MockedDb {
         eventData.put("attendeeList", new ArrayList<>());
         eventData.put("cancelledList", new ArrayList<>());
 
-        return eventData;
+        String id = String.valueOf(new Random().nextInt());
+        events.put(id, eventData);
     }
 
     /**
@@ -101,7 +104,6 @@ public class EnableEventGeolocationTest extends MockedDb {
 
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
         globalApp.setDb(mockFirestore);
-        EventList eventList = globalApp.getEvents();
         try (final ActivityScenario<SelectRoleActivity> scenario = ActivityScenario.launch(intent)) {
             // User is not admin, so admin button should not show
             onView(ViewMatchers.withId(R.id.entrantButton)).check(matches(isDisplayed()));
@@ -137,6 +139,7 @@ public class EnableEventGeolocationTest extends MockedDb {
 
             // Check that the event is in the organizer's list and that the qr code has been generated
             boolean eventIsPresent = false;
+            EventList eventList = globalApp.getEvents();
             for(Event e : eventList.getEventList()) {
                 if(Objects.equals(e.getName(), testEventName) && (e.getAttendeeSpots() == Integer.parseInt(testAttendeeLimit))) {
                     eventIsPresent = true;
