@@ -228,7 +228,6 @@ public abstract class MockedDb {
             String id = invocation.getArgument(0);  // assuming id exists in users map
             return makeUserDocumentSnapshot(id);
         });
-        //
         // Get a collection of users stuff
 //        when(mockUsersCollection.whereEqualTo(anyString(), any())).thenReturn(mockUserQuery);  // note: not sure where is called
 //        when(mockUserQuery.get()).thenReturn(mockUserQueryTask);
