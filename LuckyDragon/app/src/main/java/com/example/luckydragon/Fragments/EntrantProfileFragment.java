@@ -169,9 +169,9 @@ public class EntrantProfileFragment extends Fragment {
         String deviceID = ((GlobalApp) requireActivity().getApplication()).getUser().getDeviceId();
         for (Event event : eventList.getEventList()) {
             if ((listType.equals("attendeeList") && event.onAttendeeList(deviceID))
-            ||  (listType.equals("waitList") && event.onWaitList(deviceID))
-            ||  (listType.equals("inviteeList") && event.onInviteeList(deviceID))
-            ||  (listType.equals("cancelledList") && event.onCancelledList(deviceID))) {
+                    ||  (listType.equals("waitList") && event.onWaitList(deviceID))
+                    ||  (listType.equals("inviteeList") && event.onInviteeList(deviceID))
+                    ||  (listType.equals("cancelledList") && event.onCancelledList(deviceID))) {
                 eventData.add(event);
             }
         }
