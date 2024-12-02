@@ -85,12 +85,12 @@ public class EntrantProfileFragment extends Fragment {
         // Reference: https://www.geeksforgeeks.org/how-to-read-qr-code-using-zxing-library-in-android/
         scanQRButton.setOnClickListener((View v) -> {
             // This is for starting up a test event
-//            Event event = globalApp.getEvent("jvnkGe6dUhSUubdoWQVp");
-//            globalApp.setEventToView(event);
-//            startActivity(new Intent(getContext(), ViewEventActivity.class));
-//
-////             This is for testing without scanning QR Code:
-            barcodeLauncher.launch(new ScanOptions());
+            Event event = globalApp.getEvent("jvnkGe6dUhSUubdoWQVp");
+            globalApp.setEventToView(event);
+            startActivity(new Intent(getContext(), ViewEventActivity.class));
+
+            // This is for testing without scanning QR Code:
+//            barcodeLauncher.launch(new ScanOptions());
 
         });
 
@@ -169,9 +169,9 @@ public class EntrantProfileFragment extends Fragment {
         String deviceID = ((GlobalApp) requireActivity().getApplication()).getUser().getDeviceId();
         for (Event event : eventList.getEventList()) {
             if ((listType.equals("attendeeList") && event.onAttendeeList(deviceID))
-            ||  (listType.equals("waitList") && event.onWaitList(deviceID))
-            ||  (listType.equals("inviteeList") && event.onInviteeList(deviceID))
-            ||  (listType.equals("cancelledList") && event.onCancelledList(deviceID))) {
+                    ||  (listType.equals("waitList") && event.onWaitList(deviceID))
+                    ||  (listType.equals("inviteeList") && event.onInviteeList(deviceID))
+                    ||  (listType.equals("cancelledList") && event.onCancelledList(deviceID))) {
                 eventData.add(event);
             }
         }
