@@ -177,7 +177,10 @@ public class AddEventDialogFragment extends DialogFragment {
                     LocalDateTime lotteryDateTime = LocalDateTime.of(lotteryDate, lotteryTime);
 
                     LocalDateTime now = LocalDateTime.now();
-
+                    if (event.getWaitListSpots() == 0 || event.getAttendeeSpots() == 0) {
+                        event.deleteEventFromDb();
+                        return;
+                    }
                     if(!eventDateTime.isAfter(now)) {
                         activity.sendToast("Event must be in the future!");
                         event.deleteEventFromDb();
@@ -196,7 +199,12 @@ public class AddEventDialogFragment extends DialogFragment {
                         return;
                     }
 
-                    user.getOrganizer().addEvent(event);
+                    if(event.getName().isEmpty() || event.getFacility().isEmpty() || event.getAttendeeSpots() == -1) {
+                        event.deleteEventFromDb(); // make sure event is not in db
+                        return;
+                    }
+
+
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override

@@ -60,7 +60,6 @@ public class AddEventController extends Controller {
         }
         if (waitListLimit == 0) {
             activity.sendToast("Waitlist limit cannot be zero!");
-            return;
         }
         getObservable().setWaitListLimit(waitListLimit);
     }
@@ -73,12 +72,10 @@ public class AddEventController extends Controller {
         String attendeeLimitStr = et.getText().toString();
         if (attendeeLimitStr.isEmpty()) {
             activity.sendToast("Fields cannot be empty!");
-            return;
         }
         Integer attendeeLimit = Integer.valueOf(attendeeLimitStr);
         if (attendeeLimit == 0) {
             activity.sendToast("Attendee limit cannot be zero!");
-            return;
         }
         getObservable().setAttendeeLimit(attendeeLimit);
     }
@@ -115,7 +112,7 @@ public class AddEventController extends Controller {
 
     /**
      * Extracts the date from a EPOCH timestamp and updates the lottery date in the model..
-     * @param selection the time in millliseconds since epoch of the date
+     * @param selection the time in milliseconds since epoch of the date
      */
     public void extractLotteryDate(Long selection) {
         Instant dateInstant = Instant.ofEpochMilli(selection);
@@ -124,7 +121,7 @@ public class AddEventController extends Controller {
     }
 
     /**
-     * Extracts the geolocation switch from the SwitchMaterialand updates the model.
+     * Extracts the geolocation switch from the SwitchMaterial and updates the model.
      * @param toggle the SwitchMaterial of the geolocation switch
      */
     public void extractHasGeolocation(SwitchMaterial toggle) {

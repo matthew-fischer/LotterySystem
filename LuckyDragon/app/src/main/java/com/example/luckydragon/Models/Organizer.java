@@ -54,22 +54,6 @@ public class Organizer {
     }
 
     /**
-     * Adds an event to the organizer's list.
-     * @param event the event to be added
-     */
-    public void addEvent(Event event) {
-        return;
-    }
-
-    /**
-     * Remove an event from the organizer's list.
-     * @param event the event to be removed
-     */
-    public void removeEvent(Event event) {
-        return;
-    }
-
-    /**
      * Removes all events associated with the organizer and set facility to null.
      */
     public void removeFacility() {
