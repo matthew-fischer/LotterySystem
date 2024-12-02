@@ -20,6 +20,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -109,6 +110,22 @@ public class SignupActivity extends AppBarActivity {
         signupController = new SignupController(user);
         signupView = new SignupView(user, this, signupController);
 
+        // Set page titles
+        String titleString = getIntent().getStringExtra("title");
+        String subtitleString = getIntent().getStringExtra("subtitle");
+        String navbarString = getIntent().getStringExtra("navbar");
+        if (titleString != null) {
+            TextView titleText = findViewById(R.id.signupTitle);
+            titleText.setText(titleString);
+        }
+        if (subtitleString != null) {
+            TextView subtitleText = findViewById(R.id.signupSubtitle);
+            subtitleText.setText(subtitleString);
+        }
+        if (navbarString != null) {
+            getSupportActionBar().setTitle(navbarString);
+        }
+
         uploadImageResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
@@ -130,8 +147,7 @@ public class SignupActivity extends AppBarActivity {
                                 int height = ((GlobalApp) getApplication()).profilePictureSize.getHeight();
                                 profilePicture = Bitmap.createScaledBitmap(profilePicture, width, height, false);
                                 signupController.setProfilePicture(profilePicture);
-                            } catch (Exception e) {
-                                Log.e("signup", "error uploading pfp");
+                            } catch (Exception ignored) {
                             }
                         }
                     }
