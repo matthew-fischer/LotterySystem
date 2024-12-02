@@ -69,8 +69,25 @@ public class RemoveEventAdminTest extends MockedDb {
         eventData.put("attendeeList", new ArrayList<>());
         eventData.put("cancelledList", new ArrayList<>());
 
-        String id = "event123";
-        events.put(id, eventData);
+        events.put("asdf123", eventData);
+
+        HashMap<String, Object> eventData2 = new HashMap<>();
+        eventData2.put("name", "C401 Standup");
+        eventData2.put("organizerDeviceId", "mockOrgId");
+        eventData2.put("facility", "UofA");
+        eventData2.put("waitListLimit", 10L);
+        eventData2.put("attendeeLimit", 10L);
+        eventData2.put("hasGeolocation", true);
+        eventData2.put("date", LocalDate.now().toString());
+        eventData2.put("hours", 10L);
+        eventData2.put("minutes", 30L);
+        eventData2.put("hashedQR", "Fake QR");
+        eventData2.put("waitList", new ArrayList<>());
+        eventData2.put("inviteeList", new ArrayList<>());
+        eventData2.put("attendeeList", new ArrayList<>());
+        eventData2.put("cancelledList", new ArrayList<>());
+
+        events.put("asdf456", eventData2);
     }
 
     @Test

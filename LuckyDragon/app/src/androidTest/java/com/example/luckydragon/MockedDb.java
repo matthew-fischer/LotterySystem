@@ -105,6 +105,13 @@ public abstract class MockedDb {
 
         when(mockEventDocument.getId()).thenReturn(id);
         when(mockEventDocument.get()).thenReturn(mockEventTask);
+        when(mockEventDocument.delete()).thenAnswer(invocation -> {
+            events.remove(id);
+            if (eventListener != null) {
+                eventListener.onEvent(mockEventQuerySnapshot, null);
+            }
+            return mockVoidTask;
+        });
         when(mockEventDocument.set(anyMap())).thenAnswer((invocation) -> {
             // Update the events map
             Map<String, Object> eventData = invocation.getArgument(0);
