@@ -93,12 +93,6 @@ public abstract class MockedDb {
     }
 
     protected DocumentReference makeEventDocumentSnapshot(String id) {
-        Map<String, Object> data = events.get(id);
-        if (data == null) {
-            // generate a new event
-            events.put(id, new HashMap<>());
-        }
-
         DocumentReference mockEventDocument = mock(DocumentReference.class);
         Task<DocumentSnapshot> mockEventTask = mock(Task.class);
         DocumentSnapshot mockEventDocumentSnapshot = mock(DocumentSnapshot.class);
@@ -157,12 +151,6 @@ public abstract class MockedDb {
     }
 
     protected DocumentReference makeUserDocumentSnapshot(String id) {
-        Map<String, Object> data = users.get(id);
-        if (data == null) {
-            // generate a new User
-            users.put(id, new HashMap<>());
-        }
-
         DocumentReference mockUserDocument = mock(DocumentReference.class);
         Task<DocumentSnapshot> mockUserTask = mock(Task.class);
         DocumentSnapshot mockUserDocumentSnapshot = mock(DocumentSnapshot.class);
