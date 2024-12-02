@@ -93,8 +93,6 @@ public abstract class MockedDb {
     }
 
     protected DocumentReference makeEventDocumentSnapshot(String id) {
-        Map<String, Object> data = events.get(id);
-
         DocumentReference mockEventDocument = mock(DocumentReference.class);
         Task<DocumentSnapshot> mockEventTask = mock(Task.class);
         DocumentSnapshot mockEventDocumentSnapshot = mock(DocumentSnapshot.class);
@@ -153,8 +151,6 @@ public abstract class MockedDb {
     }
 
     protected DocumentReference makeUserDocumentSnapshot(String id) {
-        Map<String, Object> data = users.get(id);
-
         DocumentReference mockUserDocument = mock(DocumentReference.class);
         Task<DocumentSnapshot> mockUserTask = mock(Task.class);
         DocumentSnapshot mockUserDocumentSnapshot = mock(DocumentSnapshot.class);
