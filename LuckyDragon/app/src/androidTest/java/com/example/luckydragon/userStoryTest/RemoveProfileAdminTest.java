@@ -2,6 +2,7 @@ package com.example.luckydragon.userStoryTest;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -27,10 +28,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Contains test for US 03.05.01.
- * As an administrator, I want to be able to browse profiles.
+ * Contains test for US 03.02.01.
+ * As an administrator, I want to be able to remove profiles.
  */
-public class BrowseUsersAdminTest extends MockedDb {
+public class RemoveProfileAdminTest extends MockedDb {
 
     @Override
     protected HashMap<String, Object> getMockUserData() {
@@ -51,6 +52,24 @@ public class BrowseUsersAdminTest extends MockedDb {
     }
 
     @Override
+    protected void loadMockUserData(Map<String, Map<String, Object>> users) {
+        super.loadMockUserData(users);
+        // Define test user
+        HashMap<String, Object> testUserData = new HashMap<>();
+        // Personal info
+        testUserData.put("name", "Tony Sun");
+        testUserData.put("email", "tonysun@ualberta.ca");
+        testUserData.put("phoneNumber", "780-827-7821");
+        // Roles
+        testUserData.put("isEntrant", true);
+        testUserData.put("isOrganizer", true);
+
+        String id = "user123";
+        users.put(id, testUserData);
+
+    }
+
+    @Override
     protected void loadMockEventData(Map<String, Map<String, Object>> events) {
         HashMap<String, Object> eventData = new HashMap<>();
         eventData.put("name", "C301 Standup");
@@ -68,12 +87,29 @@ public class BrowseUsersAdminTest extends MockedDb {
         eventData.put("attendeeList", new ArrayList<>());
         eventData.put("cancelledList", new ArrayList<>());
 
-        String id = "event123";
-        events.put(id, eventData);
+        events.put("asdf123", eventData);
+
+        HashMap<String, Object> eventData2 = new HashMap<>();
+        eventData2.put("name", "C401 Standup");
+        eventData2.put("organizerDeviceId", "mockOrgId");
+        eventData2.put("facility", "UofA");
+        eventData2.put("waitListLimit", 10L);
+        eventData2.put("attendeeLimit", 10L);
+        eventData2.put("hasGeolocation", true);
+        eventData2.put("date", LocalDate.now().toString());
+        eventData2.put("hours", 10L);
+        eventData2.put("minutes", 30L);
+        eventData2.put("hashedQR", "Fake QR");
+        eventData2.put("waitList", new ArrayList<>());
+        eventData2.put("inviteeList", new ArrayList<>());
+        eventData2.put("attendeeList", new ArrayList<>());
+        eventData2.put("cancelledList", new ArrayList<>());
+
+        events.put("asdf456", eventData2);
     }
 
     @Test
-    public void testBrowseUsers() {
+    public void testDeleteProfile() {
 
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
@@ -96,8 +132,24 @@ public class BrowseUsersAdminTest extends MockedDb {
             // Admin clicks "View Profiles"
             onView(withId(R.id.viewProfilesButton)).perform(click());
 
-            // Check if the user "John Doe" is displayed
-            onView(withText("John Doe")).check(matches(isDisplayed()));
+            // Check if the user "Tony Sun" is displayed
+            onView(withText("Tony Sun")).check(matches(isDisplayed()));
+
+            // Click on the user "Tony Sun"
+            onView(withText("Tony Sun")).perform(click());
+
+            // Admin profile fragment should open and delete profile button should be displayed
+            onView(withId(R.id.adminDeleteProfileButton)).check(matches(isDisplayed()));
+
+            // Admin clicks "Delete Profile" button
+            onView(withId(R.id.adminDeleteProfileButton)).perform(click());
+
+            // Admin profile fragment should close and the user list should be displayed
+            onView(withId(R.id.adminProfileUsersListview)).check(matches(isDisplayed()));
+
+            // Verify that "Tony Sun" is no longer displayed
+            onView(withText("Tony Sun")).check(doesNotExist());
+
         }
     }
 
