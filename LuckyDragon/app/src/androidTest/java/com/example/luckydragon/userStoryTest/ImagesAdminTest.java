@@ -165,7 +165,7 @@ public class ImagesAdminTest extends MockedDb {
             onView(withId(R.id.adminRemoveProfilePictureButton)).perform(click());
 
             // "Remove Profile Picture" button should not exist anymore as profile picture has been removed
-            onView(withId(R.id.adminRemoveEventPoster)).check(matches(not(isDisplayed())));
+            onView(withId(R.id.adminRemoveProfilePictureButton)).check(matches(not(isDisplayed())));
 
         }
     }
