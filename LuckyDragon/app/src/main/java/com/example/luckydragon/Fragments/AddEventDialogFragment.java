@@ -86,7 +86,6 @@ public class AddEventDialogFragment extends DialogFragment {
         String facilityName = user.getOrganizer().getFacility();
 
         // MVC
-        // TODO: restore an in progress event creation OR, save to db if all data is valid.
         event = ((GlobalApp) requireActivity().getApplication()).makeEvent();
         // Set event attr we know (and before it is observed)
         event.setOrganizerDeviceId(organizerDeviceID);
@@ -152,7 +151,6 @@ public class AddEventDialogFragment extends DialogFragment {
 
         return builder.setView(dialogView)
                 .setPositiveButton("Create", (dialogInterface, i) -> {
-                    // TODO: make sure we only want to extract event on submit
                     // get fields
                     TextInputEditText eventNameEditText = dialogView.findViewById(R.id.eventNameEditText);
                     TextInputEditText waitlistLimitEditText = dialogView.findViewById(R.id.waitlistLimitEditText);
