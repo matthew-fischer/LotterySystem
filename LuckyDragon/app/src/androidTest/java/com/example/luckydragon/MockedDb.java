@@ -10,11 +10,13 @@ import static org.mockito.MockitoAnnotations.openMocks;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.test.espresso.intent.Intents;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.example.luckydragon.Activities.SelectRoleActivity;
+import com.example.luckydragon.Models.Location;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -33,6 +35,10 @@ import org.junit.Before;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -109,13 +115,30 @@ public abstract class MockedDb {
         when(mockEventDocument.set(anyMap())).thenAnswer((invocation) -> {
             // Update the events map
             Map<String, Object> eventData = invocation.getArgument(0);
+
+            // shallow clone to avoid modifying the app's data
+            eventData = (Map) ((HashMap) eventData).clone();
+
             // cast ints to longs in the data
             for (Map.Entry<String, Object> entry : eventData.entrySet()) {
                 if (entry.getValue() instanceof Integer) {
                     eventData.put(entry.getKey(), Long.valueOf((Integer) entry.getValue()));
                 }
             }
-
+            // cast locations to plain old java
+            if (eventData.get("waitListLocations") != null) {
+                ArrayList<Object> locations = (ArrayList) ((ArrayList) eventData.get("waitListLocations")).clone();
+                for (int i = 0; i < locations.size(); i++) {
+                    if (locations.get(i) instanceof Location) {
+                        Map<String, Object> locationMap = new HashMap<>();
+                        locationMap.put("latitude", ((Location) locations.get(i)).getLatitude());
+                        locationMap.put("longitude", ((Location) locations.get(i)).getLongitude());
+                        locations.set(i, locationMap);
+                    }
+                }
+                eventData.put("waitListLocations", locations);
+            }
+            Log.d("TONYYY", eventData.toString());
             events.put(id, eventData);
             // Only call the eventListener if it has been created
             if (eventListener != null) {

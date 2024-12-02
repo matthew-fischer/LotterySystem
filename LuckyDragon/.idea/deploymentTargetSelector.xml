@@ -13,19 +13,19 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="JoinWaitlistTest">
+      <SelectionState runConfigName="OrganizerViewMapTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="LeaveWaitlistTest">
+      <SelectionState runConfigName="OrganizerViewWaitingListTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="LogInByDeviceTest">
+      <SelectionState runConfigName="SampleInviteesTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="OpenEntrantProfileFragmentTest">
+      <SelectionState runConfigName="SignupTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="OrganizerViewAttendeeListTest">
+      <SelectionState runConfigName="StoreQrCodeTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
