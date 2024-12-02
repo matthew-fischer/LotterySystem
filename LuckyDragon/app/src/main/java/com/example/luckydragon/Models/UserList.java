@@ -39,8 +39,8 @@ public class UserList extends Observable {
             }
             if (value != null) {
                 users.clear();
-                for(int i = 0; i < value.size(); i++) {
-                    users.add(createUser((QueryDocumentSnapshot) value.getDocuments().get(i)));
+                for (QueryDocumentSnapshot document : value) {
+                    users.add(createUser(document));
                 }
                 notifyObservers();
             }

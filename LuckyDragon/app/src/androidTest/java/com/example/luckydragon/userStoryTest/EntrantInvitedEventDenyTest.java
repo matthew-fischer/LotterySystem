@@ -85,7 +85,7 @@ public class EntrantInvitedEventDenyTest extends MockedDb {
      * USER STORY TEST
      * US 01.05.03
      * Entrant - be able to decline an invitation when chosen to participate in an event
-     * Launch activity directly on event activity
+     * Navigate to event activity
      * User clicks decline
      * User is now part of the cancelled list
      * User sees a message saying the waitlist is closed
@@ -95,7 +95,7 @@ public class EntrantInvitedEventDenyTest extends MockedDb {
      */
     @Test
     public void testDeclineInvite() {
-        // Launch event activity directly
+        // Launch event activity
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
 

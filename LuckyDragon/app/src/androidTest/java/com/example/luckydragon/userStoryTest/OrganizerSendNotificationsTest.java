@@ -122,13 +122,13 @@ public class OrganizerSendNotificationsTest extends MockedDb {
 
         HashMap<String, Object> testUserData2 = new HashMap<>();
         // Personal info
-        testUserData.put("name", "Tony Sun");
-        testUserData.put("email", "tonysun@ualberta.ca");
-        testUserData.put("phoneNumber", "780-831-3291");
+        testUserData2.put("name", "Tony Sun");
+        testUserData2.put("email", "tonysun@ualberta.ca");
+        testUserData2.put("phoneNumber", "780-831-3291");
         // Roles
-        testUserData.put("isEntrant", true);
-        testUserData.put("isOrganizer", false);
-        testUserData.put("isAdmin", false);
+        testUserData2.put("isEntrant", true);
+        testUserData2.put("isOrganizer", false);
+        testUserData2.put("isAdmin", false);
 
         users.put("ts123", testUserData2);
     }

@@ -51,8 +51,8 @@ public class EntrantNotInEventTest extends MockedDb {
     protected void loadMockEventData(Map<String, Map<String, Object>> events) {
         HashMap<String, Object> eventData = getMockEventData();
 
-        String id = String.valueOf(new Random().nextInt());
-        events.put(id, eventData);
+//        String id = String.valueOf(new Random().nextInt());
+        events.put(eventId, eventData);
     }
 
     private HashMap<String, Object> getMockEventData() {
@@ -94,7 +94,6 @@ public class EntrantNotInEventTest extends MockedDb {
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
         globalApp.setDb(mockFirestore);
-        globalApp.setDeviceId(deviceId);
         globalApp.setRole(GlobalApp.ROLE.ENTRANT);
         // Set event to view
         Event testEvent = new Event(eventId, mockFirestore);
