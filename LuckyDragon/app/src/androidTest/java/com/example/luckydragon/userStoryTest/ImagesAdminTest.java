@@ -29,7 +29,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Contains tests for all administrator stories related to images.
+ * Contains tests for US 03.03.01 and US 03.06.01.
+ * As an administrator, I want to be able to remove images.
+ * As an administrator, I want to be able to browse images.
  */
 public class ImagesAdminTest extends MockedDb {
 
@@ -78,10 +80,6 @@ public class ImagesAdminTest extends MockedDb {
         events.put(id, eventData);
     }
 
-    /**
-     * Contains test for US 03.03.01.
-     * As an administrator, I want to be able to remove images.
-     */
     @Test
     public void testRemoveEventPoster() {
 
@@ -124,10 +122,6 @@ public class ImagesAdminTest extends MockedDb {
         }
     }
 
-    /**
-     * Contains test for US 03.03.01.
-     * As an administrator, I want to be able to remove images.
-     */
     @Test
     public void testRemoveProfilePicture() {
 
