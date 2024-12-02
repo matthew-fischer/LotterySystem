@@ -60,6 +60,7 @@ public class AddEventController extends Controller {
         }
         if (waitListLimit == 0) {
             activity.sendToast("Waitlist limit cannot be zero!");
+            return;
         }
         getObservable().setWaitListLimit(waitListLimit);
     }
@@ -72,10 +73,12 @@ public class AddEventController extends Controller {
         String attendeeLimitStr = et.getText().toString();
         if (attendeeLimitStr.isEmpty()) {
             activity.sendToast("Fields cannot be empty!");
+            return;
         }
         Integer attendeeLimit = Integer.valueOf(attendeeLimitStr);
         if (attendeeLimit == 0) {
             activity.sendToast("Attendee limit cannot be zero!");
+            return;
         }
         getObservable().setAttendeeLimit(attendeeLimit);
     }
