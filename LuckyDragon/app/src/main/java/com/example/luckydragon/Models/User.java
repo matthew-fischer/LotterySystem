@@ -98,7 +98,7 @@ public class User extends Observable {
                     Map<String, Object> userData = documentSnapshot.getData();
                     if (userData == null) {
                         save();
-                        // since this is a new user, we need to also intitialize their notificationList
+                        // since this is a new user, we need to also initialize their notificationList
                         // in firestore
                         notificationList.initializeInFirestore();
                     } else {

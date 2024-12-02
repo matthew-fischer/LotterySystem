@@ -145,7 +145,6 @@ public class SignupActivity extends AppBarActivity {
                         }
                     }
                 });
-//        setDefaults();
         setupListeners();
     }
 

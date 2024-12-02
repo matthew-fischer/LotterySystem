@@ -50,7 +50,7 @@ public class GlobalApp extends Application {
 
     public final Bitmap profilePictureSize = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
 
-    private Event eventToView = null; // temporary storage for eventToView to be passed into ViewEventActivity (avoids passing event through intent or having to re-fetch it unneccessarily)
+    private Event eventToView = null;
     private User userToView = null;
 
     private NotificationService notificationService;
@@ -211,9 +211,6 @@ public class GlobalApp extends Application {
     public void sendNotification(String title, String messageBody) {
         Intent intent = new Intent(this, SelectRoleActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        Bundle extras = new Bundle();
-//        extras.putString("eventId", eventId);
-//        intent.putExtras(extras);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_IMMUTABLE);
 
@@ -224,7 +221,6 @@ public class GlobalApp extends Application {
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentTitle(title)
                         .setContentText(messageBody)
-//                        .addExtras(extras)
                         .setAutoCancel(true)
                         .setSound(defaultSoundUri)
                         .setContentIntent(pendingIntent)
@@ -242,7 +238,6 @@ public class GlobalApp extends Application {
             notificationManager.createNotificationChannel(channel);
         }
 
-        Log.d("TONY", "sendNotification: ");
         Random random = new Random();
         int notifId = random.nextInt(Integer.MAX_VALUE);
         notificationManager.notify(notifId /* ID of notification */, notificationBuilder.build());

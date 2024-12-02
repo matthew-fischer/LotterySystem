@@ -31,7 +31,10 @@ import com.example.luckydragon.Controllers.EventController;
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.R;
 
-
+/**
+ * A dialog fragment that allows organizers to upload and edit their event poster.
+ * This fragment lets users select an image, preview its name, and confirm the upload.
+ */
 public class UploadPosterDialogFragment extends DialogFragment{
     private Event event;
     private Bitmap uploadedPoster;

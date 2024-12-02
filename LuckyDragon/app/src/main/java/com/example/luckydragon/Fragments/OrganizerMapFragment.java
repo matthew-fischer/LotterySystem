@@ -30,7 +30,12 @@ import org.osmdroid.views.overlay.OverlayItem;
 
 import java.util.ArrayList;
 
-// Heavily based on osmdroid docs: https://github.com/osmdroid/osmdroid/wiki/How-to-use-the-osmdroid-library-(Java)
+/**
+ * A dialog fragment that displays a map with markers for event waitlist locations.
+ * This fragment utilizes the osmdroid library to display an interactive map.
+ * It centers on the first location in the waitlist and marks all waitlist locations.
+ * Heavily based on osmdroid docs: <a href="https://github.com/osmdroid/osmdroid/wiki/How-to-use-the-osmdroid-library-(Java)">...</a>
+ */
 public class OrganizerMapFragment extends DialogFragment {
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private MapView map = null;

@@ -58,9 +58,6 @@ public class ProfileActivity extends AppBarActivity {
         }
 
         // Create profile view
-        // initializeView() uses profileView, but it will run before the ProfileView constructor returns so it still thinks ProfileView is null
-        // To fix I set isLoaded to false until after profileView is set
-        // I also had to add notifyObservers() to setIsLoaded() in User
         profileView = new ProfileView(user, this);
 
         // Create profile fragment
