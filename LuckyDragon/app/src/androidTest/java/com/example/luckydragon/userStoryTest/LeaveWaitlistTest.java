@@ -29,6 +29,7 @@ import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.example.luckydragon.Activities.EventActivity;
+import com.example.luckydragon.Activities.ViewEventActivity;
 import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.MockedDb;
 import com.example.luckydragon.Models.Event;
@@ -51,6 +52,7 @@ import org.mockito.Mock;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -76,6 +78,12 @@ public class LeaveWaitlistTest extends MockedDb {
     @Override
     protected void loadMockEventData(Map<String, Map<String, Object>> events) {
         super.loadMockEventData(events);
+        HashMap<String, Object> eventData = getMockEventData();
+
+        events.put(eventId, eventData);
+    }
+
+    private HashMap<String, Object> getMockEventData() {
         HashMap<String, Object> eventData = new HashMap<>();
         eventData.put("name", "C301 Standup");
         eventData.put("organizerDeviceId", "mockOrgId");
@@ -87,12 +95,8 @@ public class LeaveWaitlistTest extends MockedDb {
         eventData.put("hours", 10L);
         eventData.put("minutes", 30L);
         eventData.put("hashedQR", "Fake QR");
-        eventData.put("waitList", new ArrayList<>());
-        eventData.put("attendeeList", new ArrayList<>());
-        eventData.put("attendeeList", new ArrayList<>());
-        eventData.put("cancelledList", new ArrayList<>());
 
-        events.put("mockEventID", eventData);
+        return eventData;
     }
 
     /**
@@ -103,28 +107,33 @@ public class LeaveWaitlistTest extends MockedDb {
      */
     @Test
     public void testLeaveWaitlist() {
+// Launch event activity directly
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         GlobalApp globalApp = (GlobalApp) targetContext.getApplicationContext();
         globalApp.setDb(mockFirestore);
-
-        // Launch event activity directly
-        final Intent intent = new Intent(targetContext, EventActivity.class);
-        intent.putExtra("eventID", "mockEventID");
-        try (final ActivityScenario<EventActivity> scenario = ActivityScenario.launch(intent)) {
-            Event event = globalApp.getEvent("mockEventID");
-
+        globalApp.setRole(GlobalApp.ROLE.ENTRANT);
+        // Set event to view
+        Event testEvent = new Event(eventId, mockFirestore);
+        testEvent.parseEventDocument(getMockEventData());
+        testEvent.setIsLoaded(true);
+        globalApp.setEventToView(testEvent);
+        // Launch event activity
+        final Intent intent = new Intent(targetContext, ViewEventActivity.class);
+        try(final ActivityScenario<ViewEventActivity> scenario = ActivityScenario.launch(intent)) {
             // User clicks Sign-Up
-            onView(withId(R.id.signUpButton)).perform(click());
+            onView(withId(R.id.waitlistActionButton)).check(matches(withText("Join Waitlist")));
+            onView(withId(R.id.waitlistActionButton)).perform(click());
 
             // User should now be on the waitlist.
-            assertEquals(1, event.getWaitList().size());
-            assertTrue(event.getWaitList().contains(deviceId));
+            assertEquals(1, testEvent.getWaitList().size());
+            assertTrue(testEvent.getWaitList().contains(deviceId));
 
             // User clicks Cancel
-            onView(withId(R.id.eventCancel)).perform(click());
+            onView(withId(R.id.waitlistActionButton)).check(matches(withText("Cancel")));
+            onView(withId(R.id.waitlistActionButton)).perform(click());
 
             // Waitlist should now be empty.
-            assertEquals(0, event.getWaitList().size());
+            assertEquals(0, testEvent.getWaitList().size());
         }
     }
 }

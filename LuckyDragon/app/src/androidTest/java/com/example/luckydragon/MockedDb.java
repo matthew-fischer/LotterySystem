@@ -138,7 +138,6 @@ public abstract class MockedDb {
                 }
                 eventData.put("waitListLocations", locations);
             }
-            Log.d("TONYYY", eventData.toString());
             events.put(id, eventData);
             // Only call the eventListener if it has been created
             if (eventListener != null) {
