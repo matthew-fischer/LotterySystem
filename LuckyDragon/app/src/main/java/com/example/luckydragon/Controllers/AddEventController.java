@@ -53,10 +53,14 @@ public class AddEventController extends Controller {
      */
     public void extractWaitLimit(EditText et) {
         String waitListLimitStr = et.getText().toString();
-        // TODO: enforce integer
+
         int waitListLimit = -1;
         if (!waitListLimitStr.isEmpty()) {
             waitListLimit = Integer.parseInt(waitListLimitStr);
+        }
+        if (waitListLimit == 0) {
+            activity.sendToast("Waitlist limit cannot be zero!");
+            return;
         }
         getObservable().setWaitListLimit(waitListLimit);
     }
@@ -72,6 +76,10 @@ public class AddEventController extends Controller {
             return;
         }
         Integer attendeeLimit = Integer.valueOf(attendeeLimitStr);
+        if (attendeeLimit == 0) {
+            activity.sendToast("Attendee limit cannot be zero!");
+            return;
+        }
         getObservable().setAttendeeLimit(attendeeLimit);
     }
 
@@ -87,7 +95,7 @@ public class AddEventController extends Controller {
 
     /**
      * Extracts the date from a EPOCH timestamp and updates the event date in the model.
-     * @param selection the time in millliseconds since epoch of the date
+     * @param selection the time in milliseconds since epoch of the date
      */
     public void extractEventDate(Long selection) {
         Instant dateInstant = Instant.ofEpochMilli(selection);
