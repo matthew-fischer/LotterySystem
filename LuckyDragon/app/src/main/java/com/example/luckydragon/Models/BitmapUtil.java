@@ -6,6 +6,9 @@ import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
 
+/**
+ * Utility class for converting between Bitmap objects and Base64 strings.
+ */
 public class BitmapUtil {
     /**
      * Converts bitmap to string

@@ -62,8 +62,6 @@ public class SignupActivity extends AppBarActivity {
                 if (isGranted) {
                     onSubmit();
                     // FCM SDK (and your app) can post notifications.
-                } else {
-                    // TODO: Inform user that that your app will not show notifications.
                 }
             });
 
@@ -77,11 +75,6 @@ public class SignupActivity extends AppBarActivity {
                     PackageManager.PERMISSION_GRANTED) {
                 throw new RuntimeException("entered into notification perm request with requests enabled already!");
                 // FCM SDK (and your app) can post notifications.
-//            } else if (shouldShowRequestPermissionRationale(POST_NOTIFICATIONS)) {
-//                // TODO: display an educational UI explaining to the user the features that will be enabled
-//                //       by them granting the POST_NOTIFICATION permission. This UI should provide the user
-//                //       "OK" and "No thanks" buttons. If the user selects "OK," directly request the permission.
-//                //       If the user selects "No thanks," allow the user to continue without notifications.
             } else {
                 // Directly ask for the permission
                 requestPermissionLauncher.launch(POST_NOTIFICATIONS);
@@ -152,7 +145,6 @@ public class SignupActivity extends AppBarActivity {
                         }
                     }
                 });
-//        setDefaults();
         setupListeners();
     }
 

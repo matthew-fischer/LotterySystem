@@ -177,7 +177,7 @@ public class EventTest {
 
             // Check that event fields were set correctly
             HashMap<String, Object> testData = getMockData();
-            String testTime = "10:30 AM"; // TODO generate this based off of testData
+            String testTime = "10:30 AM";
             assertEquals(testEvent.getName(), testData.get("name"));
             assertEquals(testEvent.getFacility(), testData.get("facility"));
             assertEquals(testEvent.getTime12h(), testTime);
@@ -204,7 +204,7 @@ public class EventTest {
 
             // Check that event fields were set correctly
             HashMap<String, Object> testData = getMockData();
-            String testTime = "10:30 AM"; // TODO generate this based off of testData
+            String testTime = "10:30 AM";
             assertEquals(testEvent.getName(), testData.get("name"));
             assertEquals(testEvent.getFacility(), testData.get("facility"));
             assertEquals(testEvent.getTime12h(), testTime);

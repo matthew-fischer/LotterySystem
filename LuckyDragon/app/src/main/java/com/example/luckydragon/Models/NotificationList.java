@@ -136,11 +136,9 @@ public class NotificationList extends Observable {
      */
     private void updateFromPayload(Map<String, Object> payload) {
         if (!(payload.get("notificationList") instanceof ArrayList)) {
-            Log.d("TONY", user.getName());
             Log.e("Notifications", "notificationList was not an ArrayList!");
             return;
         }
-        // TODO: resolve this cast uncheck
         ArrayList<HashMap<String, String>> arrayMap = (ArrayList<HashMap<String, String>>) payload.get("notificationList");
 
         if (arrayMap == null) {

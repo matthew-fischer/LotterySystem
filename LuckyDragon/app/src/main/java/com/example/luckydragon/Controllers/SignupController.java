@@ -48,7 +48,6 @@ public class SignupController extends Controller {
      * @param editPhone the editText field
      */
     public void extractPhoneNumber(EditText editPhone) {
-        // TODO: input validation
         String phoneNumber = editPhone.getText().toString().trim();
         getObservable().setPhoneNumber(phoneNumber);
     }

@@ -205,7 +205,6 @@ public class ReplacementInviteesTest extends MockedDb {
             assertTrue(event.getInviteeList().contains("mf456"));
             assertEquals(event.getInviteeList().size(), 2);
 
-            // TODO could check that invited users are displayed -- invitee display isn't implemented yet
         }
     }
 }

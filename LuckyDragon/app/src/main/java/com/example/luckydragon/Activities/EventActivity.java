@@ -42,7 +42,7 @@ public class EventActivity extends AppBarActivity {
             throw new RuntimeException("Event Id is Null!");
         }
 
-        event = ((GlobalApp) getApplication()).getEvent(eventId);  // TODO: Might have to move this onResume in case viewing diff event does not work
+        event = ((GlobalApp) getApplication()).getEvent(eventId);
         eventController = new EventController(event);
 
         eventView = new EventView(event, deviceId, this);

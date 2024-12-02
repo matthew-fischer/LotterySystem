@@ -121,9 +121,6 @@ public class OrganizerEventFragment extends Fragment {
     private void setupAdapter(EntrantArrayAdapter adapter, ListView listView) {
         // set the listview's adapter
         listView.setAdapter(adapter);
-
-        // TODO: Setup item click listener for cancelling entrants --> can't cancel from attendeeList
-
     }
 
     /**

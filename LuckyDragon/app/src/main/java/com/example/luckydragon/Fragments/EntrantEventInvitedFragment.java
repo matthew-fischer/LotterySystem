@@ -13,6 +13,10 @@ import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.R;
 
+/**
+ * A fragment for displaying event invitations to entrants.
+ * Allows entrants to accept or decline the invitation and updates the UI accordingly.
+ */
 public class EntrantEventInvitedFragment extends Fragment {
     private Event event;
     private EventController eventController;

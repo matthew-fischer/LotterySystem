@@ -86,9 +86,6 @@ public class EntrantInvitedEventTest extends MockedDb {
      * User clicks accept
      * User is now part of the attendee list
      * User sees a message confirming that they are attending this event
-     * TODO below
-     *      User can see that they are part of the attendee list
-     *      User can see on their profile they are on the attendee list
      */
     @Test
     public void testAcceptInvite() {

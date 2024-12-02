@@ -79,7 +79,6 @@ public class Event extends Observable implements Serializable {
         }
     }
 
-    // TODO: REMOVE DEFAULT
     private transient FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private String id;
@@ -133,7 +132,6 @@ public class Event extends Observable implements Serializable {
     }
 
     /**
-     * TODO: REMOVE
      * Creates an Event object.
      * @param id the event id
      * @param name the name of the event
@@ -215,7 +213,6 @@ public class Event extends Observable implements Serializable {
      * Fetches event data from database.
      */
     public void fetchData() {
-        // TODO: Ensure null attr are ok to read
         DocumentReference docRef = db.collection("events").document(id);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -328,7 +325,6 @@ public class Event extends Observable implements Serializable {
      * Returns a random entrant's deviceID from the waitlist.
      * In the case that there is no one in the waitlist, returns null.
      * @return the deviceID of the randomly chosen entrant, or null if list is empty
-     * TODO: Should be private method?
      */
     public String drawEntrantFromWaitList() {
         if (waitList.isEmpty()) {
@@ -341,8 +337,6 @@ public class Event extends Observable implements Serializable {
 
     /**
      * Samples entrants from the waitlist and moves them to the invitee list.
-     * TODO: This should also notify the invited entrants.
-     * TODO: Should move other entrants to cancelled list? - Tony
      */
     public void sampleEntrantsFromWaitList() {
         while (attendeeList.size() + inviteeList.size() < attendeeLimit && !waitList.isEmpty()) {
@@ -628,7 +622,6 @@ public class Event extends Observable implements Serializable {
     }
 
     public void setName(String name) {
-        // TODO: Catch empty?
         this.name = name;
         notifyObservers();
     }

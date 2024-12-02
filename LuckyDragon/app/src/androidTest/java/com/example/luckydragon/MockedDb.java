@@ -304,7 +304,6 @@ public abstract class MockedDb {
 
         when(mockEventsCollection.addSnapshotListener(any(EventListener.class)))
                 .thenAnswer((invocation) -> {
-                    // TODO: can only hold 1 eventListener at a time.
                     eventListener = invocation.getArgument(0);  // capture snapshot listener
                     return null;
                 });

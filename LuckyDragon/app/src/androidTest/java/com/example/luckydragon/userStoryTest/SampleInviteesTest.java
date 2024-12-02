@@ -226,9 +226,6 @@ public class SampleInviteesTest extends MockedDb {
             assertTrue(event.getWaitList().isEmpty());
             assertEquals(event.getInviteeList().size(), 2);
 
-            // TODO could check that invited users are displayed -- invitee display isn't implemented yet
-            //onView(withText("Tony Sun")).check(matches(isDisplayed()));
-            //onView(withText("Matthew Fischer")).check(matches(isDisplayed()));
         }
     }
 }

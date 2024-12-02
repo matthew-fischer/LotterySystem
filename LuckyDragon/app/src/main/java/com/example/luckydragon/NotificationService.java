@@ -41,10 +41,7 @@ public class NotificationService extends Observer {
 
     @Override
     public void update(Observable whoUpdatedMe) {
-        Log.d("TONY", "update: ");
-        Log.d("TONY", String.valueOf(getObservable().getNotificationList().size()));
         for (NotificationList.Notification notification : getObservable().getNotificationList()) {
-            Log.d("Tony", String.format("Consuming %s", notification.title));
             globalApp.sendNotification(notification.title, notification.body);
         }
         if (!getObservable().getNotificationList().isEmpty()) {

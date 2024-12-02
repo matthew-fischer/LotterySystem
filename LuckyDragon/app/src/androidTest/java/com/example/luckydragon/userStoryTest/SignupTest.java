@@ -108,7 +108,7 @@ public class SignupTest extends MockedDb {
             onView(withId(R.id.signupPhone)).perform(ViewActions.clearText());
 
             // Click confirm
-            onView(withText("Submit")).perform(click());  // TODO: Somehow cant find view without typing in signup phone. Maybe delay?
+            onView(withText("Submit")).perform(click());
 
             // Check that profile displays info
             onView(withId(R.id.nameTextView)).check(matches(withText(name)));

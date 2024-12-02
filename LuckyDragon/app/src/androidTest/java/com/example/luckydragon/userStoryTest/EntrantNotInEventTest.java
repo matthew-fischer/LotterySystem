@@ -84,7 +84,6 @@ public class EntrantNotInEventTest extends MockedDb {
      * User clicks sign up
      * User is now part of the waitlist
      * Button changes from "Join Waitlist" to "Cancel"
-     * TODO: Below
      * User can see that they are part of the waitlist
      * User can see on their profile they are on the waitlist
      */

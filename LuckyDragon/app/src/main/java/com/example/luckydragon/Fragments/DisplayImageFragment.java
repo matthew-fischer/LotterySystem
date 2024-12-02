@@ -16,6 +16,10 @@ import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.R;
 import com.google.zxing.common.BitMatrix;
 
+/**
+ * A {@link DialogFragment} for displaying an image along with a title in a dialog.
+ * Typically used to show QR codes or other bitmaps in a dialog.
+ */
 public class DisplayImageFragment extends DialogFragment {
     public DisplayImageFragment() {
         super();

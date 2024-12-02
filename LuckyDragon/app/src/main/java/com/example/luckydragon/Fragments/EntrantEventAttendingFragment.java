@@ -14,6 +14,11 @@ import com.example.luckydragon.GlobalApp;
 import com.example.luckydragon.Models.Event;
 import com.example.luckydragon.R;
 
+/**
+ * A fragment for displaying event attendance details to an entrant.
+ * This fragment shows the current number of attendees and available spots,
+ * and allows the entrant to view the event's poster if available.
+ */
 public class EntrantEventAttendingFragment extends Fragment {
     private Event event;
 
