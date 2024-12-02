@@ -7,6 +7,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static org.hamcrest.CoreMatchers.not;
+
 import android.content.Context;
 import android.content.Intent;
 
@@ -27,10 +29,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Contains test for US 03.05.01.
- * As an administrator, I want to be able to browse profiles.
+ * Contains test for US 03.07.01.
+ * As an administrator I want to remove facilities that violate app policy.
  */
-public class BrowseUsersAdminTest extends MockedDb {
+public class RemoveFacilityAdminTest extends MockedDb {
 
     @Override
     protected HashMap<String, Object> getMockUserData() {
@@ -73,7 +75,7 @@ public class BrowseUsersAdminTest extends MockedDb {
     }
 
     @Test
-    public void testBrowseUsers() {
+    public void testRemoveFacility() {
 
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
@@ -98,6 +100,25 @@ public class BrowseUsersAdminTest extends MockedDb {
 
             // Check if the user "John Doe" is displayed
             onView(withText("John Doe")).check(matches(isDisplayed()));
+
+            // Click on the user "John Doe"
+            onView(withText("John Doe")).perform(click());
+
+            // Admin user fragment should open and "Remove Facility" button should be displayed
+            onView(withId(R.id.adminRemoveFacilityButton)).check(matches(isDisplayed()));
+
+            // Check if the facility name "John Doe" is displayed
+            onView(withText("The Sports Centre")).check(matches(isDisplayed()));
+
+            // Admin clicks "Remove Facility" button
+            onView(withId(R.id.adminRemoveFacilityButton)).perform(click());
+
+            // "Remove Facility" button should not exist anymore as facility has been removed
+            onView(withId(R.id.adminRemoveFacilityButton)).check(matches(not(isDisplayed())));
+
+            // Check if the facility is now set to "No facility set"
+            onView(withText("No facility set.")).check(matches(isDisplayed()));
+
         }
     }
 

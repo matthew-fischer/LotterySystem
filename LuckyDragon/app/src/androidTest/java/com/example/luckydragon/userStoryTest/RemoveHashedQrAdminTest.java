@@ -7,6 +7,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static org.hamcrest.CoreMatchers.not;
+
 import android.content.Context;
 import android.content.Intent;
 
@@ -27,10 +29,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Contains test for US 03.05.01.
- * As an administrator, I want to be able to browse profiles.
+ * Contains test for US 03.03.02.
+ * As an administrator, I want to be able to remove hashed QR code data.
  */
-public class BrowseUsersAdminTest extends MockedDb {
+public class RemoveHashedQrAdminTest extends MockedDb {
 
     @Override
     protected HashMap<String, Object> getMockUserData() {
@@ -73,7 +75,7 @@ public class BrowseUsersAdminTest extends MockedDb {
     }
 
     @Test
-    public void testBrowseUsers() {
+    public void testRemoveQR() {
 
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
@@ -90,14 +92,27 @@ public class BrowseUsersAdminTest extends MockedDb {
             // Admin clicks "Administrator"
             onView(withId(R.id.adminButton)).perform(click());
 
-            // Admin profile fragment should open and view profiles button should be displayed
-            onView(withId(R.id.viewProfilesButton)).check(matches(isDisplayed()));
+            // Admin profile fragment should open and view events button should be displayed
+            onView(withId(R.id.viewEventsButton)).check(matches(isDisplayed()));
 
-            // Admin clicks "View Profiles"
-            onView(withId(R.id.viewProfilesButton)).perform(click());
+            // Admin clicks "View Events"
+            onView(withId(R.id.viewEventsButton)).perform(click());
 
-            // Check if the user "John Doe" is displayed
-            onView(withText("John Doe")).check(matches(isDisplayed()));
+            // Check if the event "C301 Standup" is displayed
+            onView(withText("C301 Standup")).check(matches(isDisplayed()));
+
+            // Click on the event "C301 Standup"
+            onView(withText("C301 Standup")).perform(click());
+
+            // Admin event fragment should open and remove QR button should be displayed
+            onView(withId(R.id.adminRemoveQRButton)).check(matches(isDisplayed()));
+
+            // Admin clicks "Remove QR" button
+            onView(withId(R.id.adminRemoveQRButton)).perform(click());
+
+            // "Remove QR" button should not exist anymore as QR code has been removed
+            onView(withId(R.id.adminRemoveQRButton)).check(matches(not(isDisplayed())));
+
         }
     }
 
