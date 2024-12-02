@@ -73,7 +73,7 @@ public class BrowseUsersAdminTest extends MockedDb {
     }
 
     @Test
-    public void testBrowseEvents() {
+    public void testBrowseUsers() {
 
         final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         final Intent intent = new Intent(targetContext, SelectRoleActivity.class);
