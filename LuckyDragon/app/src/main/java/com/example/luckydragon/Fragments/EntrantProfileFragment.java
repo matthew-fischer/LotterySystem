@@ -61,12 +61,14 @@ public class EntrantProfileFragment extends Fragment {
                         if (o.getContents() == null) {
                             Toast.makeText(getActivity(), "Cancelled", Toast.LENGTH_SHORT).show();
                         } else {
-                            Intent intent = new Intent(getActivity(), EventActivity.class);
+                            Intent intent = new Intent(getActivity(), ViewEventActivity.class);
                             // Pass in event eventId (from QR CODE SCANNER)
                             String eventID = o.getContents();
-                            intent.putExtra("eventID", eventID);
+                            GlobalApp globalApp = (GlobalApp) requireActivity().getApplication();
+                            Event event = globalApp.getEvent(eventID);
+                            globalApp.setEventToView(event);
 
-                            // start EventActivity
+                            // start ViewEventActivity
                             startActivity(intent);
                         }
                     });
